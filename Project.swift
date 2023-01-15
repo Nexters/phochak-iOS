@@ -82,7 +82,7 @@ let project: Project = .init(
       platform: .iOS,
       deploymentTarget: deploymentTarget,
       dependencies: [
-        .target(name: Module.domain.moduleName)
+        .target(name: Module.network.moduleName)
       ]),
 
     Project.makePhoChakFrameworkTargets(
@@ -97,7 +97,7 @@ let project: Project = .init(
       deploymentTarget: deploymentTarget,
       dependencies: [
         .target(name: Module.designKit.moduleName),
-        .target(name: Module.service.moduleName)
+        .target(name: Module.domain.moduleName)
       ])
 
   ].flatMap { $0 }
