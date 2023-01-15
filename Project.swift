@@ -97,7 +97,12 @@ let project: Project = .init(
       deploymentTarget: deploymentTarget,
       dependencies: [
         .target(name: Module.designKit.moduleName),
-        .target(name: Module.domain.moduleName)
+        .target(name: Module.domain.moduleName),
+        .external(name: "RxCocoa"),
+        .external(name: "RxDataSources"),
+        .external(name: "ReactorKit"),
+        .external(name: "SnapKit"),
+        .external(name: "Then")
       ])
 
   ].flatMap { $0 }
