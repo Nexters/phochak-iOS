@@ -8,12 +8,14 @@
 
 import XCTest
 
+@testable import Core
+
 import Swinject
 
 final class DIContainerTests: XCTestCase {
 
   // MARK: Properties
-  private let container: Container = .init()
+  private let container = DIContainer.shared.container
 
   // MARK: Methods
   override func setUp() {
@@ -29,7 +31,7 @@ final class DIContainerTests: XCTestCase {
   func test_whenCallStubMethod_thenReturn200() {
     guard let mockClass = container.resolve(MockClass.self) else { fatalError() }
 
-    XCTAssertEqual(mockClass.stub(), 500)
+    XCTAssertNotEqual(mockClass.stub(), 500)
     XCTAssertEqual(mockClass.stub(), 200)
   }
 }
