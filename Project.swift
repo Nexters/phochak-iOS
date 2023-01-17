@@ -64,7 +64,7 @@ let project: Project = .init(
       platform: .iOS,
       deploymentTarget: deploymentTarget,
       dependencies: [
-        .target(name: Module.core.moduleName)
+        .target(name: Module.service.moduleName)
       ]),
 
     Project.makePhoChakFrameworkTargets(
@@ -74,7 +74,8 @@ let project: Project = .init(
       dependencies: [
         .target(name: Module.core.moduleName),
         .external(name: "Moya"),
-        .external(name: "RxMoya")
+        .external(name: "RxMoya"),
+        .external(name: "Alamofire")
       ]),
 
     Project.makePhoChakFrameworkTargets(
