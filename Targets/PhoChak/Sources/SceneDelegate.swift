@@ -5,6 +5,11 @@
 //  Created by Ian on 2023/01/14.
 //
 
+import Core
+import Domain
+import Feature
+import Network
+import Service
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -19,6 +24,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     options connectionOptions: UIScene.ConnectionOptions
   ) {
     guard let _ = (scene as? UIWindowScene) else { return }
+
+    registerDomain()
+    registerNetwork()
+    registerService()
+    registerFeature()
   }
 
   func sceneDidDisconnect(_ scene: UIScene) {}
@@ -32,3 +42,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   func sceneDidEnterBackground(_ scene: UIScene) {}
 }
 
+// MARK: - Extension
+private extension SceneDelegate {
+  func registerDomain() {
+    DomainRegistrant().register(container: DIContainer.shared.container)
+  }
+
+  func registerNetwork() {
+    NetworkRegistrant().register(container: DIContainer.shared.container)
+  }
+
+  func registerService() {
+    ServiceRegistrant().register(container: DIContainer.shared.container)
+  }
+
+  func registerFeature() {
+    FeatureRegistrant().register(container: DIContainer.shared.container)
+  }
+}
