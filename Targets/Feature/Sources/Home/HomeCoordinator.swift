@@ -14,7 +14,7 @@ protocol HomeCoordinatorType: CoordinatorType {
   var parentCoordinator: CoordinatorType? { get set }
 
   // MARK: Methods
-  func startPush() -> HomeViewController
+  func startPush() -> UINavigationController
 }
 
 final class HomeCoordinator: HomeCoordinatorType {
@@ -23,31 +23,27 @@ final class HomeCoordinator: HomeCoordinatorType {
   weak var parentCoordinator: CoordinatorType?
   var children: [CoordinatorType]
   var router: UINavigationController
-  private var homeViewController: HomeViewController?
+  private let sceneFactory: SceneFactory
+
+  // MARK: Dependency
+  struct Dependency {
+    let router: UINavigationController
+    let sceneFactory: SceneFactory
+  }
 
   // MARK: Initializer
-  init(router: UINavigationController) {
+  init(dependency: Dependency) {
     self.children = []
-    self.router = router
+    self.router = dependency.router
+    self.sceneFactory = dependency.sceneFactory
   }
 
   // MARK: Methods
   func start() {
-    let viewController: HomeViewController = makeViewController()
-    router.pushViewController(viewController, animated: true)
+    router.pushViewController(sceneFactory.create(scene: .home), animated: true)
   }
 
-  func startPush() -> HomeViewController {
-    makeViewController()
-  }
-}
-
-// MARK: - Private Extension
-private extension HomeCoordinator {
-  func makeViewController() -> HomeViewController {
-    let viewController: HomeViewController = .init(nibName: nil, bundle: nil)
-    self.homeViewController = viewController
-
-    return viewController
+  func startPush() -> UINavigationController {
+    .init(rootViewController: sceneFactory.create(scene: .home))
   }
 }

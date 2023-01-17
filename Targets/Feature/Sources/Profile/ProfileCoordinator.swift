@@ -14,7 +14,7 @@ protocol ProfileCoordinatorType: CoordinatorType {
   var parentCoordinator: CoordinatorType? { get set }
 
   // MARK: Methods
-  func startPush() -> ProfileViewController
+  func startPush() -> UINavigationController
 }
 
 final class ProfileCoordinator: ProfileCoordinatorType {
@@ -23,31 +23,27 @@ final class ProfileCoordinator: ProfileCoordinatorType {
   weak var parentCoordinator: CoordinatorType?
   var children: [CoordinatorType]
   var router: UINavigationController
-  private var profileViewController: ProfileViewController?
+  private let sceneFactory: SceneFactory
+
+  // MARK: Dependency
+  struct Dependency {
+    let router: UINavigationController
+    let sceneFactory: SceneFactory
+  }
 
   // MARK: Initializer
-  init(router: UINavigationController) {
+  init(dependency: Dependency) {
     self.children = []
-    self.router = router
+    self.router = dependency.router
+    self.sceneFactory = dependency.sceneFactory
   }
 
   // MARK: Methods
   func start() {
-    let viewController: ProfileViewController = makeViewController()
-    router.pushViewController(viewController, animated: true)
+    router.pushViewController(sceneFactory.create(scene: .profile), animated: true)
   }
 
-  func startPush() -> ProfileViewController {
-    makeViewController()
-  }
-}
-
-// MARK: - Private Extension
-private extension ProfileCoordinator {
-  func makeViewController() -> ProfileViewController {
-    let viewController: ProfileViewController = .init(nibName: nil, bundle: nil)
-    self.profileViewController = viewController
-
-    return viewController
+  func startPush() -> UINavigationController {
+    .init(rootViewController: sceneFactory.create(scene: .profile))
   }
 }

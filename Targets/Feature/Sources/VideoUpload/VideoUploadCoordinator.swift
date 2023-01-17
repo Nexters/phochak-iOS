@@ -14,7 +14,7 @@ protocol VideoUploadCoordinatorType: CoordinatorType {
   var parentCoordinator: CoordinatorType? { get set }
 
   // MARK: Methods
-  func startPush() -> VideoUploadViewController
+  func startPush() -> UINavigationController
 }
 
 final class VideoUploadCoordinator: VideoUploadCoordinatorType {
@@ -23,31 +23,27 @@ final class VideoUploadCoordinator: VideoUploadCoordinatorType {
   weak var parentCoordinator: CoordinatorType?
   var children: [CoordinatorType]
   var router: UINavigationController
-  private var videoUploadViewController: VideoUploadViewController?
+  private let sceneFactory: SceneFactory
+
+  // MARK: dependency
+  struct Dependency {
+    let router: UINavigationController
+    let sceneFactory: SceneFactory
+  }
 
   // MARK: Initializer
-  init(router: UINavigationController) {
+  init(dependency: Dependency) {
     self.children = []
-    self.router = router
+    self.router = dependency.router
+    self.sceneFactory = dependency.sceneFactory
   }
 
   // MARK: Methods
   func start() {
-    let viewController: VideoUploadViewController = makeViewController()
-    router.pushViewController(viewController, animated: true)
+    router.pushViewController(sceneFactory.create(scene: .videoUpload), animated: true)
   }
 
-  func startPush() -> VideoUploadViewController {
-    makeViewController()
-  }
-}
-
-// MARK: - Private Extension
-private extension VideoUploadCoordinator {
-  func makeViewController() -> VideoUploadViewController {
-    let viewController: VideoUploadViewController = .init(nibName: nil, bundle: nil)
-    self.videoUploadViewController = viewController
-
-    return viewController
+  func startPush() -> UINavigationController {
+    .init(rootViewController: sceneFactory.create(scene: .videoUpload))
   }
 }
