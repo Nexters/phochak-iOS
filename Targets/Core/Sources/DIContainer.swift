@@ -8,8 +8,8 @@
 
 import Swinject
 
-public protocol RegistrantType {
-  func register(container: Container)
+public protocol AssemblyType {
+  func assemble(container: Container)
 }
 
 public struct DIContainer {
