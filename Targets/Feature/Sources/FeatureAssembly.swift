@@ -11,10 +11,10 @@ import Domain
 
 import Swinject
 
-public struct FeatureRegistrant: RegistrantType {
+public struct FeatureAssembly: AssemblyType {
 
   // MARK: Methods
-  public func register(container: Container) {
+  public func assemble(container: Container) {
   }
 
   // MARK: Initializer
