@@ -45,7 +45,8 @@ let project: Project = .init(
     [Project.makePhoChakAppTarget(
       platform: .iOS,
       dependencies: [
-        .target(name: Module.feature.moduleName)
+        .target(name: Module.feature.moduleName),
+        .target(name: Module.service.moduleName)
       ],
       deploymentTarget: deploymentTarget)],
 
