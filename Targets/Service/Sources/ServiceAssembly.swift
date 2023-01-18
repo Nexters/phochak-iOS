@@ -12,10 +12,10 @@ import Network
 
 import Swinject
 
-public struct ServiceRegistrant: RegistrantType {
+public struct ServiceAssembly: AssemblyType {
 
   // MARK: Methods
-  public func register(container: Container) {
+  public func assemble(container: Container) {
   }
 
   // MARK: Initializer
