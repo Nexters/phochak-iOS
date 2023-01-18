@@ -25,10 +25,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
   ) {
     guard let _ = (scene as? UIWindowScene) else { return }
 
-    registerDomain()
-    registerNetwork()
-    registerService()
-    registerFeature()
+    assembleDomain()
+    assembleNetwork()
+    assembleService()
+    assembleFeature()
   }
 
   func sceneDidDisconnect(_ scene: UIScene) {}
@@ -44,19 +44,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 // MARK: - Extension
 private extension SceneDelegate {
-  func registerDomain() {
-    DomainRegistrant().register(container: DIContainer.shared.container)
+  func assembleDomain() {
+    DomainAssembly().assemble(container: DIContainer.shared.container)
   }
 
-  func registerNetwork() {
-    NetworkRegistrant().register(container: DIContainer.shared.container)
+  func assembleNetwork() {
+    NetworkAssembly().assemble(container: DIContainer.shared.container)
   }
 
-  func registerService() {
-    ServiceRegistrant().register(container: DIContainer.shared.container)
+  func assembleService() {
+    ServiceAssembly().assemble(container: DIContainer.shared.container)
   }
 
-  func registerFeature() {
-    FeatureRegistrant().register(container: DIContainer.shared.container)
+  func assembleFeature() {
+    FeatureAssembly().assemble(container: DIContainer.shared.container)
   }
 }
