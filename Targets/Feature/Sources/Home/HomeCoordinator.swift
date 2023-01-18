@@ -24,6 +24,7 @@ final class HomeCoordinator: HomeCoordinatorType {
   var children: [CoordinatorType]
   var router: UINavigationController
   private let sceneFactory: SceneFactoryType
+  private var homeViewController: HomeViewController?
 
   // MARK: Dependency
   struct Dependency {
@@ -42,6 +43,8 @@ final class HomeCoordinator: HomeCoordinatorType {
   func start() {}
 
   func createNavWrappedViewController() -> UINavigationController {
-    .init(rootViewController: sceneFactory.create(scene: .home))
+    let viewController = sceneFactory.create(scene: .home)
+    self.homeViewController = viewController as? HomeViewController
+    return .init(rootViewController: viewController)
   }
 }

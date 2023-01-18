@@ -24,6 +24,7 @@ final class VideoUploadCoordinator: VideoUploadCoordinatorType {
   var children: [CoordinatorType]
   var router: UINavigationController
   private let sceneFactory: SceneFactoryType
+  private var videoUploadViewController: VideoUploadViewController?
 
   // MARK: dependency
   struct Dependency {
@@ -42,6 +43,8 @@ final class VideoUploadCoordinator: VideoUploadCoordinatorType {
   func start() {}
 
   func createNavWrappedViewController() -> UINavigationController {
-    .init(rootViewController: sceneFactory.create(scene: .videoUpload))
+    let viewController = sceneFactory.create(scene: .videoUpload)
+    self.videoUploadViewController = viewController as? VideoUploadViewController
+    return .init(rootViewController: viewController)
   }
 }

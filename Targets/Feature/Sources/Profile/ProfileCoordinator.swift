@@ -24,6 +24,7 @@ final class ProfileCoordinator: ProfileCoordinatorType {
   var children: [CoordinatorType]
   var router: UINavigationController
   private let sceneFactory: SceneFactoryType
+  private var profileViewController: ProfileViewController?
 
   // MARK: Dependency
   struct Dependency {
@@ -42,6 +43,8 @@ final class ProfileCoordinator: ProfileCoordinatorType {
   func start() {}
 
   func createNavWrappedViewController() -> UINavigationController {
-    .init(rootViewController: sceneFactory.create(scene: .profile))
+    let viewController = sceneFactory.create(scene: .profile)
+    self.profileViewController = viewController as? ProfileViewController
+    return .init(rootViewController: viewController)
   }
 }
