@@ -10,10 +10,10 @@ import Core
 
 import Swinject
 
-public struct NetworkRegistrant: RegistrantType {
+public struct NetworkAssembly: AssemblyType {
 
   // MARK: Methods
-  public func register(container: Container) {
+  public func assemble(container: Container) {
   }
 
   // MARK: Initializer
