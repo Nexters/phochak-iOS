@@ -1,6 +1,6 @@
 //
 //  CoordinatorType.swift
-//  Service
+//  Feature
 //
 //  Created by Ian on 2023/01/16.
 //  Copyright © 2023 PhoChak. All rights reserved.

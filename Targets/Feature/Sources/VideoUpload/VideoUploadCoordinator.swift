@@ -14,7 +14,7 @@ protocol VideoUploadCoordinatorType: CoordinatorType {
   var parentCoordinator: CoordinatorType? { get set }
 
   // MARK: Methods
-  func startPush() -> UINavigationController
+  func createNavWrappedViewController() -> UINavigationController
 }
 
 final class VideoUploadCoordinator: VideoUploadCoordinatorType {
@@ -23,12 +23,12 @@ final class VideoUploadCoordinator: VideoUploadCoordinatorType {
   weak var parentCoordinator: CoordinatorType?
   var children: [CoordinatorType]
   var router: UINavigationController
-  private let sceneFactory: SceneFactory
+  private let sceneFactory: SceneFactoryType
 
   // MARK: dependency
   struct Dependency {
     let router: UINavigationController
-    let sceneFactory: SceneFactory
+    let sceneFactory: SceneFactoryType
   }
 
   // MARK: Initializer
@@ -39,11 +39,9 @@ final class VideoUploadCoordinator: VideoUploadCoordinatorType {
   }
 
   // MARK: Methods
-  func start() {
-    router.pushViewController(sceneFactory.create(scene: .videoUpload), animated: true)
-  }
+  func start() {}
 
-  func startPush() -> UINavigationController {
+  func createNavWrappedViewController() -> UINavigationController {
     .init(rootViewController: sceneFactory.create(scene: .videoUpload))
   }
 }

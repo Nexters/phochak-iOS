@@ -16,7 +16,6 @@ final class AppCoordinator: AppCoordinatorType {
   // MARK: Properties
   var children: [CoordinatorType]
   var router: UINavigationController
-  private let sceneFactory: SceneFactory = .init()
 
   // MARK: Initializer
   init(router: UINavigationController) {
@@ -37,10 +36,7 @@ private extension AppCoordinator {
 
   func startTabBar() {
     let tabBarCoordinator: TabBarCoordinatorType = TabBarCoordinator(
-      dependency: .init(
-        router: router,
-        sceneFactory: sceneFactory
-      )
+      dependency: .init(router: router)
     )
     tabBarCoordinator.parentCoordinator = self
     addchild(tabBarCoordinator)

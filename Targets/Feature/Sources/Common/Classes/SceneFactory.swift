@@ -1,6 +1,6 @@
 //
 //  SceneFactory.swift
-//  PhoChak
+//  Feature
 //
 //  Created by Ian on 2023/01/17.
 //  Copyright © 2023 PhoChak. All rights reserved.
@@ -21,9 +21,13 @@ protocol SceneFactoryType {
 
 public final class SceneFactory: SceneFactoryType {
 
-  // TODO: 생성시 DIContainer 주입받기.
-  // DIContainer를 기반으로 Scene에 따른 의존성 객체들을 resolve하여 생성한 Scene을 반환한다.
-  public init() {}
+  // MARK: Properties
+  public static let shared = SceneFactory()
+
+  private init() {
+    // DIContainer를 기반으로 Scene에 따른 의존성 객체들을 resolve하여 생성한 Scene을 반환한다.
+//    self.container = DIContainer.shrared
+  }
 
   // MARK: Methods
   func create(scene: Scene) -> UIViewController {
