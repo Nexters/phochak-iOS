@@ -11,7 +11,7 @@ import UIKit
 public struct PhoChakColor {
 
   // MARK: Properties
-  public enum ColorType: String {
+  public enum ColorLiteral: String {
     case monoGray = "mono-gray-"
     case red = "red-"
     case yellow = "yellow-"
@@ -20,10 +20,10 @@ public struct PhoChakColor {
   }
 
   // MARK: Methods
-  public static func createColor(_ colorType: ColorType, _ weight: Int) -> UIColor {
+  public static func createColor(_ color: ColorLiteral, _ weight: Int) -> UIColor {
     let weight = String(weight)
+    guard let color: UIColor = .init(named: color.rawValue + weight) else { return .init() }
 
-    guard let color: UIColor = .init(named: colorType.rawValue + weight) else { return .init() }
     return color
   }
 }

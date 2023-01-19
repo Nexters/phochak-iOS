@@ -11,7 +11,7 @@ import UIKit
 public struct PhoChakFont {
 
   // MARK: Properties
-  public enum FontSize: CGFloat {
+  public enum FontSizeLiteral: CGFloat {
     case LargeTitle = 32
     case Title1 = 28
     case Title2 = 24
@@ -25,7 +25,7 @@ public struct PhoChakFont {
   }
 
   // MARK: Methods
-  public static func createFont(_ size: FontSize, _ weight: Int) -> UIFont {
+  public static func createFont(_ size: FontSizeLiteral, _ weight: Int) -> UIFont {
     var fontName: String {
       switch weight {
       case 800: return "Pretendard-ExtraBold"
@@ -37,8 +37,8 @@ public struct PhoChakFont {
       default: return .init()
       }
     }
-
     guard let font: UIFont = .init(name: fontName, size: size.rawValue) else { return .init() }
+
     return font
   }
 }
