@@ -16,8 +16,8 @@ public extension UIViewController {
     let gradientLayer = CAGradientLayer()
     gradientLayer.colors = [topColor, bottomColor]
     gradientLayer.locations = [0, 1]
-    gradientLayer.frame = self.view.bounds
+    gradientLayer.frame = view.bounds
 
-    self.view.layer.insertSublayer(gradientLayer, at:0)
+    view.layer.insertSublayer(gradientLayer, at: 0)
   }
 }
