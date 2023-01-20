@@ -10,7 +10,7 @@ import Core
 
 import Swinject
 
-public struct NetworkAssembly: AssemblyType {
+public struct NetworkAssembly: Assembly {
 
   // MARK: Methods
   public func assemble(container: Container) {

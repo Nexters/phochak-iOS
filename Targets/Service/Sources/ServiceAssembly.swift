@@ -7,12 +7,10 @@
 //
 
 import Core
-import Domain
-import Network
 
 import Swinject
 
-public struct ServiceAssembly: AssemblyType {
+public struct ServiceAssembly: Assembly {
 
   // MARK: Methods
   public func assemble(container: Container) {

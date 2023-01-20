@@ -7,11 +7,10 @@
 //
 
 import Core
-import Domain
 
 import Swinject
 
-public struct FeatureAssembly: AssemblyType {
+public struct FeatureAssembly: Assembly {
 
   // MARK: Methods
   public func assemble(container: Container) {
