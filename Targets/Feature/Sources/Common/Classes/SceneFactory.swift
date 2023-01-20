@@ -6,46 +6,88 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import Core
 import UIKit
 
-enum Scene {
+public enum Scene {
+  case tab
   case login
   case home
   case videoUpload
   case profile
+
+  var title: String {
+    switch self {
+    case .tab: return ""
+    case .login: return "Login"
+    case .home: return "Home"
+    case .videoUpload: return "Upload"
+    case .profile: return "Profile"
+    }
+  }
 }
 
-protocol SceneFactoryType {
+public protocol SceneFactoryType {
   func create(scene: Scene) -> UIViewController
 }
 
-public final class SceneFactory: SceneFactoryType {
+final class SceneFactory: SceneFactoryType {
 
   // MARK: Properties
-  public static let shared = SceneFactory()
+  private let injector: DependencyResolvable
 
-  private init() {
-    // DIContainer를 기반으로 Scene에 따른 의존성 객체들을 resolve하여 생성한 Scene을 반환한다.
-//    self.container = DIContainer.shrared
+  struct Dependency {
+    let injetor: DependencyResolvable
+  }
+
+  // MARK: Initializer
+  init(dependency: Dependency) {
+    self.injector = dependency.injetor
   }
 
   // MARK: Methods
-  func create(scene: Scene) -> UIViewController {
+  public func create(scene: Scene) -> UIViewController {
     switch scene {
     case .login:
       return UIViewController()
     case .home:
       let homeViewController: HomeViewController = .init(nibName: nil, bundle: nil)
-      homeViewController.title = "Home"
+      homeViewController.title = scene.title
       return homeViewController
     case .videoUpload:
       let videoUploadController: VideoUploadViewController = .init(nibName: nil, bundle: nil)
-      videoUploadController.title = "Upload"
+      videoUploadController.title = scene.title
       return videoUploadController
     case .profile:
       let profileViewController: ProfileViewController = .init(nibName: nil, bundle: nil)
-      profileViewController.title = "Profile"
+      profileViewController.title = scene.title
       return profileViewController
+
+    case .tab:
+      let tabBarController: PhoChakTabBarController = .init(nibName: nil, bundle: nil)
+
+      let homeViewController: HomeViewController = .init(nibName: nil, bundle: nil)
+      homeViewController.title = Scene.home.title
+      homeViewController.tabBarItem = .init(title: Scene.home.title, image: nil, selectedImage: nil)
+
+      let videoUploadViewController: VideoUploadViewController = .init(nibName: nil, bundle: nil)
+      videoUploadViewController.title = Scene.videoUpload.title
+      videoUploadViewController.tabBarItem = .init(title: Scene.videoUpload.title, image: nil, selectedImage: nil)
+
+      let profileViewController: ProfileViewController = .init(nibName: nil, bundle: nil)
+      profileViewController.title = Scene.profile.title
+      profileViewController.tabBarItem = .init(title: Scene.profile.title, image: nil, selectedImage: nil)
+
+      tabBarController.setViewControllers(
+        [
+          UINavigationController(rootViewController: homeViewController),
+          UINavigationController(rootViewController: videoUploadViewController),
+          UINavigationController(rootViewController: profileViewController)
+        ],
+        animated: false
+      )
+
+      return tabBarController
     }
   }
 }
