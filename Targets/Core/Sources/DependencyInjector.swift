@@ -33,7 +33,7 @@ public final class DependencyInjector: InjectorType {
     container.resolve(serviceType)!
   }
 
-  public func resolve<Object>(_ serviceType: Object.Type, name: String?) -> Object {
+  public func resolve<T>(_ serviceType: T.Type, name: String?) -> T {
     container.resolve(serviceType, name: name)!
   }
 
