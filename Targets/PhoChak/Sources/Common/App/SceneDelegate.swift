@@ -12,12 +12,15 @@ import Network
 import Service
 import UIKit
 
+import Swinject
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
   // MARK: Properties
   var window: UIWindow?
   private var appCoordinator: AppCoordinatorType?
   private var router: UINavigationController?
+  private let injector: InjectorType = DependencyInjector(container: .init())
 
   // MARK: Methods
   func scene(
@@ -35,10 +38,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     window?.rootViewController = router
 
-    assembleDomain()
-    assembleNetwork()
-    assembleService()
-    assembleFeature()
+    injector.assemble([
+      NetworkAssembly(), ServiceAssembly(), DomainAssembly(), FeatureAssembly()
+    ])
 
     guard let router = router else { return }
     setupAppearance()
@@ -73,21 +75,5 @@ private extension SceneDelegate {
       UITabBar.appearance().backgroundColor = .black
       UITabBar.appearance().tintColor = .white
     }
-  }
-
-  func assembleDomain() {
-    DomainAssembly().assemble(container: DIContainer.shared.container)
-  }
-
-  func assembleNetwork() {
-    NetworkAssembly().assemble(container: DIContainer.shared.container)
-  }
-
-  func assembleService() {
-    ServiceAssembly().assemble(container: DIContainer.shared.container)
-  }
-
-  func assembleFeature() {
-    FeatureAssembly().assemble(container: DIContainer.shared.container)
   }
 }
