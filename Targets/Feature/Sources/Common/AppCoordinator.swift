@@ -40,7 +40,7 @@ extension AppCoordinatorType {
 public final class AppCoordinator: AppCoordinatorType {
 
   // MARK: Properties
-  private var currentViewController: UIViewController?
+  private var currentNavController: UINavigationController?
   private let sceneFactory: SceneFactory
 
   public struct Dependency {
@@ -58,55 +58,58 @@ public final class AppCoordinator: AppCoordinatorType {
 
   public func start(from root: Scene) {
     let rootViewController = sceneFactory.create(scene: root)
-    self.currentViewController = rootViewController
+    self.currentNavController = rootViewController.navigationController
 
     UIApplication.keyWindow?.rootViewController = rootViewController
   }
 
   public func transition(to scene: Scene, style: TransitionStyle, animated: Bool, completion: (() -> Void)?) {
-    guard let currentViewController = currentViewController else {
-      return
+    let navController: UINavigationController
+
+    if let currentNavController = currentNavController {
+      navController = currentNavController
+    } else {
+      navController = (UIApplication.keyWindow?.rootViewController as? PhoChakTabBarController)?
+        .selectedViewController as! UINavigationController
+      self.currentNavController = navController
     }
 
-    let viewController = sceneFactory.create(scene: scene)
+    let createdViewController = sceneFactory.create(scene: scene)
 
     switch style {
     case .push:
-      currentViewController.navigationController?
-        .pushViewController(viewController, animated: true)
+      navController.pushViewController(createdViewController, animated: true)
 
     case .modal:
-      currentViewController.present(viewController, animated: animated, completion: completion)
+      navController.present(createdViewController, animated: animated, completion: completion)
     }
   }
 
   public func close(style: CloseStyle, animated: Bool, completion: (() -> Void)?) {
-    guard let currentViewController = currentViewController else {
-      return
+    let navController: UINavigationController
+
+    if let currentNavController = currentNavController {
+      navController = currentNavController
+    } else {
+      navController = (UIApplication.keyWindow?.rootViewController as? PhoChakTabBarController)?
+        .selectedViewController as! UINavigationController
+      self.currentNavController = navController
     }
 
     switch style {
     case .root:
-      self.currentViewController?
-        .navigationController?
+      self.currentNavController?
         .popToRootViewController(animated: animated)
       completion?()
 
     case .pop:
-      self.currentViewController?.navigationController?.popViewController(animated: true)
+      self.currentNavController?.navigationController?.popViewController(animated: true)
 
     case .dismiss:
-      if let presentingViewController = currentViewController.presentingViewController {
-        currentViewController.dismiss(animated: animated, completion: {
-          self.currentViewController = presentingViewController
-          completion?()
-        })
-      } else {
-        currentViewController.dismiss(animated: animated, completion: completion)
-      }
+      self.currentNavController?.dismiss(animated: animated, completion: completion)
 
     case .target(let scene):
-      guard let viewControllers = currentViewController.navigationController?.viewControllers else {
+      guard let viewControllers = currentNavController?.viewControllers else {
         return
       }
 
@@ -125,8 +128,7 @@ public final class AppCoordinator: AppCoordinatorType {
         }
       }) else { return }
 
-      currentViewController.navigationController?
-        .popToViewController(target, animated: animated)
+      currentNavController?.popToViewController(target, animated: animated)
     }
   }
 }
