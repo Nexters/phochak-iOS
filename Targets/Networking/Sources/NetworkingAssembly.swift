@@ -1,5 +1,5 @@
 //
-//  NetworkAssembly.swift
+//  NetworkingAssembly.swift
 //  Network
 //
 //  Created by Ian on 2023/01/20.
@@ -10,7 +10,7 @@ import Core
 
 import Swinject
 
-public struct NetworkAssembly: Assembly {
+public struct NetworkingAssembly: Assembly {
 
   // MARK: Methods
   public func assemble(container: Container) {

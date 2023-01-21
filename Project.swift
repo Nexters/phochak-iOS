@@ -5,7 +5,7 @@ import MyPlugin
 private enum Module: CaseIterable {
   case core
   case domain
-  case network
+  case networking
   case service
   case designKit
   case feature
@@ -14,7 +14,7 @@ private enum Module: CaseIterable {
     switch self {
     case .core: return "Core"
     case .domain: return "Domain"
-    case .network: return "Network"
+    case .networking: return "Networking"
     case .service: return "Service"
     case .designKit: return "DesignKit"
     case .feature: return "Feature"
@@ -69,7 +69,7 @@ let project: Project = .init(
       ]),
 
     Project.makePhoChakFrameworkTargets(
-      name: Module.network.moduleName,
+      name: Module.networking.moduleName,
       platform: .iOS,
       deploymentTarget: deploymentTarget,
       dependencies: [
@@ -84,7 +84,7 @@ let project: Project = .init(
       platform: .iOS,
       deploymentTarget: deploymentTarget,
       dependencies: [
-        .target(name: Module.network.moduleName),
+        .target(name: Module.networking.moduleName),
         .target(name: Module.domain.moduleName)
       ]),
 
