@@ -1,5 +1,5 @@
 //
-//  Container.swift
+//  DependencyInjector.swift
 //  PhoChak
 //
 //  Created by Ian on 2023/01/20.
@@ -8,7 +8,7 @@
 
 import Swinject
 
-public protocol DependencyAssemblyable {
+public protocol DependencyAssemblable {
   func assemble(_ assemblyList: [Assembly])
 }
 
@@ -16,7 +16,7 @@ public protocol DependencyResolvable {
   func resolve<T>(_ serviceType: T.Type) -> T
 }
 
-public typealias InjectorType = DependencyAssemblyable & DependencyResolvable
+public typealias InjectorType = DependencyAssemblable & DependencyResolvable
 
 public final class DependencyInjector: InjectorType {
 
