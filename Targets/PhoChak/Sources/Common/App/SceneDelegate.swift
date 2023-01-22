@@ -8,16 +8,18 @@
 import Core
 import Domain
 import Feature
-import Network
+import Networking
 import Service
 import UIKit
+
+import Swinject
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
   // MARK: Properties
   var window: UIWindow?
   private var appCoordinator: AppCoordinatorType?
-  private var router: UINavigationController?
+  private let injector: InjectorType = DependencyInjector(container: .init())
 
   // MARK: Methods
   func scene(
@@ -26,24 +28,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     options connectionOptions: UIScene.ConnectionOptions
   ) {
     guard let windowScene = scene as? UIWindowScene else { return }
-    window = .init(windowScene: windowScene).then {
-      $0.makeKeyAndVisible()
-    }
+    window = .init(windowScene: windowScene)
+    window?.makeKeyAndVisible()
 
-    router = .init(nibName: nil, bundle: nil).then {
-      $0.navigationBar.isHidden = true
-    }
-    window?.rootViewController = router
+    injector.assemble([
+      NetworkingAssembly(), ServiceAssembly(), DomainAssembly(), FeatureAssembly(injector: injector)
+    ])
 
-    assembleDomain()
-    assembleNetwork()
-    assembleService()
-    assembleFeature()
-
-    guard let router = router else { return }
     setupAppearance()
-    appCoordinator = AppCoordinator(router: router)
-    appCoordinator?.start()
+
+    appCoordinator = AppCoordinator(dependency: .init(injector: injector))
+    appCoordinator?.start(from: .tab)
   }
 
   func sceneDidDisconnect(_ scene: UIScene) {}
@@ -73,21 +68,5 @@ private extension SceneDelegate {
       UITabBar.appearance().backgroundColor = .black
       UITabBar.appearance().tintColor = .white
     }
-  }
-
-  func assembleDomain() {
-    DomainAssembly().assemble(container: DIContainer.shared.container)
-  }
-
-  func assembleNetwork() {
-    NetworkAssembly().assemble(container: DIContainer.shared.container)
-  }
-
-  func assembleService() {
-    ServiceAssembly().assemble(container: DIContainer.shared.container)
-  }
-
-  func assembleFeature() {
-    FeatureAssembly().assemble(container: DIContainer.shared.container)
   }
 }

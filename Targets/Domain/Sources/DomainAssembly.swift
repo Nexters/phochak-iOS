@@ -1,8 +1,8 @@
 //
-//  DomainRegistrant.swift
+//  DomainAssembly.swift
 //  Domain
 //
-//  Created by 한상진 on 2023/01/18.
+//  Created by Ian on 2023/01/20.
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
@@ -10,7 +10,7 @@ import Core
 
 import Swinject
 
-public struct DomainAssembly: AssemblyType {
+public struct DomainAssembly: Assembly {
 
   // MARK: Methods
   public func assemble(container: Container) {
