@@ -1,6 +1,6 @@
 //
 //  UIViewController+.swift
-//  Core
+//  DesignKit
 //
 //  Created by Ian on 2023/01/22.
 //  Copyright © 2023 PhoChak. All rights reserved.

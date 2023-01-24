@@ -1,6 +1,6 @@
 //
 //  UIApplication+.swift
-//  Core
+//  DesignKit
 //
 //  Created by Ian on 2023/01/20.
 //  Copyright © 2023 PhoChak. All rights reserved.
