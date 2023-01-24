@@ -142,6 +142,14 @@ extension Project {
           ]
         ]
       ],
+      "UIAppFonts": [
+        "Pretendard-Bold.otf",
+        "Pretendard-ExtraBold.otf",
+        "Pretendard-Light.otf",
+        "Pretendard-Medium.otf",
+        "Pretendard-Regular.otf",
+        "Pretendard-SemiBold.otf"
+      ]
     ]
 
     return .init(
