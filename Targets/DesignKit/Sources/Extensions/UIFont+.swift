@@ -1,5 +1,5 @@
 //
-//  PhoChakFont.swift
+//  UIFont+.swift
 //  DesignKit
 //
 //  Created by 한상진 on 2023/01/20.
@@ -8,10 +8,10 @@
 
 import UIKit
 
-public struct PhoChakFont {
+public extension UIFont {
 
   // MARK: Properties
-  public enum FontSizeLiteral: CGFloat {
+  enum FontSizeLiteral: CGFloat {
     case LargeTitle = 32
     case Title1 = 28
     case Title2 = 24
@@ -24,17 +24,25 @@ public struct PhoChakFont {
     case Caption = 12
   }
 
+  enum FontWeight {
+    case w300
+    case w400
+    case w500
+    case w600
+    case w700
+    case w800
+  }
+
   // MARK: Methods
-  public static func createFont(_ size: FontSizeLiteral, _ weight: Int) -> UIFont {
+  static func createFont(_ size: FontSizeLiteral, _ weight: FontWeight) -> UIFont {
     var fontName: String {
       switch weight {
-      case 800: return "Pretendard-ExtraBold"
-      case 700: return "Pretendard-Bold"
-      case 600: return "Pretendard-SemiBold"
-      case 500: return "Pretendard-Medium"
-      case 400: return "Pretendard-Regular"
-      case 300: return "Pretendard-Light"
-      default: return .init()
+      case .w800: return "Pretendard-ExtraBold"
+      case .w700: return "Pretendard-Bold"
+      case .w600: return "Pretendard-SemiBold"
+      case .w500: return "Pretendard-Medium"
+      case .w400: return "Pretendard-Regular"
+      case .w300: return "Pretendard-Light"
       }
     }
     guard let font: UIFont = .init(name: fontName, size: size.rawValue) else { return .init() }
