@@ -1,5 +1,5 @@
 //
-//  PhoChakImage.swift
+//  UIImage+.swift
 //  DesignKit
 //
 //  Created by 한상진 on 2023/01/20.
@@ -8,10 +8,10 @@
 
 import UIKit
 
-public struct PhoChakImage {
+public extension UIImage {
 
   // MARK: Properties
-  public enum ImageLiteral: String {
+  enum ImageLiteral: String {
     case back = "back"
     case dots = "dots"
     case exclame = "exclame"
@@ -24,7 +24,7 @@ public struct PhoChakImage {
   }
 
   // MARK: Methods
-  public static func createImage(_ image: ImageLiteral) -> UIImage {
+  static func createImage(_ image: ImageLiteral) -> UIImage {
     guard let image: UIImage = .init(named: image.rawValue) else { return .init() }
 
     return image
