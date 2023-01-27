@@ -5,7 +5,6 @@ import MyPlugin
 private enum Module: CaseIterable {
   case core
   case domain
-  case networking
   case service
   case designKit
   case feature
@@ -14,7 +13,6 @@ private enum Module: CaseIterable {
     switch self {
     case .core: return "Core"
     case .domain: return "Domain"
-    case .networking: return "Networking"
     case .service: return "Service"
     case .designKit: return "DesignKit"
     case .feature: return "Feature"
@@ -69,30 +67,23 @@ let project: Project = .init(
       ]),
 
     Project.makePhoChakFrameworkTargets(
-      name: Module.networking.moduleName,
-      platform: .iOS,
-      deploymentTarget: deploymentTarget,
-      dependencies: [
-        .target(name: Module.core.moduleName),
-        .external(name: "Moya"),
-        .external(name: "RxMoya"),
-        .external(name: "Alamofire")
-      ]),
-
-    Project.makePhoChakFrameworkTargets(
       name: Module.service.moduleName,
       platform: .iOS,
       deploymentTarget: deploymentTarget,
       dependencies: [
-        .target(name: Module.networking.moduleName),
-        .target(name: Module.domain.moduleName)
+        .target(name: Module.domain.moduleName),
+        .external(name: "Moya"),
+        .external(name: "RxMoya")
       ]),
 
     Project.makePhoChakFrameworkTargets(
       name: Module.designKit.moduleName,
       platform: .iOS,
       deploymentTarget: deploymentTarget,
-      dependencies: []),
+      dependencies: [
+        .external(name: "RxCocoa"),
+        .external(name: "RxSwift")
+      ]),
 
     Project.makePhoChakFrameworkTargets(
       name: Module.feature.moduleName,
@@ -104,9 +95,9 @@ let project: Project = .init(
         .external(name: "RxCocoa"),
         .external(name: "RxDataSources"),
         .external(name: "ReactorKit"),
+        .external(name: "Kingfisher"),
         .external(name: "SnapKit"),
         .external(name: "Then")
       ])
-
   ].flatMap { $0 }
 )

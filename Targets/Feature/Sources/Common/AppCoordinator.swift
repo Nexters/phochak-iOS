@@ -7,6 +7,7 @@
 ////
 
 import Core
+import DesignKit
 import UIKit
 
 public enum TransitionStyle {

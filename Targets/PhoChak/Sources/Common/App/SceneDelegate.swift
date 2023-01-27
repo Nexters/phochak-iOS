@@ -8,7 +8,6 @@
 import Core
 import Domain
 import Feature
-import Networking
 import Service
 import UIKit
 
@@ -32,7 +31,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     window?.makeKeyAndVisible()
 
     injector.assemble([
-      NetworkingAssembly(), ServiceAssembly(), DomainAssembly(), FeatureAssembly(injector: injector)
+      ServiceAssembly(), DomainAssembly(), FeatureAssembly(injector: injector)
     ])
 
     setupAppearance()
