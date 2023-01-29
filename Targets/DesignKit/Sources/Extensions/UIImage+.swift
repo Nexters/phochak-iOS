@@ -15,12 +15,16 @@ public extension UIImage {
     case back = "back"
     case dots = "dots"
     case exclame = "exclame"
+    case exclameOff = "exclame_off"
     case filter = "filter"
-    case heart = "heart"
+    case heartOff = "heart_off"
+    case heartOn = "heart_on"
     case iconX = "iconX"
     case kakao = "kakao"
     case search = "search"
     case setting = "setting"
+    case tab_home = "tab_home"
+    case tab_home_selected = "tab_home_selected"
   }
 
   // MARK: Methods
