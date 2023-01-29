@@ -126,6 +126,10 @@ public final class AppCoordinator: AppCoordinatorType {
           return $0 is VideoUploadViewController
         case .profile:
           return $0 is ProfileViewController
+        case .search:
+          return true
+        case .postRolling:
+          return true
         }
       }) else { return }
 
