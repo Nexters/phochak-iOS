@@ -29,4 +29,30 @@ public extension UIView {
 
     setGradient(startColor: startColor, endColor: endColor)
   }
+
+  func cornerRadius(_ corners: [UIRectCorner] = [.allCorners], radius: CGFloat) {
+    layer.masksToBounds = true
+    layer.cornerRadius = radius
+
+    if corners != [.allCorners] {
+      var cornerMask: CACornerMask = .init()
+
+      corners.forEach {
+        if $0 == .bottomLeft {
+          cornerMask.insert(.layerMinXMinYCorner)
+        }
+        if $0 == .bottomRight {
+          cornerMask.insert(.layerMaxXMinYCorner)
+        }
+        if $0 == .topLeft {
+          cornerMask.insert(.layerMinXMaxYCorner)
+        }
+        if $0 == .topRight {
+          cornerMask.insert(.layerMaxXMaxYCorner)
+        }
+      }
+
+      layer.maskedCorners = cornerMask
+    }
+  }
 }
