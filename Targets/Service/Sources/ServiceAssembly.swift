@@ -7,6 +7,7 @@
 //
 
 import Core
+import Domain
 
 import Swinject
 
@@ -14,6 +15,7 @@ public struct ServiceAssembly: Assembly {
 
   // MARK: Methods
   public func assemble(container: Container) {
+    container.register(VideoPostServiceType.self) { _ in return VideoPostService() }
   }
 
   // MARK: Initializer
