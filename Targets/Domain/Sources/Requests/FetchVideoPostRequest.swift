@@ -10,5 +10,12 @@ import Foundation
 
 public struct FetchVideoPostRequest {
 
-  public init() {}
+  // MARK: Properties
+  let lastVideoPostID: Int
+  let count: Int
+
+  public init(lastVideoPostID: Int, count: Int = 10) {
+    self.lastVideoPostID = lastVideoPostID
+    self.count = count
+  }
 }

@@ -116,8 +116,10 @@ private extension HomeViewController {
 
   // MARK: Methods
   func bindAction(reactor: HomeReactor) {
-    Observable.just(())
-      .map { _ in HomeReactor.Action.load }
+    collectionView.rx.didEndDragging.map { _ in }
+      .asObservable()
+      .startWith(())
+      .map { _ in HomeReactor.Action.fetchItems(count: 6) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 

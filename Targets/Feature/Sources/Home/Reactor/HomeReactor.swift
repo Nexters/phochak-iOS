@@ -11,25 +11,25 @@ import Domain
 import ReactorKit
 
 final class HomeReactor: Reactor {
-
+  
   // MARK: Properties
   private let depepdency: Dependency
   var initialState: State = .init(videoPosts: [], isLoading: false)
-
+  
   struct Dependency {
     let coordinaotr: AppCoordinatorType
     let useCase: HomeUseCaseType
   }
-
+  
   // MARK: Initializer
   init(dependency: Dependency) {
     self.depepdency = dependency
   }
-
+  
   enum Action {
-    case load
     case tapSearchButton
     case tapVideoCell(index: Int)
+    case fetchItems(count: Int)
   }
 
   enum Mutation {
@@ -44,17 +44,19 @@ final class HomeReactor: Reactor {
 
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
-    case .load:
-      return .concat([
-        .just(.setLoading(true)),
-        fetchVideoPosts()
-      ])
-
     case .tapSearchButton:
       return pushSearchScene()
 
     case .tapVideoCell(let index):
       return pushPostRollingScene(index: index)
+
+    case .fetchItems(let count):
+      let lastVideoPostID: Int = currentState.videoPosts.last?.postID ?? 0
+
+      return .concat([
+        .just(.setLoading(true)),
+        fetchVideoPosts(lastVideoPostID: lastVideoPostID, count: count)
+      ])
     }
   }
 
@@ -75,14 +77,19 @@ final class HomeReactor: Reactor {
 
 // MARK: Private
 private extension HomeReactor {
-  func fetchVideoPosts() -> Observable<Mutation> {
-    return depepdency.useCase.fetchVideoPosts(request: .init())
-      .flatMap {
-        Observable<Mutation>.concat([
-          .just(.setVideoPosts($0)),
-          .just(.setLoading(false))
-        ])
-      }
+  func fetchVideoPosts(lastVideoPostID: Int, count: Int) -> Observable<Mutation> {
+    return depepdency.useCase.fetchVideoPosts(
+      request: .init(
+        lastVideoPostID: lastVideoPostID,
+        count: count
+      )
+    )
+    .flatMap { videoPosts in
+      Observable<Mutation>.concat([
+        .just(.setVideoPosts(videoPosts)),
+        .just(.setLoading(false))
+      ])
+    }
   }
 
   func pushSearchScene() -> Observable<Mutation> {

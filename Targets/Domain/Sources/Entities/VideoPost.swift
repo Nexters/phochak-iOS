@@ -9,7 +9,7 @@
 public struct VideoPost: Equatable {
 
   // MARK: Properties
-  let postID: Int
+  public let postID: Int
   public let hashTags: [String]?
   public let postCategory: String
   public let viewCount: Int
