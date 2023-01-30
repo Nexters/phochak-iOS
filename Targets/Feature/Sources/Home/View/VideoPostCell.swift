@@ -36,6 +36,22 @@ final class VideoPostCell: BaseCollectionViewCell {
     nicknameLabel.text = nil
   }
 
+  override func layoutSubviews() {
+    super.layoutSubviews()
+
+    let gradient: CAGradientLayer = .init()
+    gradient.frame = .init(
+      x: 0, y: 0, width: contentView.frame.width,
+      height: contentView.frame.height * 0.18
+    )
+    gradient.colors = [
+      UIColor.clear.cgColor,
+      UIColor.createColor(.monoGray, .w950, alpha: 0.8).cgColor
+    ]
+    gradient.locations = [0.0, 1.0]
+    containerView.layer.insertSublayer(gradient, at: 0)
+  }
+
   override func setupViews() {
     contentView.cornerRadius(radius: 5)
     contentView.addSubview(videoPlayerView)
