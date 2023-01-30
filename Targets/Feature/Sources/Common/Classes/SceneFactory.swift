@@ -102,8 +102,8 @@ final class SceneFactory: SceneFactoryType {
       let profileViewController: ProfileViewController = .init(nibName: nil, bundle: nil)
       profileViewController.tabBarItem = .init(
         title: nil,
-        image: nil,
-        selectedImage: nil
+        image: .createImage(.tab_profile),
+        selectedImage: .createImage(.tab_profile_selected)
       )
 
       tabBarController.setViewControllers(
