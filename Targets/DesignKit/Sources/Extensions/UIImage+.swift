@@ -25,6 +25,8 @@ public extension UIImage {
     case setting = "setting"
     case tab_home = "tab_home"
     case tab_home_selected = "tab_home_selected"
+    case tab_profile = "tab_profile"
+    case tab_profile_selected = "tab_profile_selected"
   }
 
   // MARK: Methods

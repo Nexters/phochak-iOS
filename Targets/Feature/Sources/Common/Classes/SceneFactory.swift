@@ -102,8 +102,8 @@ final class SceneFactory: SceneFactoryType {
       let myPageViewController: MyPageViewController = .init(nibName: nil, bundle: nil)
       myPageViewController.tabBarItem = .init(
         title: nil,
-        image: nil,
-        selectedImage: nil
+        image: .createImage(.tab_profile),
+        selectedImage: .createImage(.tab_profile_selected)
       )
 
       tabBarController.setViewControllers(
