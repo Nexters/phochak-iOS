@@ -1,5 +1,5 @@
 //
-//  HomeUseCase.swift
+//  VideoPostUseCase.swift
 //  Domain
 //
 //  Created by Ian on 2023/01/27.
@@ -8,12 +8,12 @@
 
 import RxSwift
 
-public protocol HomeUseCaseType:
+public protocol VideoPostUseCaseType:
   FetchVideoPostUseCaseType,
   LikeVideoPostUseCaseType,
   ExclameVideoPostUseCaseType {}
 
-final class HomeUseCase: HomeUseCaseType {
+final class VideoPostUseCase: VideoPostUseCaseType {
 
   // MARK: Properties
   private let service: VideoPostServiceType

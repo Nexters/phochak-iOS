@@ -29,9 +29,9 @@ public struct DomainAssembly: Assembly {
       return LikeVideoPostUseCase(service: service)
     }
 
-    container.register(HomeUseCaseType.self) { resolver in
+    container.register(VideoPostUseCaseType.self) { resolver in
       let service = resolver.resolve(VideoPostServiceType.self)!
-      return HomeUseCase(service: service)
+      return VideoPostUseCase(service: service)
     }
   }
 
