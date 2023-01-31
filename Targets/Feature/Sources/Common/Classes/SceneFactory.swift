@@ -55,34 +55,31 @@ final class SceneFactory: SceneFactoryType {
       return searchViewController
 
     case let .postRolling(videoPosts, currentIndex):
-
-      // TODO: 추후 수정 예정
-      let postRollingViewController: UIViewController = .init(nibName: nil, bundle: nil)
+      let coordinator = injector.resolve(AppCoordinatorType.self)
+      let videoPostUseCase = injector.resolve(VideoPostUseCaseType.self)
+      let postRollingViewController: PostRollingViewController = .init(
+        reactor: .init(
+          dependency: .init(
+            coordinator: coordinator,
+            videoPosts: videoPosts,
+            currentIndex: currentIndex,
+            useCase: videoPostUseCase
+          )
+        )
+      )
+      postRollingViewController.hidesBottomBarWhenPushed = true
       return postRollingViewController
-
-//      let coordinator = injector.resolve(AppCoordinatorType.self)
-//      let postRollingViewController: PostRollingViewController = .init(
-//        reactor: .init(
-//          dependency: .init(
-//            coordinator: coordinator,
-//            videoPosts: videoPosts,
-//            currentIndex: currentIndex
-//          )
-//        )
-//      )
-//      postRollingViewController.hidesBottomBarWhenPushed = true
-//      return postRollingViewController
 
     case .tab:
       let tabBarController: PhoChakTabBarController = .init(nibName: nil, bundle: nil)
 
       let coordinator = injector.resolve(AppCoordinatorType.self)
-      let homeUseCase = injector.resolve(HomeUseCaseType.self)
+      let videoPostUseCase = injector.resolve(VideoPostUseCaseType.self)
       let homeViewController: HomeViewController = .init(
         reactor: .init(
           dependency: .init(
             coordinaotr: coordinator,
-            useCase: homeUseCase
+            useCase: videoPostUseCase
           )
         )
       )

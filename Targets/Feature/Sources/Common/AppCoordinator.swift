@@ -79,7 +79,7 @@ public final class AppCoordinator: AppCoordinatorType {
 
     switch style {
     case .push:
-      navController.pushViewController(createdViewController, animated: true)
+      navController.pushViewController(createdViewController, animated: animated)
 
     case .modal:
       navController.present(createdViewController, animated: animated, completion: completion)
