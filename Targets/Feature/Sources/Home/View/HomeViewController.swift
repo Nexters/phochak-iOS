@@ -77,7 +77,6 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     collectionView.do {
       $0.contentInsetAdjustmentBehavior = .never
       $0.backgroundColor = .clear
-      $0.rx.setDelegate(self).disposed(by: disposeBag)
       $0.showsVerticalScrollIndicator = false
       $0.showsHorizontalScrollIndicator = false
       $0.decelerationRate = .fast
@@ -167,10 +166,8 @@ private extension HomeViewController {
 
       if index > CGFloat(owner.currentIndex) {
         owner.currentIndex += 1
-      } else if index < CGFloat(owner.currentIndex) {
-        if owner.currentIndex != 0 {
-          owner.currentIndex -= 1
-        }
+      } else if index < CGFloat(owner.currentIndex), owner.currentIndex != 0 {
+        owner.currentIndex -= 1
       }
 
       offset = .init(
@@ -212,6 +209,3 @@ private extension HomeViewController {
     }
   }
 }
-
-// MARK: - UICollectionViewDelegate
-extension HomeViewController: UICollectionViewDelegate {}

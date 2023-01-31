@@ -120,12 +120,6 @@ public final class AppCoordinator: AppCoordinatorType {
           return $0 is PhoChakTabBarController
         case .login:
           return false
-        case .home:
-          return $0 is HomeViewController
-        case .videoUpload:
-          return $0 is VideoUploadViewController
-        case .profile:
-          return $0 is ProfileViewController
         case .search:
           return true
         case .postRolling:

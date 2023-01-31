@@ -1,5 +1,5 @@
 //
-//  VIdeoPlayerView.swift
+//  VideoPlayerView.swift
 //  DesignKit
 //
 //  Created by Ian on 2023/01/24.
