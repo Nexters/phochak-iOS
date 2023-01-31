@@ -14,6 +14,25 @@ public struct DomainAssembly: Assembly {
 
   // MARK: Methods
   public func assemble(container: Container) {
+    container.register(FetchVideoPostUseCaseType.self) { resolver in
+      let service = resolver.resolve(VideoPostServiceType.self)!
+      return FetchVideoPostUseCase(service: service)
+    }
+
+    container.register(ExclameVideoPostUseCaseType.self) { resolver in
+      let service = resolver.resolve(VideoPostServiceType.self)!
+      return ExclameVideoPostUseCase(service: service)
+    }
+
+    container.register(LikeVideoPostUseCase.self) { resolver in
+      let service = resolver.resolve(VideoPostServiceType.self)!
+      return LikeVideoPostUseCase(service: service)
+    }
+
+    container.register(HomeUseCaseType.self) { resolver in
+      let service = resolver.resolve(VideoPostServiceType.self)!
+      return HomeUseCase(service: service)
+    }
   }
 
   // MARK: Initializer

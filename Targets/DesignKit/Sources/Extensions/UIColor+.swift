@@ -34,8 +34,9 @@ public extension UIColor {
   }
 
   // MARK: Methods
-  static func createColor(_ color: ColorLiteral, _ weight: ColorWeight) -> UIColor {
+  static func createColor(_ color: ColorLiteral, _ weight: ColorWeight, alpha: CGFloat = 1.0) -> UIColor {
     guard let color: UIColor = .init(named: color.rawValue + weight.rawValue) else { return .init() }
+    color.withAlphaComponent(alpha)
 
     return color
   }

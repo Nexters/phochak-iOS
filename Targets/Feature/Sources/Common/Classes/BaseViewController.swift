@@ -6,6 +6,7 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import DesignKit
 import UIKit
 
 import ReactorKit
@@ -36,6 +37,10 @@ class BaseViewController<T: Reactor>: UIViewController, View {
 
   // MARK: Methods
   func bind(reactor: T) {}
-  func setupViews() {}
+  func setupViews() {
+    view.setGradientBackground()
+    navigationController?.navigationBar.tintColor = .white
+    navigationItem.backButtonTitle = ""
+  }
   func setupLayoutConstraints() {}
 }

@@ -54,18 +54,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 // MARK: - Extension
 private extension SceneDelegate {
   func setupAppearance() {
-    if #available(iOS 15, *) {
-      let navAppearance = UINavigationBarAppearance()
-      navAppearance.configureWithOpaqueBackground()
+    let navAppearance = UINavigationBarAppearance()
+    navAppearance.configureWithOpaqueBackground()
+    navAppearance.backgroundColor = .clear
+    navAppearance.shadowColor = .clear
+    navAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+    navAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+    navAppearance.setBackIndicatorImage(.createImage(.back), transitionMaskImage: .createImage(.back))
 
-      UINavigationBar.appearance().barTintColor = .black
-      UINavigationBar.appearance().standardAppearance = navAppearance
-      UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
+    UINavigationBar.appearance().standardAppearance = navAppearance
+    UINavigationBar.appearance().scrollEdgeAppearance = navAppearance
+    UINavigationBar.appearance().barTintColor = .white
+    UINavigationBar.appearance().backItem?.title = ""
 
-      let tabBarAppearance = UITabBarAppearance()
-      tabBarAppearance.configureWithOpaqueBackground()
-      UITabBar.appearance().backgroundColor = .black
-      UITabBar.appearance().tintColor = .white
-    }
+    let tabBarAppearance = UITabBarAppearance()
+    tabBarAppearance.configureWithOpaqueBackground()
+    tabBarAppearance.backgroundColor = .clear
+    
+    UITabBar.appearance().standardAppearance = tabBarAppearance
+    UITabBar.appearance().backgroundColor = .clear
+    UITabBar.appearance().tintColor = .white
   }
 }
