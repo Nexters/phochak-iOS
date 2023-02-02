@@ -36,7 +36,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ])
 
     setupAppearance()
-    TokenManager.deleteAll()
+
     let firstScene: Scene = TokenManager.load(tokenType: .accessToken) == nil ? .signIn : .tab
     appCoordinator = AppCoordinator(dependency: .init(injector: injector))
     appCoordinator?.start(from: firstScene)
