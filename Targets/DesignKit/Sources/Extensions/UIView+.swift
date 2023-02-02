@@ -34,25 +34,20 @@ public extension UIView {
     layer.masksToBounds = true
     layer.cornerRadius = radius
 
-    if corners != [.allCorners] {
-      var cornerMask: CACornerMask = .init()
+    guard corners != [.allCorners] else { return }
 
-      corners.forEach {
-        if $0 == .bottomLeft {
-          cornerMask.insert(.layerMinXMinYCorner)
-        }
-        if $0 == .bottomRight {
-          cornerMask.insert(.layerMaxXMinYCorner)
-        }
-        if $0 == .topLeft {
-          cornerMask.insert(.layerMinXMaxYCorner)
-        }
-        if $0 == .topRight {
-          cornerMask.insert(.layerMaxXMaxYCorner)
-        }
+    var cornerMask: CACornerMask = .init()
+
+    corners.forEach {
+      switch $0 {
+      case .topLeft: cornerMask.insert(.layerMinXMinYCorner)
+      case .topRight: cornerMask.insert(.layerMaxXMinYCorner)
+      case .bottomLeft: cornerMask.insert(.layerMinXMaxYCorner)
+      case .bottomRight: cornerMask.insert(.layerMaxXMaxYCorner)
+      default: break
       }
-
-      layer.maskedCorners = cornerMask
     }
+
+    layer.maskedCorners = cornerMask
   }
 }

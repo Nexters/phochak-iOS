@@ -10,6 +10,7 @@ import Domain
 import Feature
 import Service
 import UIKit
+import KakaoSDKAuth
 
 import Swinject
 
@@ -35,9 +36,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ])
 
     setupAppearance()
-
+    TokenManager.deleteAll()
+    let firstScene: Scene = TokenManager.load(tokenType: .accessToken) == nil ? .signIn : .tab
     appCoordinator = AppCoordinator(dependency: .init(injector: injector))
-    appCoordinator?.start(from: .tab)
+    appCoordinator?.start(from: firstScene)
+  }
+
+  func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+    if let url = URLContexts.first?.url {
+        if (AuthApi.isKakaoTalkLoginUrl(url)) {
+            _ = AuthController.handleOpenUrl(url: url)
+        }
+    }
   }
 
   func sceneDidDisconnect(_ scene: UIScene) {}
