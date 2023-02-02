@@ -121,12 +121,16 @@ extension Project {
       "CFBundleVersion": "1",
       "CFBundleDisplayName": "$(PRODUCT_NAME)",
       "UILaunchStoryboardName": "LaunchScreen",
-      //        "UIUserInterfaceStyle": "Light",
-      //        "CFBundleURLTypes": ["CFBundleTypeRole": "Editor", "CFBundleURLSchemes": ["kakaoc7088851270493d80c903f77ecbad7e5"]],
-      //        "KAKAO_API_KEY": "c7088851270493d80c903f77ecbad7e5",
-      //        "LSApplicationQueriesSchemes": ["kakaokompassauth", "kakaolink"],
-      //        "BASE_URL": "${BASE_URL}",
-      //        "USER_AGENT": "${USER_AGENT}",
+      "UIUserInterfaceStyle": "Dark",
+      "CFBundleURLTypes": [
+        [
+          "CFBundleTypeRole": "Editor",
+          "CFBundleURLSchemes": ["kakao${KAKAO_NATIVE_APP_KEY}"]
+        ]
+      ],
+      "KAKAO_NATIVE_APP_KEY": "${KAKAO_NATIVE_APP_KEY}",
+      "LSApplicationQueriesSchemes": ["kakaokompassauth", "kakaolink"],
+      "BASE_URL": "${BASE_URL}",
       "NSAppTransportSecurity": ["NSAllowsArbitraryLoads": true],
       "NSPhotoLibraryAddUsageDescription": "사진첩 접근 권한 요청",
       "UIApplicationSupportsIndirectInputEvents": true,

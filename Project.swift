@@ -73,7 +73,8 @@ let project: Project = .init(
       dependencies: [
         .target(name: Module.domain.moduleName),
         .external(name: "Moya"),
-        .external(name: "RxMoya")
+        .external(name: "RxMoya"),
+        .external(name: "RxKakaoSDK")
       ]),
 
     Project.makePhoChakFrameworkTargets(

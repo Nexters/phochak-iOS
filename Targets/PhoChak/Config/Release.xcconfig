@@ -8,3 +8,9 @@
 
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
+
+// MARK: 카카오 소셜로그인 네이티브 앱 키
+KAKAO_NATIVE_APP_KEY = 90c2a33697ae1ea550f63ac017f7fb70
+
+// MARK: BASE URL
+BASE_URL = 101.101.209.228
