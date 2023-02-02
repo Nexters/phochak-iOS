@@ -7,6 +7,7 @@
 //
 
 import Core
+import Domain
 
 import Swinject
 
@@ -19,6 +20,20 @@ public struct FeatureAssembly: Assembly {
   public func assemble(container: Container) {
     container.register(AppCoordinatorType.self) { _ in
       AppCoordinator(dependency: .init(injector: injector))
+    }
+
+    container.register(SignInViewController.self) { resolver in
+      let useCase = resolver.resolve(SignInUseCaseType.self)!
+      let coordinator = resolver.resolve(AppCoordinatorType.self)!
+
+      let reactorDependency: SignInReactor.Dependency = .init(
+        coordinator: coordinator,
+        useCase: useCase
+      )
+      let reactor: SignInReactor = .init(dependency: reactorDependency)
+      let signInViewController: SignInViewController = .init(reactor: reactor)
+
+      return signInViewController
     }
   }
 

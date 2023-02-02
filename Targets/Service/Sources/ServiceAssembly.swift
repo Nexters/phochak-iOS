@@ -16,6 +16,8 @@ public struct ServiceAssembly: Assembly {
   // MARK: Methods
   public func assemble(container: Container) {
     container.register(VideoPostServiceType.self) { _ in return VideoPostService() }
+
+    container.register(SignInServiceType.self) { _ in return SignInService() }
   }
 
   // MARK: Initializer

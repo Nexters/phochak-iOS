@@ -33,6 +33,11 @@ public struct DomainAssembly: Assembly {
       let service = resolver.resolve(VideoPostServiceType.self)!
       return HomeUseCase(service: service)
     }
+
+    container.register(SignInUseCaseType.self) { resolver in
+      let service = resolver.resolve(SignInServiceType.self)!
+      return SignInUseCase(service: service)
+    }
   }
 
   // MARK: Initializer

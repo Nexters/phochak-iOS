@@ -12,18 +12,9 @@ import UIKit
 
 public enum Scene {
   case tab
-  case login
+  case signIn
   case search
   case postRolling(videoPosts: [VideoPost], currentIndex: Int)
-
-  var title: String {
-    switch self {
-    case .tab: return ""
-    case .login: return "Login"
-    case .search: return ""
-    case .postRolling: return ""
-    }
-  }
 }
 
 public protocol SceneFactoryType {
@@ -47,8 +38,8 @@ final class SceneFactory: SceneFactoryType {
   // MARK: Methods
   public func create(scene: Scene) -> UIViewController {
     switch scene {
-    case .login:
-      return UIViewController()
+    case .signIn:
+      return injector.resolve(SignInViewController.self)
 
     case .search:
       let searchViewController: UIViewController = .init(nibName: nil, bundle: nil)
