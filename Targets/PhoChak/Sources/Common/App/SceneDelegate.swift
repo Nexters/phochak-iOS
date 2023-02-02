@@ -11,6 +11,7 @@ import Feature
 import Service
 import UIKit
 
+import KakaoSDKAuth
 import Swinject
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -30,14 +31,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     window = .init(windowScene: windowScene)
     window?.makeKeyAndVisible()
 
-    injector.assemble([
-      ServiceAssembly(), DomainAssembly(), FeatureAssembly(injector: injector)
-    ])
+    injector.assemble([ServiceAssembly(), DomainAssembly()])
 
     setupAppearance()
 
     appCoordinator = AppCoordinator(dependency: .init(injector: injector))
-    appCoordinator?.start(from: .tab)
+    coordinatorAssemby(coordinator: appCoordinator!)
+
+    let firstScene: Scene = TokenManager.load(tokenType: .accessToken) == nil ? .signIn : .tab
+    appCoordinator?.start(from: firstScene)
+  }
+
+  func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+    if let url = URLContexts.first?.url {
+        if (AuthApi.isKakaoTalkLoginUrl(url)) {
+            _ = AuthController.handleOpenUrl(url: url)
+        }
+    }
   }
 
   func sceneDidDisconnect(_ scene: UIScene) {}
@@ -74,5 +84,12 @@ private extension SceneDelegate {
     UITabBar.appearance().standardAppearance = tabBarAppearance
     UITabBar.appearance().backgroundColor = .clear
     UITabBar.appearance().tintColor = .white
+  }
+
+  func coordinatorAssemby(coordinator: AppCoordinatorType) {
+    injector.register(
+      AppCoordinatorType.self,
+      AppCoordinator(dependency: .init(injector: injector))
+    )
   }
 }

@@ -118,8 +118,8 @@ public final class AppCoordinator: AppCoordinatorType {
         switch scene {
         case .tab:
           return $0 is PhoChakTabBarController
-        case .login:
-          return false
+        case .signIn:
+          return $0 is SignInViewController
         case .search:
           return true
         case .postRolling:
