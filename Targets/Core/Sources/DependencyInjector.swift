@@ -10,6 +10,7 @@ import Swinject
 
 public protocol DependencyAssemblable {
   func assemble(_ assemblyList: [Assembly])
+  func register<T>(_ serviceType: T.Type, _ object: T)
 }
 
 public protocol DependencyResolvable {
@@ -35,6 +36,10 @@ public final class DependencyInjector: InjectorType {
 
   public func resolve<T>(_ serviceType: T.Type, name: String?) -> T {
     container.resolve(serviceType, name: name)!
+  }
+
+  public func register<T>(_ serviceType: T.Type, _ object: T) {
+    container.register(serviceType) { _ in object }
   }
 
   public func assemble(_ assemblyList: [Assembly]) {

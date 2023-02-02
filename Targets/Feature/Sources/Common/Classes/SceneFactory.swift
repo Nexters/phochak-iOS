@@ -39,7 +39,16 @@ final class SceneFactory: SceneFactoryType {
   public func create(scene: Scene) -> UIViewController {
     switch scene {
     case .signIn:
-      return injector.resolve(SignInViewController.self)
+      let useCase = injector.resolve(SignInUseCaseType.self)
+      let coordinator = injector.resolve(AppCoordinatorType.self)
+
+      let reactorDependency: SignInReactor.Dependency = .init(
+        coordinator: coordinator,
+        useCase: useCase
+      )
+      let reactor: SignInReactor = .init(dependency: reactorDependency)
+      let signInViewController: SignInViewController = .init(reactor: reactor)
+      return signInViewController
 
     case .search:
       let searchViewController: UIViewController = .init(nibName: nil, bundle: nil)

@@ -31,14 +31,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     window = .init(windowScene: windowScene)
     window?.makeKeyAndVisible()
 
-    injector.assemble([
-      ServiceAssembly(), DomainAssembly(), FeatureAssembly(injector: injector)
-    ])
+    injector.assemble([ServiceAssembly(), DomainAssembly()])
 
     setupAppearance()
 
-    let firstScene: Scene = TokenManager.load(tokenType: .accessToken) == nil ? .signIn : .tab
     appCoordinator = AppCoordinator(dependency: .init(injector: injector))
+    coordinatorAssemby(coordinator: appCoordinator!)
+
+    let firstScene: Scene = TokenManager.load(tokenType: .accessToken) == nil ? .signIn : .tab
     appCoordinator?.start(from: firstScene)
   }
 
@@ -84,5 +84,12 @@ private extension SceneDelegate {
     UITabBar.appearance().standardAppearance = tabBarAppearance
     UITabBar.appearance().backgroundColor = .clear
     UITabBar.appearance().tintColor = .white
+  }
+
+  func coordinatorAssemby(coordinator: AppCoordinatorType) {
+    injector.register(
+      AppCoordinatorType.self,
+      AppCoordinator(dependency: .init(injector: injector))
+    )
   }
 }

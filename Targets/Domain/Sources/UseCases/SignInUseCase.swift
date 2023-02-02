@@ -17,7 +17,7 @@ public protocol SignInUseCaseType {
 public final class SignInUseCase: SignInUseCaseType {
 
   // MARK: - Properties
-  public var signInService: SignInServiceType
+  public let signInService: SignInServiceType
 
   // MARK: - Initializer
   public init(service: SignInServiceType) {

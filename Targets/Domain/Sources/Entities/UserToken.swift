@@ -7,9 +7,13 @@
 //
 
 public struct UserToken {
+
+  // MARK: Properties
   public let accessToken: String
   public let refreshToken: String
 
+
+  // MARK: Initializer
   public init(accessToken: String, refreshToken: String) {
     self.accessToken = accessToken
     self.refreshToken = refreshToken
