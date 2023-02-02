@@ -10,8 +10,8 @@ import Domain
 import Feature
 import Service
 import UIKit
-import KakaoSDKAuth
 
+import KakaoSDKAuth
 import Swinject
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {

@@ -38,6 +38,7 @@ final class SignInViewController: BaseViewController<SignInReactor> {
   }
 
   override func setupViews() {
+    super.setupViews()
     view.addSubview(kakaoLoginButton)
     view.addSubview(appleLoginButton)
 

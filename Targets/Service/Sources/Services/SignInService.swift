@@ -34,13 +34,13 @@ public final class SignInService: SignInServiceType {
       return UserApi.shared.rx.loginWithKakaoTalk()
         .withUnretained(self)
         .flatMap { owner, oAuthToken in
-          owner.requestKakaoSignin(accessToken: oAuthToken.accessToken)
+          owner.requestSignIn(accessToken: oAuthToken.accessToken)
         }
     } else {
       return UserApi.shared.rx.loginWithKakaoAccount()
         .withUnretained(self)
         .flatMap { owner, oAuthToken in
-          owner.requestKakaoSignin(accessToken: oAuthToken.accessToken)
+          owner.requestSignIn(accessToken: oAuthToken.accessToken)
         }
     }
   }
@@ -48,7 +48,7 @@ public final class SignInService: SignInServiceType {
 
 // MARK: - Extension
 private extension SignInService {
-  func requestKakaoSignin(accessToken: String) -> Single<UserToken> {
+  func requestSignIn(accessToken: String) -> Single<UserToken> {
     provider.rx.request(.tryKakaoSignIn(accessToken: accessToken))
       .map(SignInResponse.self)
       .map { $0.makeUserToken() }

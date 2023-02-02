@@ -60,8 +60,8 @@ extension SignInAPI: TargetType {
 
   private var parameters: [String: Any]? {
     switch self {
-    case .tryKakaoSignIn(let oAuthToken):
-      return ["token": oAuthToken]
+    case .tryKakaoSignIn(let accessToken):
+      return ["token": accessToken]
     }
   }
 }
