@@ -26,7 +26,7 @@ final class ProfileSettingReactor: Reactor {
   }
 
   enum Mutation {
-    case checkDuplication(nickName: String)
+    case setIsEnableComplete(nickName: String)
   }
 
   struct State {
@@ -36,7 +36,7 @@ final class ProfileSettingReactor: Reactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case .tapCheckButton(let nickName):
-      return .just(.checkDuplication(nickName: nickName))
+      return .just(.setIsEnableComplete(nickName: nickName))
     }
   }
 
@@ -44,7 +44,7 @@ final class ProfileSettingReactor: Reactor {
     var newState: State = state
 
     switch mutation {
-    case .checkDuplication(let nickName):
+    case .setIsEnableComplete(let nickName):
       newState.isEnableComplete = nickName.count <= 10
     }
 

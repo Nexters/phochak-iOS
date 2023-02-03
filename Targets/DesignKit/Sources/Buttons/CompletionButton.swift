@@ -14,7 +14,7 @@ import RxCocoa
 public final class CompletionButton: UIButton {
 
   // MARK: Properties
-  public let isEnableTapSubject: PublishSubject<Bool> = .init()
+  public let isTapEnableSubject: PublishSubject<Bool> = .init()
   private let disposeBag: DisposeBag = .init()
 
   // MARK: Initializer
@@ -41,7 +41,7 @@ private extension CompletionButton {
   }
 
   func bind() {
-    isEnableTapSubject
+    isTapEnableSubject
       .asSignal(onErrorSignalWith: .empty())
       .emit(with: self, onNext: { owner, isEnable in
         owner.setTitleColor(.createColor(.monoGray, isEnable ? .w50 : .w600), for: .normal)

@@ -14,8 +14,8 @@ import RxCocoa
 public final class DuplicationCheckButton: UIButton {
 
   // MARK: Properties
-  public let textFieldIsFocusingSubject: PublishSubject<Bool> = .init()
-  public let textFieldIsEmptySubject: PublishSubject<Bool> = .init()
+  public let isFocusingTextFieldSubject: PublishSubject<Bool> = .init()
+  public let isEmptyTextFieldSubject: PublishSubject<Bool> = .init()
   private let disposeBag: DisposeBag = .init()
 
   // MARK: Initializer
@@ -42,7 +42,7 @@ private extension DuplicationCheckButton {
   }
 
   func bind() {
-    Observable.combineLatest(textFieldIsFocusingSubject, textFieldIsEmptySubject)
+    Observable.combineLatest(isFocusingTextFieldSubject, isEmptyTextFieldSubject)
       .asSignal(onErrorSignalWith: .empty())
       .emit(with: self, onNext: { owner, combineValues in
         let (isFocusing, isEmpty) = combineValues

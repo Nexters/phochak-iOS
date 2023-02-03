@@ -59,6 +59,7 @@ public final class PhoChakAlertViewController: UIViewController {
   public init(alertType: AlertTypeLiteral) {
     self.alertType = alertType
     super.init(nibName: nil, bundle: nil)
+
     setupModalStyle()
   }
 
@@ -171,14 +172,14 @@ private extension PhoChakAlertViewController {
   }
 
   func bind() {
-    let viewTapGestureSignal = view.addTapGesture().rx.event
+    let viewTapSignal = view.addTapGesture().rx.event
       .filter { $0.state == .recognized }
       .map { _ in }
       .asSignal(onErrorSignalWith: .empty())
 
     let cancelButtonTapSignal = cancelButton.rx.tap.asSignal()
 
-    Signal.merge(viewTapGestureSignal, cancelButtonTapSignal)
+    Signal.merge(viewTapSignal, cancelButtonTapSignal)
       .emit(with: self, onNext: { owner, _ in
         owner.dismiss(animated: true)
       })

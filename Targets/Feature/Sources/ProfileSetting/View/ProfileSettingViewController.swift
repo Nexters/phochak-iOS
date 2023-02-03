@@ -1,5 +1,5 @@
 //
-//  ProfileSettingView.swift
+//  ProfileSettingViewController.swift
 //  Feature
 //
 //  Created by 한상진 on 2023/01/25.
@@ -88,30 +88,32 @@ final class ProfileSettingViewController: BaseViewController<ProfileSettingReact
 
 // MARK: - Extension
 private extension ProfileSettingViewController {
+
+  // MARK: Properties
+  var isEnableCompleteBinder: Binder<Bool> {
+    .init(self, binding: { owner, isEnable in
+      owner.subTitleLabel.textColor = .createColor(isEnable ? .green : .red, .w400)
+
+      let titleText = isEnable ? "사용할 수 있는 닉네임입니다" : "10자 이하의 다른 닉네임을 입력해 주세요"
+      owner.subTitleLabel.text = titleText
+
+      owner.completeButton.isTapEnableSubject.onNext(isEnable)
+    })
+  }
+
+  // MARK: Methods
   func bindAction(reactor: ProfileSettingReactor) {
     typealias Action = ProfileSettingReactor.Action
 
     checkDuplicationButton.rx.tap
       .withLatestFrom(textField.rx.text.orEmpty)
-      .map { String($0) }
-      .map(Action.tapCheckButton)
+      .map { Action.tapCheckButton(nickName: String($0)) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
   }
 
   func bindState(reactor: ProfileSettingReactor) {
     typealias State = ProfileSettingReactor.State
-
-    var isEnableCompleteBinder: Binder<Bool> {
-      .init(self, binding: { owner, isEnable in
-        owner.subTitleLabel.textColor = .createColor(isEnable ? .green : .red, .w400)
-
-        let titleText = isEnable ? "사용할 수 있는 닉네임입니다" : "10자 이하의 다른 닉네임을 입력해 주세요"
-        owner.subTitleLabel.text = titleText
-
-        owner.completeButton.isEnableTapSubject.onNext(isEnable)
-      })
-    }
 
     reactor.state
       .map { $0.isEnableComplete }
@@ -123,18 +125,18 @@ private extension ProfileSettingViewController {
   func bindExtra() {
     textField.rx.controlEvent(.editingDidBegin)
       .map { _ in true}
-      .bind(to: checkDuplicationButton.textFieldIsFocusingSubject)
+      .bind(to: checkDuplicationButton.isFocusingTextFieldSubject)
       .disposed(by: disposeBag)
 
     textField.rx.controlEvent(.editingDidEnd)
       .map { _ in false }
-      .bind(to: checkDuplicationButton.textFieldIsFocusingSubject)
+      .bind(to: checkDuplicationButton.isFocusingTextFieldSubject)
       .disposed(by: disposeBag)
 
     textField.rx.text.orEmpty
       .map { $0.isEmpty }
       .distinctUntilChanged()
-      .bind(to: checkDuplicationButton.textFieldIsEmptySubject)
+      .bind(to: checkDuplicationButton.isEmptyTextFieldSubject)
       .disposed(by: disposeBag)
 
     view.addTapGesture().rx.event

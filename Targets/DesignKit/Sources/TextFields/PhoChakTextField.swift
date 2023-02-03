@@ -17,7 +17,15 @@ public final class PhoChakTextField: UITextField {
   public enum FieldStyle {
     case search
     case text
+
+    var placeholderText: String {
+      switch self {
+      case .search: return "어떤 주제를 찾아볼까요"
+      case .text: return "터치해서 입력하기"
+      }
+    }
   }
+
   private let fieldStyle: FieldStyle
   private let disposeBag: DisposeBag = .init()
 
@@ -47,8 +55,6 @@ private extension PhoChakTextField {
   }
 
   func bind() {
-    let placeholderText: String = fieldStyle == .search ? "어떤 주제를 찾아볼까요" : "터치해서 입력하기"
-
     rx.controlEvent(.editingDidBegin)
       .asSignal()
       .emit(with: self, onNext: { owner, _ in
@@ -62,7 +68,7 @@ private extension PhoChakTextField {
       .asSignal(onErrorSignalWith: .empty())
       .emit(with: self, onNext: { owner, _ in
         owner.attributedPlaceholder = NSAttributedString(
-          string: placeholderText,
+          string: owner.fieldStyle.placeholderText,
           attributes: [
             NSAttributedString.Key.foregroundColor : UIColor.createColor(.monoGray, .w400)
           ]
