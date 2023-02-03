@@ -99,8 +99,8 @@ final class SceneFactory: SceneFactoryType {
         selectedImage: nil
       )
 
-      let profileViewController: ProfileViewController = .init(nibName: nil, bundle: nil)
-      profileViewController.tabBarItem = .init(
+      let myPageViewController: MyPageViewController = .init(nibName: nil, bundle: nil)
+      myPageViewController.tabBarItem = .init(
         title: nil,
         image: nil,
         selectedImage: nil
@@ -110,7 +110,7 @@ final class SceneFactory: SceneFactoryType {
         [
           UINavigationController(rootViewController: homeViewController),
           UINavigationController(rootViewController: videoUploadViewController),
-          UINavigationController(rootViewController: profileViewController)
+          UINavigationController(rootViewController: myPageViewController)
         ],
         animated: false
       )

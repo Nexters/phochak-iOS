@@ -1,5 +1,5 @@
 //
-//  ProfileViewController.swift
+//  MyPageViewController.swift
 //  Feature
 //
 //  Created by Ian on 2023/01/16.
@@ -9,7 +9,7 @@
 import UIKit
 
 // TODO: Conform BaseViewController
-final class ProfileViewController: UIViewController {
+final class MyPageViewController: UIViewController {
 
   // MARK: LifeCycle
   override func viewDidLoad() {

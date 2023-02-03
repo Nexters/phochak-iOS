@@ -50,4 +50,11 @@ public extension UIView {
 
     layer.maskedCorners = cornerMask
   }
+
+  func addTapGesture() -> UITapGestureRecognizer {
+    let tapGestureRecognizer: UITapGestureRecognizer = .init()
+    addGestureRecognizer(tapGestureRecognizer)
+
+    return tapGestureRecognizer
+  }
 }
