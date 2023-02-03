@@ -30,7 +30,7 @@ final class VideoPostService: VideoPostServiceType {
     let dummyPosts: [VideoPost] = .init([
       .init(
         postID: 0,
-        hashTags: ["가나다", "가나다라마바사아자카파"],
+        hashTags: ["가나다", "가나다라마바사아자카파", "동네동네동네동네동네", "동네", "동네동네", "동네동네동네"],
         postCategory: "TEST",
         viewCount: 123,
         shorts: .init(
@@ -39,8 +39,8 @@ final class VideoPostService: VideoPostServiceType {
           thumbnailURLString: "TEST")
       ),
       .init(
-        postID: 0,
-        hashTags: ["가나다", "가나다라마바사아자카파"],
+        postID: 1,
+        hashTags: ["1가나다라마바사아자카", "2가나다라마바사아자카", "3가나다라마바사아자카", "4가나다라마바사아자카", "5가나다라마바사아자카", "6가나다라마바사아자카", "7가나다라마바사아자카", "8가나다라마바사아자카", "아 졸리다 졸려", "10번째 해시태그"],
         postCategory: "TEST",
         viewCount: 123,
         shorts: .init(
@@ -49,8 +49,8 @@ final class VideoPostService: VideoPostServiceType {
           thumbnailURLString: "TEST")
       ),
       .init(
-        postID: 0,
-        hashTags: ["가나다", "가나다라마바사아자카파"],
+        postID: 2,
+        hashTags: ["가나다", "가나다라마바사아자카파", "동네동네동네동네동네", "동네", "동네동네", "동네동네동네"],
         postCategory: "TEST",
         viewCount: 123,
         shorts: .init(
@@ -59,8 +59,8 @@ final class VideoPostService: VideoPostServiceType {
           thumbnailURLString: "TEST")
       ),
       .init(
-        postID: 0,
-        hashTags: ["가나다", "가나다라마바사아자카파"],
+        postID: 3,
+        hashTags: ["가나다", "가나다라마바사아자카파", "동네동네동네동네동네", "동네", "동네동네", "동네동네동네"],
         postCategory: "TEST",
         viewCount: 123,
         shorts: .init(
@@ -69,8 +69,8 @@ final class VideoPostService: VideoPostServiceType {
           thumbnailURLString: "TEST")
       ),
       .init(
-        postID: 0,
-        hashTags: ["가나다", "가나다라마바사아자카파"],
+        postID: 4,
+        hashTags: ["가나다", "가나다라마바사아자카파", "동네동네동네동네동네", "동네", "동네동네", "동네동네동네"],
         postCategory: "TEST",
         viewCount: 123,
         shorts: .init(
