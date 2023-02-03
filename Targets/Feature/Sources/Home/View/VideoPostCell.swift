@@ -11,6 +11,8 @@ import DesignKit
 import Domain
 import UIKit
 
+import RxSwift
+
 final class VideoPostCell: BaseCollectionViewCell {
 
   // MARK: Properties
@@ -19,6 +21,8 @@ final class VideoPostCell: BaseCollectionViewCell {
   private let exclameButton: UIButton = .init()
   private let heartButton: UIButton = .init()
   private let videoPlayerView: VideoPlayerView = .init()
+
+  private(set) var videoPost: VideoPost?
 
   // MARK: Override
   override init(frame: CGRect) {
@@ -46,7 +50,7 @@ final class VideoPostCell: BaseCollectionViewCell {
     )
     gradient.colors = [
       UIColor.clear.cgColor,
-      UIColor.createColor(.monoGray, .w950, alpha: 0.8).cgColor
+      UIColor.createColor(.monoGray, .w950, alpha: 0.9).cgColor
     ]
     gradient.locations = [0.0, 1.0]
     containerView.layer.insertSublayer(gradient, at: 0)
@@ -56,7 +60,6 @@ final class VideoPostCell: BaseCollectionViewCell {
     contentView.cornerRadius(radius: 5)
     contentView.addSubview(videoPlayerView)
     contentView.addSubview(containerView)
-    containerView.backgroundColor = .clear
 
     nicknameLabel.do {
       $0.font = .createFont(.HeadLine, .w700)
@@ -104,6 +107,8 @@ final class VideoPostCell: BaseCollectionViewCell {
 
   // MARK: Methods
   func configure(_ videoPost: VideoPost) {
+    self.videoPost = videoPost
+
     // TODO: API 연동 이후 수정
     let playerItem: AVPlayerItem = .init(url: videoPost.shorts.shortsURL)
     nicknameLabel.text = "포착러"
@@ -111,5 +116,19 @@ final class VideoPostCell: BaseCollectionViewCell {
     videoPlayerView.player = .init(playerItem: playerItem)
     videoPlayerView.player?.isMuted = true
     videoPlayerView.player?.play()
+  }
+}
+
+extension VideoPostCell {
+  var exclameButtonTap: Observable<Int> {
+    return self.exclameButton.rx.tap
+      .asObservable()
+      .map { [weak self] in self?.videoPost?.postID ?? 0 }
+  }
+
+  var heartButtonTap: Observable<Int> {
+    return self.heartButton.rx.tap
+      .asObservable()
+      .map { [weak self] in self?.videoPost?.postID ?? 0 }
   }
 }
