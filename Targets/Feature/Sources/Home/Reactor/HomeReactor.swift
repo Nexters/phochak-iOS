@@ -18,7 +18,7 @@ final class HomeReactor: Reactor {
   
   struct Dependency {
     let coordinaotr: AppCoordinatorType
-    let useCase: HomeUseCaseType
+    let useCase: VideoPostUseCaseType
   }
   
   // MARK: Initializer
@@ -30,6 +30,8 @@ final class HomeReactor: Reactor {
     case tapSearchButton
     case tapVideoCell(index: Int)
     case fetchItems(count: Int)
+    case exclameVideoPost(postID: Int)
+    case likeVideoPost(postID: Int)
   }
 
   enum Mutation {
@@ -57,6 +59,18 @@ final class HomeReactor: Reactor {
         .just(.setLoading(true)),
         fetchVideoPosts(lastVideoPostID: lastVideoPostID, count: count)
       ])
+
+    case .exclameVideoPost(let postID):
+      return depepdency.useCase.exclameVideoPost(postID: postID)
+        .flatMap { _ -> Observable<Mutation> in
+          return .empty()
+        }
+
+    case .likeVideoPost(let postID):
+      return depepdency.useCase.likeVideoPost(postID: postID)
+        .flatMap { _ -> Observable<Mutation> in
+          return .empty()
+        }
     }
   }
 
@@ -107,7 +121,7 @@ private extension HomeReactor {
     depepdency.coordinaotr.transition(
       to: .postRolling(videoPosts: currentState.videoPosts, currentIndex: index),
       style: .push,
-      animated: true,
+      animated: false,
       completion: nil
     )
 
