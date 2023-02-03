@@ -1,5 +1,5 @@
 //
-//  CompleteButton.swift
+//  CompletionButton.swift
 //  DesignKit
 //
 //  Created by 한상진 on 2023/01/26.

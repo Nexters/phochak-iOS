@@ -115,6 +115,7 @@ private extension ProfileSettingViewController {
 
     reactor.state
       .map { $0.isEnableComplete }
+      .distinctUntilChanged()
       .bind(to: isEnableCompleteBinder)
       .disposed(by: disposeBag)
   }
@@ -132,13 +133,14 @@ private extension ProfileSettingViewController {
 
     textField.rx.text.orEmpty
       .map { $0.isEmpty }
+      .distinctUntilChanged()
       .bind(to: checkDuplicationButton.textFieldIsEmptySubject)
       .disposed(by: disposeBag)
 
     view.addTapGesture().rx.event
       .filter { $0.state == .recognized }
-      .asDriver(onErrorDriveWith: .empty())
-      .drive(with: self, onNext: { owner, _ in
+      .asSignal(onErrorSignalWith: .empty())
+      .emit(with: self, onNext: { owner, _ in
         owner.view.endEditing(true)
       })
       .disposed(by: disposeBag)

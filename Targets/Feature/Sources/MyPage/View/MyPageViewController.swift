@@ -1,5 +1,5 @@
 //
-//  ProfileViewController.swift
+//  MyPageViewController.swift
 //  Feature
 //
 //  Created by Ian on 2023/01/16.
