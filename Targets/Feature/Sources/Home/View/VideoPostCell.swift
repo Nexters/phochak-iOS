@@ -41,10 +41,6 @@ final class VideoPostCell: BaseCollectionViewCell {
     contentView.addSubview(videoPlayerView)
 
     containerView.do {
-      $0.setGradient(
-        startColor: .createColor(.monoGray, .w950, alpha: 0),
-        endColor: .createColor(.monoGray, .w950, alpha: 0.6)
-      )
       contentView.addSubview($0)
     }
 
@@ -101,5 +97,10 @@ final class VideoPostCell: BaseCollectionViewCell {
     videoPlayerView.player = .init(playerItem: playerItem)
     videoPlayerView.player?.isMuted = true
     videoPlayerView.player?.play()
+
+    containerView.setGradient(
+      startColor: .createColor(.monoGray, .w950, alpha: 0),
+      endColor: .createColor(.monoGray, .w950, alpha: 0.9)
+    )
   }
 }

@@ -12,6 +12,9 @@ public extension UIView {
 
   // MARK: Methods
   func setGradient(startColor: UIColor, endColor: UIColor) {
+    guard (layer.sublayers?[0] as? CAGradientLayer) == nil else { return }
+    if bounds == .init() { layoutIfNeeded() }
+
     let topColor: CGColor = startColor.cgColor
     let bottomColor: CGColor = endColor.cgColor
 
