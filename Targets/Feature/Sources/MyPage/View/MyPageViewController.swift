@@ -9,7 +9,7 @@
 import UIKit
 
 // TODO: Conform BaseViewController
-final class ProfileViewController: UIViewController {
+final class MyPageViewController: UIViewController {
 
   // MARK: LifeCycle
   override func viewDidLoad() {
