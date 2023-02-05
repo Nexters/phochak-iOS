@@ -123,7 +123,7 @@ public final class AppCoordinator: AppCoordinatorType {
         case .search:
           return true
         case .postRolling:
-          return true
+          return $0 is PostRollingViewController
         }
       }) else { return }
 

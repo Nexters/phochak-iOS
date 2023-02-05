@@ -44,6 +44,7 @@ final class HomeReactor: Reactor {
     var isLoading: Bool
   }
 
+  // MARK: Methods
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case .tapSearchButton:
