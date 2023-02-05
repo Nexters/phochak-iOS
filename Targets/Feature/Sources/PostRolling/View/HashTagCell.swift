@@ -37,7 +37,7 @@ final class HashTagCell: BaseCollectionViewCell {
     tagButton.do {
       $0.backgroundColor = .clear
       $0.setTitleColor(.createColor(.monoGray, .w50), for: .normal)
-      $0.titleLabel?.font = .createFont(.Caption, .w400)
+      $0.titleLabel?.font = .createFont(.Caption, .w600)
       contentView.addSubview($0)
     }
   }
