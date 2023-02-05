@@ -137,17 +137,3 @@ extension VideoPostCell {
       .map { [weak self] in self?.videoPost?.postID ?? 0 }
   }
 }
-
-extension VideoPostCell {
-  var exclameButtonTap: Observable<Int> {
-    return self.exclameButton.rx.tap
-      .asObservable()
-      .map { [weak self] in self?.videoPost?.postID ?? 0 }
-  }
-
-  var heartButtonTap: Observable<Int> {
-    return self.heartButton.rx.tap
-      .asObservable()
-      .map { [weak self] in self?.videoPost?.postID ?? 0 }
-  }
-}
