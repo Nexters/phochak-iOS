@@ -11,14 +11,11 @@ import Domain
 public struct VideoPostsResponse {
 
   // MARK: Properties
-  let resCode: String
-  let resMessage: String
-
+  let status: ResponseStatus
   let posts: [VideoPost]
 
   enum CodingKeys: String, CodingKey {
-    case resCode
-    case resMessage
-    case posts
+    case status
+    case posts = "data"
   }
 }
