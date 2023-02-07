@@ -16,6 +16,7 @@ class BaseCollectionViewCell: UICollectionViewCell {
   // MARK: Properties
   var disposeBag: DisposeBag = .init()
 
+  // MARK: Override
   override func prepareForReuse() {
     super.prepareForReuse()
 

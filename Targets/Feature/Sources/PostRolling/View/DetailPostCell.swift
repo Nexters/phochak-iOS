@@ -56,14 +56,14 @@ final class DetailPostCell: BaseCollectionViewCell, View {
 
     hashTagListView.snp.makeConstraints {
       $0.leading.trailing.equalToSuperview()
-      $0.bottom.equalToSuperview().offset(-15)
-      $0.height.equalToSuperview().multipliedBy(0.18)
+      $0.bottom.equalToSuperview().offset(-44)
+      $0.height.equalToSuperview().multipliedBy(0.23)
     }
 
     firstGradientView.snp.makeConstraints {
       $0.leading.trailing.equalToSuperview()
       $0.height.equalTo(hashTagListView)
-      $0.bottom.equalToSuperview()
+      $0.bottom.equalTo(hashTagListView)
     }
 
     secondGradeintView.snp.makeConstraints {
@@ -72,7 +72,7 @@ final class DetailPostCell: BaseCollectionViewCell, View {
       $0.bottom.equalToSuperview()
     }
     let firstGradient = CAGradientLayer().then {
-      $0.frame = .init(x: 0, y: 0, width: contentView.frame.width, height: contentView.frame.height * 0.2)
+      $0.frame = .init(x: 0, y: 0, width: contentView.frame.width, height: contentView.frame.height * 0.30)
       $0.locations = [0.0, 1.0]
       $0.colors = [
         UIColor.createColor(.monoGray, .w950, alpha: 0.0).cgColor,
@@ -108,11 +108,11 @@ final class DetailPostCell: BaseCollectionViewCell, View {
     bindAction(reactor: reactor)
     bindState(reactor: reactor)
 
-    hashTagListView.exclameButtonTap
+    hashTagListView.exclameButtonTapObservable
       .subscribe(exclameButtonTapSubject)
       .disposed(by: disposeBag)
 
-    hashTagListView.likeButtonTap
+    hashTagListView.likeButtonTapObservable
       .subscribe(likeButtonTapSubject)
       .disposed(by: disposeBag)
   }

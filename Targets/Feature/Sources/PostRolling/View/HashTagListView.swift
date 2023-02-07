@@ -31,8 +31,7 @@ final class HashTagListView: UIView {
     cell.configure(tagTitle: tagTitle)
     return cell
   })
-  private var videoPost: VideoPost?
-  private let videoPostSubject: PublishSubject<VideoPost> = .init()
+  private var videoPostRelay: BehaviorRelay<VideoPost?> = .init(value: nil)
   private let disposeBag: DisposeBag = .init()
 
   override init(frame: CGRect) {
@@ -40,13 +39,7 @@ final class HashTagListView: UIView {
 
     setupViews()
     setupLayoutConstraints()
-
-    videoPostSubject
-      .map { videoPost -> [HashTagSection] in
-        return [HashTagSection(header: "", items: videoPost.hashTags ?? [])]
-      }
-      .bind(to: collectionView.rx.items(dataSource: dataSource))
-      .disposed(by: disposeBag)
+    bind()
   }
 
   required init?(coder: NSCoder) {
@@ -55,26 +48,34 @@ final class HashTagListView: UIView {
 
   // MARK: Methods
   func configure(videoPost: VideoPost) {
-    self.videoPost = videoPost
     self.nicknameLabel.text = "포착러"
-    videoPostSubject.onNext(videoPost)
+
+    videoPostRelay.accept(videoPost)
   }
 }
 
 extension HashTagListView {
-  var exclameButtonTap: Observable<Int> {
+  var exclameButtonTapObservable: Observable<Int> {
     exclameButton.rx.tap
-      .map { [weak self] _ in self?.videoPost?.postID ?? 0 }
+      .map { [weak self] _ in self?.videoPostRelay.value?.postID ?? 0 }
   }
 
-  var likeButtonTap: Observable<Int> {
+  var likeButtonTapObservable: Observable<Int> {
     likeButton.rx.tap
-      .map { [weak self] _ in self?.videoPost?.postID ?? 0 }
+      .map { [weak self] _ in self?.videoPostRelay.value?.postID ?? 0 }
   }
 }
 
 // MARK: - Private
 private extension HashTagListView {
+  func bind() {
+    videoPostRelay
+      .distinctUntilChanged()
+      .map { [HashTagSection(header: "", items: $0?.hashTags ?? [])] }
+      .bind(to: collectionView.rx.items(dataSource: dataSource))
+      .disposed(by: disposeBag)
+  }
+
   func setupViews() {
     headerView.do {
       $0.backgroundColor = .clear
@@ -119,12 +120,7 @@ private extension HashTagListView {
   func setupLayoutConstraints() {
     headerView.snp.makeConstraints {
       $0.top.leading.trailing.equalToSuperview()
-      $0.height.equalTo(50)
-    }
-
-    nicknameLabel.snp.makeConstraints {
-      $0.leading.equalToSuperview().offset(25)
-      $0.centerY.equalToSuperview()
+      $0.height.equalTo(60)
     }
 
     likeButton.snp.makeConstraints {
@@ -137,8 +133,14 @@ private extension HashTagListView {
       $0.centerY.equalToSuperview()
     }
 
+    nicknameLabel.snp.makeConstraints {
+      $0.top.equalToSuperview().offset(21)
+      $0.leading.equalToSuperview().offset(25)
+      $0.trailing.lessThanOrEqualTo(exclameButton.snp.leading).offset(-10)
+    }
+
     collectionView.snp.makeConstraints {
-      $0.top.equalTo(headerView.snp.bottom)
+      $0.top.equalTo(headerView.snp.bottom).offset(23)
       $0.leading.trailing.bottom.equalToSuperview()
     }
   }
@@ -151,7 +153,7 @@ extension HashTagListView: UICollectionViewDelegateFlowLayout {
     layout collectionViewLayout: UICollectionViewLayout,
     sizeForItemAt indexPath: IndexPath
   ) -> CGSize {
-    guard let hashTag = videoPost?.hashTags?[safe: indexPath.item] else {
+    guard let hashTag = videoPostRelay.value?.hashTags?[safe: indexPath.item] else {
       return .zero
     }
 

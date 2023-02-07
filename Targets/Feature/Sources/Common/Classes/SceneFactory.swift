@@ -37,11 +37,11 @@ final class SceneFactory: SceneFactoryType {
 
   // MARK: Methods
   public func create(scene: Scene) -> UIViewController {
+    let coordinator = injector.resolve(AppCoordinatorType.self)
+
     switch scene {
     case .signIn:
       let useCase = injector.resolve(SignInUseCaseType.self)
-      let coordinator = injector.resolve(AppCoordinatorType.self)
-
       let reactorDependency: SignInReactor.Dependency = .init(
         coordinator: coordinator,
         useCase: useCase
@@ -55,7 +55,6 @@ final class SceneFactory: SceneFactoryType {
       return searchViewController
 
     case let .postRolling(videoPosts, currentIndex):
-      let coordinator = injector.resolve(AppCoordinatorType.self)
       let videoPostUseCase = injector.resolve(VideoPostUseCaseType.self)
       let postRollingViewController: PostRollingViewController = .init(
         reactor: .init(
@@ -72,8 +71,6 @@ final class SceneFactory: SceneFactoryType {
 
     case .tab:
       let tabBarController: PhoChakTabBarController = .init(nibName: nil, bundle: nil)
-
-      let coordinator = injector.resolve(AppCoordinatorType.self)
       let videoPostUseCase = injector.resolve(VideoPostUseCaseType.self)
       let homeViewController: HomeViewController = .init(
         reactor: .init(

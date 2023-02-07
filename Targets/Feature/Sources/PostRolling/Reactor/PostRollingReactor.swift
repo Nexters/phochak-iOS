@@ -48,8 +48,7 @@ final class PostRollingReactor: Reactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case .load:
-      let videoPosts = Array(dependency.videoPosts)
-      return .just(.setVideoPosts(videoPosts))
+      return .just(.setVideoPosts(dependency.videoPosts))
 
     case .exclameVideoPost(let postID):
       return dependency.useCase.exclameVideoPost(postID: postID)

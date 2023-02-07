@@ -157,13 +157,13 @@ private extension HomeViewController {
         cell.configure(post)
 
         if let likeVideoPostSubject = self?.likeVideoPostSubject {
-          cell.heartButtonTap
+          cell.heartButtonTapObservable
             .subscribe(likeVideoPostSubject)
             .disposed(by: cell.disposeBag)
         }
 
         if let exclameVideoPostSubject = self?.exclameVideoPostSubject {
-          cell.exclameButtonTap
+          cell.exclameButtonTapObservable
             .subscribe(exclameVideoPostSubject)
             .disposed(by: cell.disposeBag)
         }

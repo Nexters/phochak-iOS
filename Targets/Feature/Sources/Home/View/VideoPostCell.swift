@@ -22,7 +22,7 @@ final class VideoPostCell: BaseCollectionViewCell {
   private let heartButton: UIButton = .init()
   private let videoPlayerView: VideoPlayerView = .init()
 
-  private(set) var videoPost: VideoPost?
+  private var videoPost: VideoPost?
 
   // MARK: Override
   override init(frame: CGRect) {
@@ -125,14 +125,14 @@ final class VideoPostCell: BaseCollectionViewCell {
 }
 
 extension VideoPostCell {
-  var exclameButtonTap: Observable<Int> {
-    return self.exclameButton.rx.tap
+  var exclameButtonTapObservable: Observable<Int> {
+    exclameButton.rx.tap
       .asObservable()
       .map { [weak self] in self?.videoPost?.postID ?? 0 }
   }
 
-  var heartButtonTap: Observable<Int> {
-    return self.heartButton.rx.tap
+  var heartButtonTapObservable: Observable<Int> {
+    heartButton.rx.tap
       .asObservable()
       .map { [weak self] in self?.videoPost?.postID ?? 0 }
   }
