@@ -126,7 +126,7 @@ private extension HomeViewController {
     collectionView.rx.didEndDragging.map { _ in }
       .asObservable()
       .startWith(())
-      .map { _ in HomeReactor.Action.fetchItems(count: 6) }
+      .map { _ in HomeReactor.Action.fetchItems(size: 6) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
