@@ -11,11 +11,11 @@ import Foundation
 public struct FetchVideoPostRequest {
 
   // MARK: Properties
-  let lastVideoPostID: Int
-  let count: Int
+  let sortOption: SortOption
+  let pageSize: Int
 
-  public init(lastVideoPostID: Int, count: Int = 10) {
-    self.lastVideoPostID = lastVideoPostID
-    self.count = count
+  public init(sortOption: SortOption, pageSize: Int) {
+    self.sortOption = sortOption
+    self.pageSize = pageSize
   }
 }

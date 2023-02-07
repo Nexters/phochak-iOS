@@ -9,30 +9,44 @@
 public struct VideoPost: Equatable {
 
   // MARK: Properties
-  public let postID: Int
-  public let hashTags: [String]?
-  public let postCategory: String
-  public let viewCount: Int
-//  public let user: User
+  public let id: Int
+  public let user: User
   public let shorts: Shorts
+  public let viewCount: Int
+  public let category: String
+  public let likeCount: Int
+  public let hashTags: [String]?
 
-  enum CodingKeys: String, CodingKey {
-    case postID = "postId"
-    case hashTags = "HashTags"
-    case viewCount = "view"
-    case postCategory
+  private enum CodingKeys: String, CodingKey {
+    case id
+    case user
     case shorts
+    case category
+    case viewCount = "view"
+    case likeCount = "like"
+    case hashTags = "hashtags"
   }
 
   public static func == (lhs: VideoPost, rhs: VideoPost) -> Bool {
-    lhs.postID == rhs.postID
+    lhs.id == rhs.id
   }
 
-  public init(postID: Int, hashTags: [String]?, postCategory: String, viewCount: Int, shorts: Shorts) {
-    self.postID = postID
-    self.hashTags = hashTags
-    self.postCategory = postCategory
-    self.viewCount = viewCount
+  // MARK: Initializer
+  public init(
+    id: Int,
+    user: User,
+    shorts: Shorts,
+    viewCount: Int,
+    category: String,
+    likeCount: Int,
+    hashTags: [String]? = nil
+  ) {
+    self.id = id
+    self.user = user
     self.shorts = shorts
+    self.viewCount = viewCount
+    self.category = category
+    self.likeCount = likeCount
+    self.hashTags = hashTags
   }
 }

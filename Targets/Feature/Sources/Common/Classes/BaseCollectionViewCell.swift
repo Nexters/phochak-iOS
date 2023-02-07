@@ -8,7 +8,20 @@
 
 import UIKit
 
+import RxCocoa
+import RxSwift
+
 class BaseCollectionViewCell: UICollectionViewCell {
+
+  // MARK: Properties
+  var disposeBag: DisposeBag = .init()
+
+  // MARK: Override
+  override func prepareForReuse() {
+    super.prepareForReuse()
+
+    disposeBag = .init()
+  }
 
   // MARK: Initialzer
   override init(frame: CGRect) {

@@ -79,7 +79,7 @@ public final class AppCoordinator: AppCoordinatorType {
 
     switch style {
     case .push:
-      navController.pushViewController(createdViewController, animated: true)
+      navController.pushViewController(createdViewController, animated: animated)
 
     case .modal:
       navController.present(createdViewController, animated: animated, completion: completion)
@@ -123,7 +123,7 @@ public final class AppCoordinator: AppCoordinatorType {
         case .search:
           return true
         case .postRolling:
-          return true
+          return $0 is PostRollingViewController
         }
       }) else { return }
 

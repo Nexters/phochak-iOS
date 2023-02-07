@@ -20,7 +20,7 @@ public enum VideoPostAPI {
 // MARK: - TargetType
 extension VideoPostAPI: TargetType {
   public var baseURL: URL {
-    URL(string: "")!
+    URL(string: "www.naver.com")!
   }
 
   public var path: String {

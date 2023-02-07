@@ -26,6 +26,9 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   )
   private var currentIndex: Int = 1
   private var previousIndex: Int = 1
+  private let exclameVideoPostSubject: PublishSubject<Int> = .init()
+  private let likeVideoPostSubject: PublishSubject<Int> = .init()
+  private var isFirstEnter: Bool = true
 
   // MARK: Initializer
   init(reactor: HomeReactor) {
@@ -43,14 +46,20 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     super.viewDidLoad()
   }
 
-  override func viewDidAppear(_ animated: Bool) {
-    super.viewDidAppear(animated)
+  override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
 
-    collectionView.scrollToItem(
-      at: .init(item: 1, section: 0),
-      at: .centeredHorizontally,
-      animated: false
-    )
+    if isFirstEnter {
+      DispatchQueue.main.async { [weak self] in
+        self?.collectionView.scrollToItem(
+          at: .init(item: 1, section: 0),
+          at: .centeredHorizontally,
+          animated: false
+        )
+      }
+
+      isFirstEnter.toggle()
+    }
   }
 
   override func setupViews() {
@@ -75,7 +84,6 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     }
 
     collectionView.do {
-      $0.contentInsetAdjustmentBehavior = .never
       $0.backgroundColor = .clear
       $0.showsVerticalScrollIndicator = false
       $0.showsHorizontalScrollIndicator = false
@@ -118,7 +126,7 @@ private extension HomeViewController {
     collectionView.rx.didEndDragging.map { _ in }
       .asObservable()
       .startWith(())
-      .map { _ in HomeReactor.Action.fetchItems(count: 6) }
+      .map { _ in HomeReactor.Action.fetchItems(size: 6) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
@@ -131,6 +139,16 @@ private extension HomeViewController {
       .map { HomeReactor.Action.tapSearchButton }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
+
+    exclameVideoPostSubject
+      .map { HomeReactor.Action.exclameVideoPost(postID: $0) }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
+
+    likeVideoPostSubject
+      .map { HomeReactor.Action.likeVideoPost(postID: $0) }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
   }
 
   func bindState(reactor: HomeReactor) {
@@ -140,8 +158,20 @@ private extension HomeViewController {
       .bind(to: collectionView.rx.items(
         cellIdentifier: "\(VideoPostCell.self)",
         cellType: VideoPostCell.self)
-      ) { _, post, cell in
+      ) { [weak self] _, post, cell in
         cell.configure(post)
+
+        if let likeVideoPostSubject = self?.likeVideoPostSubject {
+          cell.heartButtonTapObservable
+            .subscribe(likeVideoPostSubject)
+            .disposed(by: cell.disposeBag)
+        }
+
+        if let exclameVideoPostSubject = self?.exclameVideoPostSubject {
+          cell.exclameButtonTapObservable
+            .subscribe(exclameVideoPostSubject)
+            .disposed(by: cell.disposeBag)
+        }
       }
       .disposed(by: disposeBag)
 
