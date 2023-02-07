@@ -108,10 +108,10 @@ final class VideoPostCell: BaseCollectionViewCell {
   // MARK: Methods
   func configure(_ videoPost: VideoPost) {
     self.videoPost = videoPost
+    nicknameLabel.text = videoPost.user.nickname
 
     // TODO: API 연동 이후 수정
     let playerItem: AVPlayerItem = .init(url: videoPost.shorts.shortsURL)
-    nicknameLabel.text = "포착러"
     playerItem.preferredForwardBufferDuration = 1.0
     videoPlayerView.player = .init(playerItem: playerItem)
     videoPlayerView.player?.isMuted = true
@@ -128,12 +128,12 @@ extension VideoPostCell {
   var exclameButtonTapObservable: Observable<Int> {
     exclameButton.rx.tap
       .asObservable()
-      .map { [weak self] in self?.videoPost?.postID ?? 0 }
+      .map { [weak self] in self?.videoPost?.id ?? 0 }
   }
 
   var heartButtonTapObservable: Observable<Int> {
     heartButton.rx.tap
       .asObservable()
-      .map { [weak self] in self?.videoPost?.postID ?? 0 }
+      .map { [weak self] in self?.videoPost?.id ?? 0 }
   }
 }

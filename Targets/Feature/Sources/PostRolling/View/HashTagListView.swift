@@ -57,12 +57,12 @@ final class HashTagListView: UIView {
 extension HashTagListView {
   var exclameButtonTapObservable: Observable<Int> {
     exclameButton.rx.tap
-      .map { [weak self] _ in self?.videoPostRelay.value?.postID ?? 0 }
+      .map { [weak self] _ in self?.videoPostRelay.value?.id ?? 0 }
   }
 
   var likeButtonTapObservable: Observable<Int> {
     likeButton.rx.tap
-      .map { [weak self] _ in self?.videoPostRelay.value?.postID ?? 0 }
+      .map { [weak self] _ in self?.videoPostRelay.value?.id ?? 0 }
   }
 }
 

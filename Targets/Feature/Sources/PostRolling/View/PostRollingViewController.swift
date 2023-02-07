@@ -58,11 +58,9 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
 
-    collectionView.setContentOffset(
-      .init(
-        x: collectionView.frame.width,
-        y: 0
-      ),
+    collectionView.scrollToItem(
+      at: .init(item: reactor?.currentIndex ?? 0, section: 0),
+      at: .centeredHorizontally,
       animated: false
     )
   }

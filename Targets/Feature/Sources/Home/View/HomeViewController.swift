@@ -28,6 +28,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   private var previousIndex: Int = 1
   private let exclameVideoPostSubject: PublishSubject<Int> = .init()
   private let likeVideoPostSubject: PublishSubject<Int> = .init()
+  private var isFirstEnter: Bool = true
 
   // MARK: Initializer
   init(reactor: HomeReactor) {
@@ -48,12 +49,16 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
 
-    DispatchQueue.main.async { [weak self] in
-      self?.collectionView.scrollToItem(
-        at: .init(item: 1, section: 0),
-        at: .centeredHorizontally,
-        animated: false
-      )
+    if isFirstEnter {
+      DispatchQueue.main.async { [weak self] in
+        self?.collectionView.scrollToItem(
+          at: .init(item: 1, section: 0),
+          at: .centeredHorizontally,
+          animated: false
+        )
+      }
+
+      isFirstEnter.toggle()
     }
   }
 

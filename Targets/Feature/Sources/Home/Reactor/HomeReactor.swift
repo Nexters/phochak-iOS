@@ -54,7 +54,7 @@ final class HomeReactor: Reactor {
       return pushPostRollingScene(index: index)
 
     case .fetchItems(let count):
-      let lastVideoPostID: Int = currentState.videoPosts.last?.postID ?? 0
+      let lastVideoPostID: Int = currentState.videoPosts.last?.id ?? 0
 
       return .concat([
         .just(.setLoading(true)),
