@@ -19,8 +19,6 @@ import RxSwift
 final class DetailPostCell: BaseCollectionViewCell, View {
 
   // MARK: Properties
-  typealias Section = RxCollectionViewSectionedAnimatedDataSource<HashTagSection>
-
   private let videoPlayerView: VideoPlayerView = .init()
   private let hashTagListView: HashTagListView = .init()
   private let firstGradientView: UIView = .init()
