@@ -24,11 +24,12 @@ public struct Shorts {
   }
 
   private enum CodingKeys: String, CodingKey {
-    case id = "shortsId"
+    case id
     case shortsURLString = "shortsUrl"
     case thumbnailURLString = "thumbnailUrl"
   }
 
+  // MARK: Initializer
   public init(id: Int, shortsURLString: String, thumbnailURLString: String) {
     self.id = id
     self.shortsURLString = shortsURLString
