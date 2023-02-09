@@ -24,11 +24,11 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     frame: .zero,
     collectionViewLayout: flowLayout
   )
-  private var currentIndex: Int = 1
-  private var previousIndex: Int = 1
   private let exclameVideoPostSubject: PublishSubject<Int> = .init()
   private let likeVideoPostSubject: PublishSubject<Int> = .init()
   private var isFirstEnter: Bool = true
+  private var currentIndex: Int = 0
+  private var previousIndex: Int = 0
 
   // MARK: Initializer
   init(reactor: HomeReactor) {
@@ -46,18 +46,11 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     super.viewDidLoad()
   }
 
-  override func viewDidLayoutSubviews() {
-    super.viewDidLayoutSubviews()
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
 
-    if isFirstEnter {
-      DispatchQueue.main.async { [weak self] in
-        self?.collectionView.scrollToItem(
-          at: .init(item: 1, section: 0),
-          at: .centeredHorizontally,
-          animated: false
-        )
-      }
-
+    if isFirstEnter, let cell = collectionView.cellForItem(at: .init(item: 0, section: 0)) {
+      cell.transform = .init(scaleX: 1.1, y: 1.1).translatedBy(x: 0, y: -20)
       isFirstEnter.toggle()
     }
   }
@@ -120,7 +113,6 @@ final class HomeViewController: BaseViewController<HomeReactor> {
 
 // MARK: - Private
 private extension HomeViewController {
-
   // MARK: Methods
   func bindAction(reactor: HomeReactor) {
     collectionView.rx.didEndDragging.map { _ in }
@@ -196,8 +188,10 @@ private extension HomeViewController {
 
       if index > CGFloat(owner.currentIndex) {
         owner.currentIndex += 1
+        owner.previousIndex = owner.currentIndex - 1
       } else if index < CGFloat(owner.currentIndex), owner.currentIndex != 0 {
         owner.currentIndex -= 1
+        owner.previousIndex = owner.currentIndex + 1
       }
 
       offset = .init(
@@ -222,19 +216,15 @@ private extension HomeViewController {
 
       if let cell = owner.collectionView.cellForItem(at: indexPath) {
         UIView.animate(withDuration: 0.25) {
-          var transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
-          transform = transform.translatedBy(x: 0, y: -20)
-          cell.transform = transform
+          cell.transform = .init(scaleX: 1.1, y: 1.1).translatedBy(x: 0, y: -20)
         }
       }
 
-      if Int(index) != owner.previousIndex {
-        let cell = owner.collectionView.cellForItem(at: .init(item: Int(owner.previousIndex), section: 0))
+      if Int(index) != owner.previousIndex,
+         let cell = owner.collectionView.cellForItem(at: .init(item: Int(owner.previousIndex), section: 0)) {
         UIView.animate(withDuration: 0.25) {
-          let transform: CGAffineTransform = .identity
-          cell?.transform = transform
+          cell.transform = .identity
         }
-        owner.previousIndex = indexPath.item
       }
     }
   }
