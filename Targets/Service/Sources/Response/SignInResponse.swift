@@ -12,8 +12,7 @@ import Foundation
 public struct SignInResponse: Decodable {
 
   // MARK: Properties
-  let resCode: String
-  let resMessage: String
+  let status: ResponseStatus
   let data: UserAccountData
 }
 
