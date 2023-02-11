@@ -36,8 +36,8 @@ final class VideoPostCell: BaseCollectionViewCell {
   override func prepareForReuse() {
     super.prepareForReuse()
 
-    videoPlayerView.player = nil
     nicknameLabel.text = nil
+    heartButton.imageView?.image = videoPost?.isLiked ?? false ? .createImage(.heartOn) : .createImage(.heartOff)
   }
 
   override func layoutSubviews() {
@@ -121,6 +121,8 @@ final class VideoPostCell: BaseCollectionViewCell {
       startColor: .createColor(.monoGray, .w950, alpha: 0),
       endColor: .createColor(.monoGray, .w950, alpha: 0.9)
     )
+
+    heartButton.setImage(videoPost.isLiked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
   }
 }
 
