@@ -6,7 +6,7 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
-public struct VideoPost: Equatable {
+public struct VideoPost: Equatable, Decodable {
 
   // MARK: Properties
   public let id: Int
@@ -16,12 +16,14 @@ public struct VideoPost: Equatable {
   public let category: String
   public let likeCount: Int
   public let hashTags: [String]?
+  public let isLiked: Bool
 
   private enum CodingKeys: String, CodingKey {
     case id
     case user
     case shorts
     case category
+    case isLiked
     case viewCount = "view"
     case likeCount = "like"
     case hashTags = "hashtags"
@@ -39,7 +41,8 @@ public struct VideoPost: Equatable {
     viewCount: Int,
     category: String,
     likeCount: Int,
-    hashTags: [String]? = nil
+    hashTags: [String]? = nil,
+    isLiked: Bool
   ) {
     self.id = id
     self.user = user
@@ -48,5 +51,6 @@ public struct VideoPost: Equatable {
     self.category = category
     self.likeCount = likeCount
     self.hashTags = hashTags
+    self.isLiked = isLiked
   }
 }

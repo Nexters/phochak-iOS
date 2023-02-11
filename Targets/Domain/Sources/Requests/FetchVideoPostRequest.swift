@@ -8,14 +8,26 @@
 
 import Foundation
 
-public struct FetchVideoPostRequest {
+public struct FetchVideoPostRequest: Equatable {
 
   // MARK: Properties
-  let sortOption: SortOption
-  let pageSize: Int
+  public let sortOption: SortOption
+  public let lastID: Int?
+  public let pageSize: Int
 
-  public init(sortOption: SortOption, pageSize: Int) {
+  // MARK: Initializer
+  public init(sortOption: SortOption, lastID: Int? = nil, pageSize: Int = 5) {
     self.sortOption = sortOption
+    self.lastID = lastID
     self.pageSize = pageSize
+  }
+
+  // MARK: Methods
+  public static func == (lhs: FetchVideoPostRequest, rhs: FetchVideoPostRequest) -> Bool {
+    if lhs.sortOption == rhs.sortOption {
+      return lhs.pageSize == rhs.pageSize && lhs.lastID == rhs.lastID
+    }
+
+    return false
   }
 }

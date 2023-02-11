@@ -23,10 +23,10 @@ final class VideoPostUseCase: VideoPostUseCaseType {
     self.service = service
   }
 
-  func fetchVideoPosts(request: FetchVideoPostRequest) -> Observable<[VideoPost]> {
+  func fetchVideoPosts(request: FetchVideoPostRequest) -> Observable<(posts: [VideoPost], isLastPage: Bool)> {
     service.fetchVideoPosts(request: request)
       .asObservable()
-      .catchAndReturn([])
+      .catchAndReturn(([], true))
   }
 
   func likeVideoPost(postID: Int) -> Observable<Void> {

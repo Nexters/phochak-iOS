@@ -6,15 +6,15 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
-public enum SortOption {
-  case phochak(lastLikeCount: Int, lastPostID: Int)
-  case latest(lastPostID: Int?)
-  case views(lastViewCount: Int, lastPostID: Int)
+public enum SortOption: Equatable {
+  case like(lastLikeCount: Int)
+  case view(lastViewCount: Int)
+  case latest
 
-  var option: String {
+  public var option: String {
     switch self {
-    case .phochak: return "PHOCHAK"
-    case .views: return "VIEWS"
+    case .like: return "LIKE"
+    case .view: return "VIEW"
     case .latest: return "LATEST"
     }
   }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct User {
+public struct User: Decodable {
 
   // MARK: Properties
   public let id: Int
