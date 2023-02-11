@@ -46,15 +46,6 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     super.viewDidLoad()
   }
 
-  override func viewDidAppear(_ animated: Bool) {
-    super.viewDidAppear(animated)
-
-    if isFirstEnter, let cell = collectionView.cellForItem(at: .init(item: 0, section: 0)) {
-      cell.transform = .init(scaleX: 1.1, y: 1.1).translatedBy(x: 0, y: -20)
-      isFirstEnter.toggle()
-    }
-  }
-
   override func setupViews() {
     super.setupViews()
 
@@ -97,17 +88,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   override func bind(reactor: HomeReactor) {
     bindAction(reactor: reactor)
     bindState(reactor: reactor)
-
-    collectionView.rx.didScroll
-      .asSignal()
-      .emit(to: transformBinder)
-      .disposed(by: disposeBag)
-
-    collectionView.rx.willEndDragging
-      .asSignal()
-      .map { $1 }
-      .emit(to: pagingBinder)
-      .disposed(by: disposeBag)
+    bindExtra(reactor: reactor)
   }
 }
 
@@ -118,7 +99,8 @@ private extension HomeViewController {
     collectionView.rx.didEndDragging.map { _ in }
       .asObservable()
       .startWith(())
-      .map { _ in HomeReactor.Action.fetchItems(size: 6) }
+      .withUnretained(self)
+      .map { owner, _ in HomeReactor.Action.fetchItems(size: 3, currentIndex: owner.currentIndex) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
@@ -171,6 +153,32 @@ private extension HomeViewController {
       .map { $0.isLoading }
       .distinctUntilChanged()
       .subscribe()
+      .disposed(by: disposeBag)
+  }
+
+  func bindExtra(reactor: HomeReactor) {
+    collectionView.rx.didScroll
+      .asSignal()
+      .emit(to: transformBinder)
+      .disposed(by: disposeBag)
+
+    collectionView.rx.willEndDragging
+      .asSignal()
+      .map { $1 }
+      .emit(to: pagingBinder)
+      .disposed(by: disposeBag)
+
+    Observable.combineLatest(
+      rx.viewWillAppear,
+      reactor.state.map { $0.videoPosts }.map { _ in }.debounce(.milliseconds(350), scheduler: MainScheduler.asyncInstance)) { _, _ in }
+      .take(1)
+      .asSignal(onErrorSignalWith: .empty())
+      .emit(with: self, onNext: { owner, _ in
+        if owner.isFirstEnter, let cell = owner.collectionView.cellForItem(at: .init(item: 0, section: 0)) {
+          cell.transform = .init(scaleX: 1.1, y: 1.1).translatedBy(x: 0, y: -20)
+          owner.isFirstEnter.toggle()
+        }
+      })
       .disposed(by: disposeBag)
   }
 

@@ -109,13 +109,7 @@ final class VideoPostCell: BaseCollectionViewCell {
   func configure(_ videoPost: VideoPost) {
     self.videoPost = videoPost
     nicknameLabel.text = videoPost.user.nickname
-
-    // TODO: API 연동 이후 수정
-    let playerItem: AVPlayerItem = .init(url: videoPost.shorts.shortsURL)
-    playerItem.preferredForwardBufferDuration = 1.0
-    videoPlayerView.player = .init(playerItem: playerItem)
-    videoPlayerView.player?.isMuted = true
-    videoPlayerView.player?.play()
+    videoPlayerView.configure(videoPost: videoPost, isMuted: true)
 
     containerView.setGradient(
       startColor: .createColor(.monoGray, .w950, alpha: 0),

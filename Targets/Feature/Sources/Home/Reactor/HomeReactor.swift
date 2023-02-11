@@ -14,7 +14,9 @@ final class HomeReactor: Reactor {
   
   // MARK: Properties
   private let depepdency: Dependency
-  var initialState: State = .init(videoPosts: [], isLoading: false, sortOption: .latest(lastPostID: nil))
+  var initialState: State = .init(videoPosts: [], isLoading: false)
+  private var isLastPage: Bool = false
+  private var existVideoPostRequest: FetchVideoPostRequest?
   
   struct Dependency {
     let coordinaotr: AppCoordinatorType
@@ -29,7 +31,7 @@ final class HomeReactor: Reactor {
   enum Action {
     case tapSearchButton
     case tapVideoCell(index: Int)
-    case fetchItems(size: Int)
+    case fetchItems(size: Int, currentIndex: Int)
     case exclameVideoPost(postID: Int)
     case likeVideoPost(postID: Int)
   }
@@ -42,7 +44,6 @@ final class HomeReactor: Reactor {
   struct State {
     var videoPosts: [VideoPost]
     var isLoading: Bool
-    var sortOption: SortOption
   }
   
   // MARK: Methods
@@ -54,11 +55,22 @@ final class HomeReactor: Reactor {
     case .tapVideoCell(let index):
       return pushPostRollingScene(index: index)
       
-    case .fetchItems(let size):
-      return .concat([
-        .just(.setLoading(true)),
-        fetchVideoPosts(request: .init(sortOption: .latest(lastPostID: nil), pageSize: size))
-      ])
+    case let .fetchItems(size, currentIndex):
+      if (currentIndex + 1 >= currentState.videoPosts.count - 3) {
+        return .concat([
+          .just(.setLoading(true)),
+          fetchVideoPosts(
+            request: .init(
+              sortOption: .latest,
+              lastID: currentState.videoPosts.last?.id ?? nil,
+              pageSize: size
+            )
+          )
+        ])
+      } else {
+        return .empty()
+      }
+
       
     case .exclameVideoPost(let postID):
       return depepdency.useCase.exclameVideoPost(postID: postID)
@@ -79,7 +91,9 @@ final class HomeReactor: Reactor {
     
     switch mutation {
     case .setVideoPosts(let videoPosts):
-      newState.videoPosts = videoPosts
+      var updatedPosts = state.videoPosts
+      updatedPosts.append(contentsOf: videoPosts)
+      newState.videoPosts = updatedPosts
       
     case .setLoading(let isLoading):
       newState.isLoading = isLoading
@@ -92,18 +106,22 @@ final class HomeReactor: Reactor {
 // MARK: Private
 private extension HomeReactor {
   func fetchVideoPosts(request: FetchVideoPostRequest) -> Observable<Mutation> {
-    return depepdency.useCase.fetchVideoPosts(
-      request: .init(
-        sortOption: currentState.sortOption,
-        pageSize: 6
-      )
-    )
-    .flatMap { videoPosts in
-      Observable<Mutation>.concat([
-        .just(.setVideoPosts(videoPosts)),
+    if existVideoPostRequest == request && isLastPage {
+      return .concat([
+        .empty(),
         .just(.setLoading(false))
       ])
     }
+
+    return depepdency.useCase.fetchVideoPosts(request: request)
+      .flatMap { [weak self] (videoPosts, isLastPage) in
+        self?.isLastPage = isLastPage
+        self?.existVideoPostRequest = request
+        return Observable<Mutation>.concat([
+          .just(.setVideoPosts(videoPosts)),
+          .just(.setLoading(false))
+        ])
+      }
   }
   
   func pushSearchScene() -> Observable<Mutation> {

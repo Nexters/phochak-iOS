@@ -7,14 +7,16 @@
 //
 
 import AVFoundation
+import Domain
 import UIKit
 
+import Kingfisher
 import RxSwift
 
 public final class VideoPlayerView: UIView {
 
   // MARK: Properties
-  public var playerLayer: AVPlayerLayer {
+  private var playerLayer: AVPlayerLayer {
     let layer = layer as! AVPlayerLayer
     layer.videoGravity = .resizeAspectFill
     return layer
@@ -29,6 +31,7 @@ public final class VideoPlayerView: UIView {
     }
   }
 
+  private let thumbnailImageView: UIImageView = .init()
   private let disposeBag: DisposeBag = .init()
 
   // MARK: Override
@@ -38,6 +41,12 @@ public final class VideoPlayerView: UIView {
 
   public override init(frame: CGRect = .zero) {
     super.init(frame: frame)
+
+    addSubview(thumbnailImageView)
+    thumbnailImageView.contentMode = .scaleAspectFill
+    thumbnailImageView.snp.makeConstraints {
+      $0.edges.equalToSuperview()
+    }
 
     NotificationCenter.default.rx.notification(.AVPlayerItemDidPlayToEndTime)
       .subscribe(with: self, onNext: { owner, _ in
@@ -49,5 +58,23 @@ public final class VideoPlayerView: UIView {
 
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
+  }
+
+  // MARK: Methods
+  public func configure(videoPost: VideoPost, isMuted: Bool) {
+    thumbnailImageView.setImage(with: videoPost.shorts.thumbnailURL)
+
+    self.player = .init(url: videoPost.shorts.shortsURL).then {
+      $0.isMuted = isMuted
+    }
+
+    player?.currentItem?.rx.observe(\.status)
+      .filter { $0 == .readyToPlay }
+      .asDriver(onErrorDriveWith: .empty())
+      .drive(with: self, onNext: { owner, _ in
+        owner.thumbnailImageView.image = nil
+        owner.player?.play()
+      })
+      .disposed(by: disposeBag)
   }
 }
