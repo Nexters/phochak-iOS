@@ -87,9 +87,6 @@ private extension SceneDelegate {
   }
 
   func coordinatorAssemby(coordinator: AppCoordinatorType) {
-    injector.register(
-      AppCoordinatorType.self,
-      AppCoordinator(dependency: .init(injector: injector))
-    )
+    injector.register(AppCoordinatorType.self, coordinator)
   }
 }
