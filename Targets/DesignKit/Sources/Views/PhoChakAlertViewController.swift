@@ -32,6 +32,7 @@ public final class PhoChakAlertViewController: UIViewController {
     case .accountDeletion: return "회원탈퇴"
     case .signOut: return "로그아웃"
     case .cacheDeletion: return "캐시삭제"
+    case .networkError: return "네트워크 불안정"
     }
   }
 
@@ -41,6 +42,7 @@ public final class PhoChakAlertViewController: UIViewController {
     case .accountDeletion: return "아이디와 포스팅은 복구할 수 없습니다"
     case .signOut: return "소셜계정을 다시 연결하면 정보가 복구됩니다"
     case .cacheDeletion: return "영상 캐시 데이터를 삭제합니다"
+    case .networkError: return "인터넷 연결을 확인해주세요"
     }
   }
 
@@ -53,6 +55,7 @@ public final class PhoChakAlertViewController: UIViewController {
     case accountDeletion
     case signOut
     case cacheDeletion
+    case networkError
   }
 
   // MARK: Initializer
@@ -67,16 +70,21 @@ public final class PhoChakAlertViewController: UIViewController {
     fatalError("init(coder:) has not been implemented")
   }
 
+  // MARK: Override
   public override func viewDidLoad() {
     super.viewDidLoad()
+
     setupViews()
     setupLayoutConstraints()
+    setupButtons()
     bind()
   }
 }
 
-// MARK: - Extension
+// MARK: - Private
 private extension PhoChakAlertViewController {
+
+  // MARK: Methods
   func setupModalStyle() {
     modalPresentationStyle = .overCurrentContext
     modalTransitionStyle = .crossDissolve
@@ -107,13 +115,6 @@ private extension PhoChakAlertViewController {
       alertContainerView.addSubview($0)
     }
 
-    cancelButton.do {
-      $0.setTitle("취소", for: .normal)
-      $0.setTitleColor(.createColor(.blue, .w400), for: .normal)
-      $0.titleLabel?.font = .createFont(.SubHead, .w400)
-      alertContainerView.addSubview($0)
-    }
-
     acceptButton.do {
       $0.setTitle("확인", for: .normal)
       $0.setTitleColor(.createColor(.blue, .w400), for: .normal)
@@ -121,11 +122,9 @@ private extension PhoChakAlertViewController {
       alertContainerView.addSubview($0)
     }
 
-    [topBorderLine, centerBorderLine].forEach { borderLine in
-      borderLine.do {
-        $0.backgroundColor = .black
-        alertContainerView.addSubview($0)
-      }
+    topBorderLine.do {
+      $0.backgroundColor = .createColor(.monoGray, .w900)
+      alertContainerView.addSubview($0)
     }
   }
 
@@ -146,28 +145,50 @@ private extension PhoChakAlertViewController {
       $0.top.equalTo(titleLabel.snp.bottom).offset(10)
     }
 
-    cancelButton.snp.makeConstraints {
-      $0.leading.bottom.equalToSuperview()
-      $0.width.equalToSuperview().multipliedBy(0.5)
-      $0.height.equalTo(view.frame.height * 0.066)
-    }
-
-    acceptButton.snp.makeConstraints {
-      $0.trailing.bottom.equalToSuperview()
-      $0.size.equalTo(cancelButton)
-    }
-
     topBorderLine.snp.makeConstraints {
       $0.leading.trailing.equalToSuperview()
-      $0.height.equalTo(1)
-      $0.bottom.equalTo(cancelButton.snp.top)
+      $0.height.equalTo(0.5)
+      $0.bottom.equalTo(acceptButton.snp.top)
     }
+  }
 
-    centerBorderLine.snp.makeConstraints {
-      $0.top.equalTo(topBorderLine)
-      $0.leading.equalTo(cancelButton.snp.trailing).inset(0.5)
-      $0.width.equalTo(1)
-      $0.bottom.equalToSuperview()
+  func setupButtons() {
+    switch alertType {
+    case .networkError:
+      acceptButton.snp.makeConstraints {
+        $0.leading.trailing.bottom.equalToSuperview()
+        $0.height.equalTo(view.frame.height * 0.066)
+      }
+    default:
+      cancelButton.do {
+        $0.setTitle("취소", for: .normal)
+        $0.setTitleColor(.createColor(.blue, .w400), for: .normal)
+        $0.titleLabel?.font = .createFont(.SubHead, .w400)
+        alertContainerView.addSubview($0)
+      }
+
+      centerBorderLine.do {
+        $0.backgroundColor = .createColor(.monoGray, .w900)
+        alertContainerView.addSubview($0)
+      }
+
+      cancelButton.snp.makeConstraints {
+        $0.leading.bottom.equalToSuperview()
+        $0.width.equalToSuperview().multipliedBy(0.5)
+        $0.height.equalTo(view.frame.height * 0.066)
+      }
+
+      acceptButton.snp.makeConstraints {
+        $0.trailing.bottom.equalToSuperview()
+        $0.size.equalTo(cancelButton)
+      }
+
+      centerBorderLine.snp.makeConstraints {
+        $0.top.equalTo(topBorderLine)
+        $0.leading.equalTo(cancelButton.snp.trailing).inset(0.5)
+        $0.width.equalTo(0.5)
+        $0.bottom.equalToSuperview()
+      }
     }
   }
 
