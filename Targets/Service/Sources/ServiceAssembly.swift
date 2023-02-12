@@ -18,6 +18,8 @@ public struct ServiceAssembly: Assembly {
     container.register(VideoPostServiceType.self) { _ in return VideoPostService() }
 
     container.register(SignInServiceType.self) { _ in return SignInService() }
+
+    container.register(UploadVideoPostServiceType.self) { _ in return UploadVideoPostService() }
   }
 
   // MARK: Initializer
