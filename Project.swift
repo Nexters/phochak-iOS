@@ -83,7 +83,8 @@ let project: Project = .init(
       deploymentTarget: deploymentTarget,
       dependencies: [
         .external(name: "RxCocoa"),
-        .external(name: "RxSwift")
+        .external(name: "RxSwift"),
+        .external(name: "Lottie")
       ]),
 
     Project.makePhoChakFrameworkTargets(
