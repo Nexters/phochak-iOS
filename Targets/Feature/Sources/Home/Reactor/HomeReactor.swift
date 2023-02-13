@@ -17,7 +17,7 @@ final class HomeReactor: Reactor {
   var initialState: State = .init(videoPosts: [], isLoading: false, sortOption: .latest(lastPostID: nil))
   
   struct Dependency {
-    let coordinaotr: AppCoordinatorType
+    let coordinator: AppCoordinatorType
     let useCase: VideoPostUseCaseType
   }
   
@@ -107,7 +107,7 @@ private extension HomeReactor {
   }
   
   func pushSearchScene() -> Observable<Mutation> {
-    depepdency.coordinaotr.transition(
+    depepdency.coordinator.transition(
       to: .search,
       style: .push,
       animated: true,
@@ -118,7 +118,7 @@ private extension HomeReactor {
   }
   
   func pushPostRollingScene(index: Int) -> Observable<Mutation> {
-    depepdency.coordinaotr.transition(
+    depepdency.coordinator.transition(
       to: .postRolling(videoPosts: currentState.videoPosts, currentIndex: index),
       style: .push,
       animated: false,

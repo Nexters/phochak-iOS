@@ -15,6 +15,7 @@ public enum Scene {
   case signIn
   case search
   case postRolling(videoPosts: [VideoPost], currentIndex: Int)
+  case uploadVideoPost
 }
 
 public protocol SceneFactoryType {
@@ -50,6 +51,16 @@ final class SceneFactory: SceneFactoryType {
       let signInViewController: SignInViewController = .init(reactor: reactor)
       return signInViewController
 
+    case .uploadVideoPost:
+      let useCase = injector.resolve(UploadVideoPostUseCaseType.self)
+      let reactorDependency: UploadVideoPostReactor.Dependency = .init(
+        coordinator: coordinator,
+        useCase: useCase
+      )
+      let reactor: UploadVideoPostReactor = .init(dependency: reactorDependency)
+      let uploadVideoPostViewController: UploadVideoPostViewController = .init(reactor: reactor)
+      return uploadVideoPostViewController
+
     case .search:
       let searchViewController: UIViewController = .init(nibName: nil, bundle: nil)
       return searchViewController
@@ -70,12 +81,13 @@ final class SceneFactory: SceneFactoryType {
       return postRollingViewController
 
     case .tab:
-      let tabBarController: PhoChakTabBarController = .init(nibName: nil, bundle: nil)
+      let tabBarController: PhoChakTabBarController = .init(coordinator: coordinator)
+
       let videoPostUseCase = injector.resolve(VideoPostUseCaseType.self)
       let homeViewController: HomeViewController = .init(
         reactor: .init(
           dependency: .init(
-            coordinaotr: coordinator,
+            coordinator: coordinator,
             useCase: videoPostUseCase
           )
         )
@@ -86,11 +98,11 @@ final class SceneFactory: SceneFactoryType {
         selectedImage: .createImage(.tab_home_selected)
       )
 
-      let videoUploadViewController: VideoUploadViewController = .init(nibName: nil, bundle: nil)
-      videoUploadViewController.tabBarItem = .init(
+      let dummyViewController: UIViewController = .init(nibName: nil, bundle: nil)
+      dummyViewController.tabBarItem = .init(
         title: nil,
-        image: nil,
-        selectedImage: nil
+        image: .createImage(.tab_videoUpload),
+        selectedImage: .createImage(.tab_videoUpload)
       )
 
       let myPageViewController: MyPageViewController = .init(nibName: nil, bundle: nil)
@@ -103,7 +115,7 @@ final class SceneFactory: SceneFactoryType {
       tabBarController.setViewControllers(
         [
           UINavigationController(rootViewController: homeViewController),
-          UINavigationController(rootViewController: videoUploadViewController),
+          UINavigationController(rootViewController: dummyViewController),
           UINavigationController(rootViewController: myPageViewController)
         ],
         animated: false

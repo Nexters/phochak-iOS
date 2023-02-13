@@ -22,7 +22,7 @@ public enum CloseStyle {
   case dismiss
 }
 
-public protocol AppCoordinatorType {
+public protocol AppCoordinatorType: AnyObject {
   func start(from root: Scene)
   func transition(to scene: Scene, style: TransitionStyle, animated: Bool, completion: (() -> Void)?)
   func close(style: CloseStyle, animated: Bool, completion: (() -> Void)?)
@@ -124,6 +124,8 @@ public final class AppCoordinator: AppCoordinatorType {
           return true
         case .postRolling:
           return $0 is PostRollingViewController
+        case .uploadVideoPost:
+          return $0 is UploadVideoPostViewController
         }
       }) else { return }
 
