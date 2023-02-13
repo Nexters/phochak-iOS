@@ -6,6 +6,7 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import Core
 import Domain
 import Foundation
 
@@ -28,17 +29,19 @@ public final class UploadVideoPostService: UploadVideoPostServiceType {
 
   // MARK: - Methods
   public func uploadVideoPost(
-    videoURL: URL,
-    videoType: String,
+    videoFile: VideoFile,
     category: String,
     hashTags: [String]
   ) -> Single<Void> {
-    fetchPresignedURL(fileType: videoType)
+    fetchPresignedURL(fileType: videoFile.fileType)
       .flatMap { [weak self] response -> Single<String> in
-        guard let presignedURL: URL = .init(string: response.uploadData.uploadURL)
+        guard let presignedURL: URL = .init(string: response.uploadData.uploadURL),
+              let fileDataURL: URL = .init(
+                string: PhoChakFileManager.shared.fetchVideoURLString(name: videoFile.fileName)
+              )
         else { return .just("") }
 
-        return self?.uploadToS3(to: presignedURL, with: videoURL)
+        return self?.uploadToS3(to: presignedURL, with: fileDataURL)
           .map { _ in response.uploadData.uploadKey } ?? .just("")
       }
       .flatMap { [weak self] uploadKey in

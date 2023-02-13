@@ -153,7 +153,9 @@ extension Project {
         "Pretendard-Medium.otf",
         "Pretendard-Regular.otf",
         "Pretendard-SemiBold.otf"
-      ]
+      ],
+      "UIFileSharingEnabled": true,
+      "LSSupportsOpeningDocumentsInPlace": true
     ]
 
     return .init(

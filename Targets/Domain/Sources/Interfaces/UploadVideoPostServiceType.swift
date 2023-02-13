@@ -14,8 +14,7 @@ public protocol UploadVideoPostServiceType {
 
   // MARK: Methods
   func uploadVideoPost(
-    videoURL: URL,
-    videoType: String,
+    videoFile: VideoFile,
     category: String,
     hashTags: [String]
   ) -> Single<Void>

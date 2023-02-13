@@ -22,8 +22,7 @@ public protocol UploadVideoPostUseCaseType {
 
   // MARK: Methods
   func uploadVideoPost(
-    videoURLString: String,
-    videoType: String,
+    videoFile: VideoFile,
     category: String,
     hashTags: [String]
   ) -> Observable<Void>
@@ -43,16 +42,12 @@ final class UploadVideoPostUseCase: UploadVideoPostUseCaseType {
 
   // MARK: Methods
   func uploadVideoPost(
-    videoURLString: String,
-    videoType: String,
+    videoFile: VideoFile,
     category: String,
     hashTags: [String]
   ) -> Observable<Void> {
-    guard let videoURL = URL(string: videoURLString) else { return .just(()) }
-    
     service.uploadVideoPost(
-      videoURL: videoURL,
-      videoType: videoType,
+      videoFile: videoFile,
       category: category,
       hashTags: hashTags
     )
