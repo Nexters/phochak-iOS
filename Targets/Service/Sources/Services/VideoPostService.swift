@@ -38,4 +38,9 @@ final class VideoPostService: VideoPostServiceType {
     provider.rx.request(.likeVideoPost(postID: postID))
       .map { _ in }
   }
+
+  func unlikeVideoPost(postID: Int) -> Single<Void> {
+    provider.rx.request(.unlikeVideoPost(postID: postID))
+      .map { _ in }
+  }
 }
