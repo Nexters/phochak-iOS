@@ -6,6 +6,7 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import Domain
 import UIKit
 
 import ReactorKit
@@ -26,6 +27,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   )
   private let exclameVideoPostSubject: PublishSubject<Int> = .init()
   private let likeVideoPostSubject: PublishSubject<Int> = .init()
+  private let updatedDataSourceSubject: PublishSubject<[VideoPost]> = .init()
   private var isFirstEnter: Bool = true
   private var currentIndex: Int = 0
   private var previousIndex: Int = 0
@@ -121,6 +123,11 @@ private extension HomeViewController {
 
     likeVideoPostSubject
       .map { HomeReactor.Action.likeVideoPost(postID: $0) }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
+
+    updatedDataSourceSubject
+      .map { HomeReactor.Action.updateDataSource(videoPosts: $0) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
   }
@@ -233,6 +240,33 @@ private extension HomeViewController {
         UIView.animate(withDuration: 0.25) {
           cell.transform = .identity
         }
+      }
+    }
+  }
+}
+
+// MARK: - PostRollingDelegate
+extension HomeViewController: PostRollingDelegate {
+  func scrollToItem(with videoPosts: [VideoPost], index: Int) {
+    updatedDataSourceSubject.onNext(videoPosts)
+
+    currentIndex = index
+    if index == 0 {
+      previousIndex = 0
+    } else {
+      previousIndex = index - 1
+    }
+
+    guard let rect = collectionView.layoutAttributesForItem(at: .init(item: index, section: 0)) else {
+      return
+    }
+
+    collectionView.scrollRectToVisible(rect.frame, animated: false)
+    collectionView.layoutIfNeeded()
+
+    if let currentCell = collectionView.cellForItem(at: .init(item: index, section: 0)) {
+      DispatchQueue.main.async { [weak currentCell] in
+        currentCell?.transform = .init(scaleX: 1.1, y: 1.1).translatedBy(x: 0, y: -20)
       }
     }
   }

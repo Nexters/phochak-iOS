@@ -34,6 +34,7 @@ final class HomeReactor: Reactor {
     case fetchItems(size: Int, currentIndex: Int)
     case exclameVideoPost(postID: Int)
     case likeVideoPost(postID: Int)
+    case updateDataSource(videoPosts: [VideoPost])
   }
   
   enum Mutation {
@@ -69,6 +70,9 @@ final class HomeReactor: Reactor {
         ])
       }
       return .empty()
+
+    case .updateDataSource(let videoPosts):
+      return .just(.setVideoPosts(videoPosts))
 
     case .exclameVideoPost(let postID):
       return depepdency.useCase.exclameVideoPost(postID: postID)
