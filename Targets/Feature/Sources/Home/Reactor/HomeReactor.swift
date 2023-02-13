@@ -67,11 +67,9 @@ final class HomeReactor: Reactor {
             )
           )
         ])
-      } else {
-        return .empty()
       }
+      return .empty()
 
-      
     case .exclameVideoPost(let postID):
       return depepdency.useCase.exclameVideoPost(postID: postID)
         .flatMap { _ -> Observable<Mutation> in
