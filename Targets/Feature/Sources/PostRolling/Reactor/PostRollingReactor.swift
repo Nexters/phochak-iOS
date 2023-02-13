@@ -15,7 +15,9 @@ final class PostRollingReactor: Reactor {
   // MARK: Properties
   private let dependency: Dependency
   var initialState: State = .init(videoPosts: [])
-  let currentIndex: Int
+  private(set) var currentIndex: Int
+  private var existVideoPostRequest: FetchVideoPostRequest?
+  private var isLastPage: Bool = false
 
   struct Dependency {
     let coordinator: AppCoordinatorType
@@ -34,6 +36,7 @@ final class PostRollingReactor: Reactor {
     case load
     case exclameVideoPost(postID: Int)
     case likeVideoPost(postID: Int)
+    case fetchItems(size: Int, currentIndex: Int)
   }
 
   enum Mutation {
@@ -49,6 +52,20 @@ final class PostRollingReactor: Reactor {
     switch action {
     case .load:
       return .just(.setVideoPosts(dependency.videoPosts))
+
+    case let .fetchItems(size, currentIndex):
+      self.currentIndex = currentIndex
+
+      if (currentIndex + 1 >= currentState.videoPosts.count - 3) {
+        return fetchVideoPosts(
+          request: .init(
+            sortOption: .latest,
+            lastID: currentState.videoPosts.last?.id ?? nil,
+            pageSize: size
+          )
+        )
+      }
+      return .empty()
 
     case .exclameVideoPost(let postID):
       return dependency.useCase.exclameVideoPost(postID: postID)
@@ -69,9 +86,27 @@ final class PostRollingReactor: Reactor {
 
     switch mutation {
     case .setVideoPosts(let videoPosts):
-      newState.videoPosts = videoPosts
+      var updatedPosts = state.videoPosts
+      updatedPosts.append(contentsOf: videoPosts)
+      newState.videoPosts = updatedPosts
     }
 
     return newState
+  }
+}
+
+// MARK: - Private
+private extension PostRollingReactor {
+  func fetchVideoPosts(request: FetchVideoPostRequest) -> Observable<Mutation> {
+    if existVideoPostRequest == request && isLastPage {
+      return .empty()
+    }
+
+    return dependency.useCase.fetchVideoPosts(request: request)
+      .flatMap { [weak self] (videoPosts, isLastPage) in
+        self?.isLastPage = isLastPage
+        self?.existVideoPostRequest = request
+        return Observable<Mutation>.just(.setVideoPosts(videoPosts))
+      }
   }
 }

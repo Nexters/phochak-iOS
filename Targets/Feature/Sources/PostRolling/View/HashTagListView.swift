@@ -48,7 +48,8 @@ final class HashTagListView: UIView {
 
   // MARK: Methods
   func configure(videoPost: VideoPost) {
-    self.nicknameLabel.text = "포착러"
+    self.nicknameLabel.text = videoPost.user.nickname
+    self.likeButton.setImage(videoPost.isLiked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
 
     videoPostRelay.accept(videoPost)
   }

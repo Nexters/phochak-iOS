@@ -6,10 +6,15 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import Domain
 import UIKit
 
 import RxCocoa
 import RxSwift
+
+protocol PostRollingDelegate: AnyObject {
+  func scrollToItem(with videoPosts: [VideoPost], index: Int)
+}
 
 final class PostRollingViewController: BaseViewController<PostRollingReactor> {
 
@@ -22,6 +27,7 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
   private let exclameButtonTapSubject: PublishSubject<Int> = .init()
   private let likeButtonTapSubject: PublishSubject<Int> = .init()
   private let topGradientView: UIView = .init()
+  weak var delegate: PostRollingDelegate?
 
   // MARK: Initializer
   init(reactor: PostRollingReactor) {
@@ -65,9 +71,10 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
     )
   }
 
-  override func viewDidDisappear(_ animated: Bool) {
-    super.viewDidDisappear(animated)
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
 
+    delegate?.scrollToItem(with: reactor?.currentState.videoPosts ?? [], index: reactor?.currentIndex ?? 0)
     navigationController?.interactivePopGestureRecognizer?.isEnabled = true
   }
 
@@ -120,6 +127,16 @@ private extension PostRollingViewController {
   func bindAction(reactor: PostRollingReactor) {
     Observable.just(())
       .map { PostRollingReactor.Action.load }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
+
+    collectionView.rx.willEndDragging
+      .withUnretained(self)
+      .map({ (owner, event) -> Int in
+        let index = Int(event.targetContentOffset.pointee.x / owner.collectionView.frame.width)
+        return index
+      })
+      .map { PostRollingReactor.Action.fetchItems(size: 3, currentIndex: $0) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
