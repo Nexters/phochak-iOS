@@ -40,6 +40,8 @@ final class HomeReactor: Reactor {
   enum Mutation {
     case setLoading(Bool)
     case setVideoPosts([VideoPost])
+    case updateVideoPosts([VideoPost])
+    case updateVideoPostLikeStatus(index: Int, isLiked: Bool)
   }
   
   struct State {
@@ -72,7 +74,7 @@ final class HomeReactor: Reactor {
       return .empty()
 
     case .updateDataSource(let videoPosts):
-      return .just(.setVideoPosts(videoPosts))
+      return .just(.updateVideoPosts(videoPosts))
 
     case .exclameVideoPost(let postID):
       return depepdency.useCase.exclameVideoPost(postID: postID)
@@ -81,10 +83,7 @@ final class HomeReactor: Reactor {
         }
       
     case .likeVideoPost(let postID):
-      return depepdency.useCase.likeVideoPost(postID: postID)
-        .flatMap { _ -> Observable<Mutation> in
-          return .empty()
-        }
+      return updateVideoPostLikeStatus(postID: postID)
     }
   }
   
@@ -95,6 +94,14 @@ final class HomeReactor: Reactor {
     case .setVideoPosts(let videoPosts):
       var updatedPosts = state.videoPosts
       updatedPosts.append(contentsOf: videoPosts)
+      newState.videoPosts = updatedPosts
+
+    case .updateVideoPosts(let videoPosts):
+      newState.videoPosts = videoPosts
+
+    case let .updateVideoPostLikeStatus(index, isLiked):
+      var updatedPosts = state.videoPosts
+      updatedPosts[index].isLiked = isLiked
       newState.videoPosts = updatedPosts
       
     case .setLoading(let isLoading):
@@ -146,5 +153,23 @@ private extension HomeReactor {
     )
     
     return .empty()
+  }
+
+  func updateVideoPostLikeStatus(postID: Int) -> Observable<Mutation> {
+    guard let index = currentState.videoPosts.firstIndex(where: { $0.id == postID }) else {
+      return .empty()
+    }
+
+    if currentState.videoPosts[index].isLiked {
+      return depepdency.useCase.unLikeVideoPost(postID: postID)
+        .flatMap { _ -> Observable<Mutation> in
+          return .just(.updateVideoPostLikeStatus(index: index, isLiked: false))
+        }
+    } else {
+      return depepdency.useCase.likeVideoPost(postID: postID)
+        .flatMap { _ -> Observable<Mutation> in
+          return .just(.updateVideoPostLikeStatus(index: index, isLiked: true))
+        }
+    }
   }
 }

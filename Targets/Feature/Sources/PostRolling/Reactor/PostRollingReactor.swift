@@ -41,6 +41,7 @@ final class PostRollingReactor: Reactor {
 
   enum Mutation {
     case setVideoPosts([VideoPost])
+    case setVideoPostLikeStatus(index: Int, isLiked: Bool)
   }
 
   struct State {
@@ -74,10 +75,7 @@ final class PostRollingReactor: Reactor {
         }
 
     case .likeVideoPost(let postID):
-      return dependency.useCase.likeVideoPost(postID: postID)
-        .flatMap { _ -> Observable<Mutation> in
-          return .empty()
-        }
+      return updateVideoPostLikeStatus(postID: postID)
     }
   }
 
@@ -88,6 +86,11 @@ final class PostRollingReactor: Reactor {
     case .setVideoPosts(let videoPosts):
       var updatedPosts = state.videoPosts
       updatedPosts.append(contentsOf: videoPosts)
+      newState.videoPosts = updatedPosts
+
+    case let .setVideoPostLikeStatus(index, isLiked):
+      var updatedPosts = state.videoPosts
+      updatedPosts[index].isLiked = isLiked
       newState.videoPosts = updatedPosts
     }
 
@@ -108,5 +111,23 @@ private extension PostRollingReactor {
         self?.existVideoPostRequest = request
         return Observable<Mutation>.just(.setVideoPosts(videoPosts))
       }
+  }
+
+  func updateVideoPostLikeStatus(postID: Int) -> Observable<Mutation> {
+    guard let index = currentState.videoPosts.firstIndex(where: { $0.id == postID }) else {
+      return .empty()
+    }
+
+    if currentState.videoPosts[index].isLiked {
+      return dependency.useCase.unLikeVideoPost(postID: postID)
+        .flatMap { _ -> Observable<Mutation> in
+          return .just(.setVideoPostLikeStatus(index: index, isLiked: false))
+        }
+    } else {
+      return dependency.useCase.likeVideoPost(postID: postID)
+        .flatMap { _ -> Observable<Mutation> in
+          return .just(.setVideoPostLikeStatus(index: index, isLiked: true))
+        }
+    }
   }
 }

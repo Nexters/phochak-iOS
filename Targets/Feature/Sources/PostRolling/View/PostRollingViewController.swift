@@ -154,7 +154,6 @@ private extension PostRollingViewController {
   func bindState(reactor: PostRollingReactor) {
     reactor.state
       .map { $0.videoPosts }
-      .distinctUntilChanged()
       .bind(to: collectionView.rx.items(
         cellIdentifier: "\(DetailPostCell.self)",
         cellType: DetailPostCell.self)

@@ -19,7 +19,7 @@ final class VideoPostCell: BaseCollectionViewCell {
   private let containerView: UIView = .init()
   private let nicknameLabel: UILabel = .init()
   private let exclameButton: UIButton = .init()
-  private let heartButton: UIButton = .init()
+  private let likeButton: UIButton = .init()
   private let videoPlayerView: VideoPlayerView = .init()
 
   private var videoPost: VideoPost?
@@ -37,7 +37,7 @@ final class VideoPostCell: BaseCollectionViewCell {
     super.prepareForReuse()
 
     nicknameLabel.text = nil
-    heartButton.imageView?.image = videoPost?.isLiked ?? false ? .createImage(.heartOn) : .createImage(.heartOff)
+    likeButton.imageView?.image = videoPost?.isLiked ?? false ? .createImage(.heartOn) : .createImage(.heartOff)
   }
 
   override func layoutSubviews() {
@@ -72,7 +72,7 @@ final class VideoPostCell: BaseCollectionViewCell {
       containerView.addSubview($0)
     }
 
-    heartButton.do {
+    likeButton.do {
       $0.setImage(.createImage(.heartOff), for: .normal)
       containerView.addSubview($0)
     }
@@ -94,14 +94,14 @@ final class VideoPostCell: BaseCollectionViewCell {
       $0.bottom.equalToSuperview().offset(-40)
     }
 
-    heartButton.snp.makeConstraints {
+    likeButton.snp.makeConstraints {
       $0.trailing.equalToSuperview().offset(-30)
       $0.bottom.equalToSuperview().offset(-40)
     }
 
     exclameButton.snp.makeConstraints {
-      $0.trailing.equalTo(heartButton.snp.leading).offset(-28)
-      $0.bottom.equalTo(heartButton)
+      $0.trailing.equalTo(likeButton.snp.leading).offset(-28)
+      $0.bottom.equalTo(likeButton)
     }
   }
 
@@ -116,7 +116,7 @@ final class VideoPostCell: BaseCollectionViewCell {
       endColor: .createColor(.monoGray, .w950, alpha: 0.9)
     )
 
-    heartButton.setImage(videoPost.isLiked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
+    likeButton.setImage(videoPost.isLiked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
   }
 }
 
@@ -127,9 +127,18 @@ extension VideoPostCell {
       .map { [weak self] in self?.videoPost?.id ?? 0 }
   }
 
-  var heartButtonTapObservable: Observable<Int> {
-    heartButton.rx.tap
+  var likeButtonTapObservable: Observable<Int> {
+    likeButton.rx.tap
       .asObservable()
       .map { [weak self] in self?.videoPost?.id ?? 0 }
+      .do(onNext: { [weak self] _ in
+        self?.videoPost?.isLiked.toggle()
+
+        guard let liked = self?.videoPost?.isLiked else {
+          return
+        }
+
+        self?.likeButton.setImage(liked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
+      })
   }
 }

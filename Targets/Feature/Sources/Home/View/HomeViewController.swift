@@ -135,7 +135,6 @@ private extension HomeViewController {
   func bindState(reactor: HomeReactor) {
     reactor.state
       .map { $0.videoPosts }
-      .distinctUntilChanged()
       .bind(to: collectionView.rx.items(
         cellIdentifier: "\(VideoPostCell.self)",
         cellType: VideoPostCell.self)
@@ -143,7 +142,7 @@ private extension HomeViewController {
         cell.configure(post)
 
         if let likeVideoPostSubject = self?.likeVideoPostSubject {
-          cell.heartButtonTapObservable
+          cell.likeButtonTapObservable
             .subscribe(likeVideoPostSubject)
             .disposed(by: cell.disposeBag)
         }
