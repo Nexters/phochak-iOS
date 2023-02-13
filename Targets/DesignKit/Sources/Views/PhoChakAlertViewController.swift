@@ -193,14 +193,7 @@ private extension PhoChakAlertViewController {
   }
 
   func bind() {
-    let viewTapSignal = view.addTapGesture().rx.event
-      .filter { $0.state == .recognized }
-      .map { _ in }
-      .asSignal(onErrorSignalWith: .empty())
-
-    let cancelButtonTapSignal = cancelButton.rx.tap.asSignal()
-
-    Signal.merge(viewTapSignal, cancelButtonTapSignal)
+    cancelButton.rx.tap.asSignal()
       .emit(with: self, onNext: { owner, _ in
         owner.dismiss(animated: true)
       })
