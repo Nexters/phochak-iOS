@@ -36,12 +36,12 @@ public final class UploadVideoPostService: UploadVideoPostServiceType {
     fetchPresignedURL(fileType: videoFile.fileType)
       .flatMap { [weak self] response -> Single<String> in
         guard let presignedURL: URL = .init(string: response.uploadData.uploadURL),
-              let fileDataURL: URL = .init(
+              let videoFileURL: URL = .init(
                 string: PhoChakFileManager.shared.fetchVideoURLString(name: videoFile.fileName)
               )
         else { return .just("") }
 
-        return self?.uploadToS3(to: presignedURL, with: fileDataURL)
+        return self?.uploadToS3(to: presignedURL, with: videoFileURL)
           .map { _ in response.uploadData.uploadKey } ?? .just("")
       }
       .flatMap { [weak self] uploadKey in
