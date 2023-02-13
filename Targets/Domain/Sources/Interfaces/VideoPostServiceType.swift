@@ -14,4 +14,5 @@ public protocol VideoPostServiceType {
   func fetchVideoPosts(request: FetchVideoPostRequest) -> Single<(posts: [VideoPost], isLastPage: Bool)>
   func exclameVideoPost(postID: Int) -> Single<Void>
   func likeVideoPost(postID: Int) -> Single<Void>
+  func unlikeVideoPost(postID: Int) -> Single<Void>
 }

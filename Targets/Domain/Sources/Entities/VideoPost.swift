@@ -16,7 +16,7 @@ public struct VideoPost: Equatable, Decodable {
   public let category: String
   public let likeCount: Int
   public let hashTags: [String]?
-  public let isLiked: Bool
+  public var isLiked: Bool
 
   private enum CodingKeys: String, CodingKey {
     case id

@@ -34,6 +34,11 @@ final class VideoPostUseCase: VideoPostUseCaseType {
       .asObservable()
   }
 
+  func unLikeVideoPost(postID: Int) -> Observable<Void> {
+    service.unlikeVideoPost(postID: postID)
+      .asObservable()
+  }
+
   func exclameVideoPost(postID: Int) -> Observable<Void> {
     service.exclameVideoPost(postID: postID)
       .asObservable()
