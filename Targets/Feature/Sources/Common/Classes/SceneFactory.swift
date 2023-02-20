@@ -25,14 +25,16 @@ final class SceneFactory: SceneFactoryType {
 
   // MARK: Properties
   private let injector: DependencyResolvable
+  private var homeViewController: HomeViewController?
+  private var postRollingViewController: PostRollingViewController?
 
   struct Dependency {
-    let injetor: DependencyResolvable
+    let injector: DependencyResolvable
   }
 
   // MARK: Initializer
   init(dependency: Dependency) {
-    self.injector = dependency.injetor
+    self.injector = dependency.injector
   }
 
   // MARK: Methods
@@ -67,6 +69,8 @@ final class SceneFactory: SceneFactoryType {
         )
       )
       postRollingViewController.hidesBottomBarWhenPushed = true
+      postRollingViewController.delegate = homeViewController
+      self.postRollingViewController = postRollingViewController
       return postRollingViewController
 
     case .tab:
@@ -85,6 +89,7 @@ final class SceneFactory: SceneFactoryType {
         image: .createImage(.tab_home),
         selectedImage: .createImage(.tab_home_selected)
       )
+      self.homeViewController = homeViewController
 
       let videoUploadViewController: VideoUploadViewController = .init(nibName: nil, bundle: nil)
       videoUploadViewController.tabBarItem = .init(

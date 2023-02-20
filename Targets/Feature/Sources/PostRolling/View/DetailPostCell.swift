@@ -95,11 +95,7 @@ final class DetailPostCell: BaseCollectionViewCell, View {
   func configure(reactor: DetailPostCellReactor) {
     self.reactor = reactor
 
-    let playerItem: AVPlayerItem = .init(url: reactor.videoPost.shorts.shortsURL)
-    
-    videoPlayerView.player = .init(playerItem: playerItem)
-    videoPlayerView.player?.play()
-    videoPlayerView.player?.isMuted = true
+    videoPlayerView.configure(videoPost: reactor.videoPost)
   }
 
   func bind(reactor: DetailPostCellReactor) {
@@ -113,6 +109,10 @@ final class DetailPostCell: BaseCollectionViewCell, View {
     hashTagListView.likeButtonTapObservable
       .subscribe(likeButtonTapSubject)
       .disposed(by: disposeBag)
+  }
+
+  func updateMuteState(isMuted: Bool) {
+    videoPlayerView.player?.isMuted = isMuted
   }
 }
 

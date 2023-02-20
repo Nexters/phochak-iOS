@@ -12,6 +12,7 @@ public protocol LikeVideoPostUseCaseType {
 
   // MARK: Methods
   func likeVideoPost(postID: Int) -> Observable<Void>
+  func unLikeVideoPost(postID: Int) -> Observable<Void>
 }
 
 final class LikeVideoPostUseCase: LikeVideoPostUseCaseType {
@@ -27,6 +28,11 @@ final class LikeVideoPostUseCase: LikeVideoPostUseCaseType {
   // MARK: Methods
   func likeVideoPost(postID: Int) -> Observable<Void> {
     service.likeVideoPost(postID: postID)
+      .asObservable()
+  }
+
+  func unLikeVideoPost(postID: Int) -> Observable<Void> {
+    service.unlikeVideoPost(postID: postID)
       .asObservable()
   }
 }

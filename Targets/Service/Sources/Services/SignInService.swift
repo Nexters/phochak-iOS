@@ -21,7 +21,7 @@ public final class SignInService: SignInServiceType {
 
   // MARK: Initializer
   init(
-    provider: MoyaProvider<SignInAPI> = MoyaProvider<SignInAPI>(plugins: [NetworkLoggerPlugin()])
+    provider: MoyaProvider<SignInAPI> = MoyaProvider<SignInAPI>(plugins: [PCNetworkLoggerPlugin()])
   ) {
     self.provider = provider
   }

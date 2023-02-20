@@ -6,6 +6,7 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import Domain
 import UIKit
 
 import ReactorKit
@@ -24,11 +25,12 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     frame: .zero,
     collectionViewLayout: flowLayout
   )
-  private var currentIndex: Int = 1
-  private var previousIndex: Int = 1
   private let exclameVideoPostSubject: PublishSubject<Int> = .init()
   private let likeVideoPostSubject: PublishSubject<Int> = .init()
+  private let updatedDataSourceSubject: PublishSubject<[VideoPost]> = .init()
   private var isFirstEnter: Bool = true
+  private var currentIndex: Int = 0
+  private var previousIndex: Int = 0
 
   // MARK: Initializer
   init(reactor: HomeReactor) {
@@ -44,22 +46,6 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   // MARK: Override
   override func viewDidLoad() {
     super.viewDidLoad()
-  }
-
-  override func viewDidLayoutSubviews() {
-    super.viewDidLayoutSubviews()
-
-    if isFirstEnter {
-      DispatchQueue.main.async { [weak self] in
-        self?.collectionView.scrollToItem(
-          at: .init(item: 1, section: 0),
-          at: .centeredHorizontally,
-          animated: false
-        )
-      }
-
-      isFirstEnter.toggle()
-    }
   }
 
   override func setupViews() {
@@ -104,29 +90,19 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   override func bind(reactor: HomeReactor) {
     bindAction(reactor: reactor)
     bindState(reactor: reactor)
-
-    collectionView.rx.didScroll
-      .asSignal()
-      .emit(to: transformBinder)
-      .disposed(by: disposeBag)
-
-    collectionView.rx.willEndDragging
-      .asSignal()
-      .map { $1 }
-      .emit(to: pagingBinder)
-      .disposed(by: disposeBag)
+    bindExtra(reactor: reactor)
   }
 }
 
 // MARK: - Private
 private extension HomeViewController {
-
   // MARK: Methods
   func bindAction(reactor: HomeReactor) {
     collectionView.rx.didEndDragging.map { _ in }
       .asObservable()
       .startWith(())
-      .map { _ in HomeReactor.Action.fetchItems(size: 6) }
+      .withUnretained(self)
+      .map { owner, _ in HomeReactor.Action.fetchItems(size: 3, currentIndex: owner.currentIndex) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
@@ -149,12 +125,16 @@ private extension HomeViewController {
       .map { HomeReactor.Action.likeVideoPost(postID: $0) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
+
+    updatedDataSourceSubject
+      .map { HomeReactor.Action.updateDataSource(videoPosts: $0) }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
   }
 
   func bindState(reactor: HomeReactor) {
     reactor.state
       .map { $0.videoPosts }
-      .distinctUntilChanged()
       .bind(to: collectionView.rx.items(
         cellIdentifier: "\(VideoPostCell.self)",
         cellType: VideoPostCell.self)
@@ -162,7 +142,7 @@ private extension HomeViewController {
         cell.configure(post)
 
         if let likeVideoPostSubject = self?.likeVideoPostSubject {
-          cell.heartButtonTapObservable
+          cell.likeButtonTapObservable
             .subscribe(likeVideoPostSubject)
             .disposed(by: cell.disposeBag)
         }
@@ -182,6 +162,32 @@ private extension HomeViewController {
       .disposed(by: disposeBag)
   }
 
+  func bindExtra(reactor: HomeReactor) {
+    collectionView.rx.didScroll
+      .asSignal()
+      .emit(to: transformBinder)
+      .disposed(by: disposeBag)
+
+    collectionView.rx.willEndDragging
+      .asSignal()
+      .map { $1 }
+      .emit(to: pagingBinder)
+      .disposed(by: disposeBag)
+
+    Observable.combineLatest(
+      rx.viewWillAppear,
+      reactor.state.map { $0.videoPosts }.map { _ in }.debounce(.milliseconds(350), scheduler: MainScheduler.asyncInstance)) { _, _ in }
+      .take(1)
+      .asSignal(onErrorSignalWith: .empty())
+      .emit(with: self, onNext: { owner, _ in
+        if owner.isFirstEnter, let cell = owner.collectionView.cellForItem(at: .init(item: 0, section: 0)) {
+          cell.transform = .init(scaleX: 1.1, y: 1.1).translatedBy(x: 0, y: -20)
+          owner.isFirstEnter.toggle()
+        }
+      })
+      .disposed(by: disposeBag)
+  }
+
   // MARK: Properties
   var pagingBinder: Binder<UnsafeMutablePointer<CGPoint>> {
     return .init(self) { owner, contentOffset in
@@ -196,8 +202,10 @@ private extension HomeViewController {
 
       if index > CGFloat(owner.currentIndex) {
         owner.currentIndex += 1
+        owner.previousIndex = owner.currentIndex - 1
       } else if index < CGFloat(owner.currentIndex), owner.currentIndex != 0 {
         owner.currentIndex -= 1
+        owner.previousIndex = owner.currentIndex + 1
       }
 
       offset = .init(
@@ -222,19 +230,38 @@ private extension HomeViewController {
 
       if let cell = owner.collectionView.cellForItem(at: indexPath) {
         UIView.animate(withDuration: 0.25) {
-          var transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
-          transform = transform.translatedBy(x: 0, y: -20)
-          cell.transform = transform
+          cell.transform = .init(scaleX: 1.1, y: 1.1).translatedBy(x: 0, y: -20)
         }
       }
 
-      if Int(index) != owner.previousIndex {
-        let cell = owner.collectionView.cellForItem(at: .init(item: Int(owner.previousIndex), section: 0))
+      if Int(index) != owner.previousIndex,
+         let cell = owner.collectionView.cellForItem(at: .init(item: Int(owner.previousIndex), section: 0)) {
         UIView.animate(withDuration: 0.25) {
-          let transform: CGAffineTransform = .identity
-          cell?.transform = transform
+          cell.transform = .identity
         }
-        owner.previousIndex = indexPath.item
+      }
+    }
+  }
+}
+
+// MARK: - PostRollingDelegate
+extension HomeViewController: PostRollingDelegate {
+  func scrollToItem(with videoPosts: [VideoPost], index: Int) {
+    updatedDataSourceSubject.onNext(videoPosts)
+
+    currentIndex = index
+    previousIndex = index == 0 ? 0 : index - 1
+
+    guard let rect = collectionView.layoutAttributesForItem(at: .init(item: index, section: 0)) else {
+      return
+    }
+
+    collectionView.scrollRectToVisible(rect.frame, animated: false)
+    collectionView.layoutIfNeeded()
+
+    if let currentCell = collectionView.cellForItem(at: .init(item: index, section: 0)) {
+      DispatchQueue.main.async { [weak currentCell] in
+        currentCell?.transform = .init(scaleX: 1.1, y: 1.1).translatedBy(x: 0, y: -20)
       }
     }
   }
