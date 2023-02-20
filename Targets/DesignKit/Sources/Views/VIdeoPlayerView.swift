@@ -54,6 +54,12 @@ public final class VideoPlayerView: UIView {
         owner.player?.play()
       })
       .disposed(by: disposeBag)
+
+    NotificationCenter.default.rx.notification(.muteAllPlayers)
+      .subscribe(with: self, onNext: { owner, _ in
+        owner.player?.isMuted = true
+      })
+      .disposed(by: disposeBag)
   }
 
   required init?(coder: NSCoder) {

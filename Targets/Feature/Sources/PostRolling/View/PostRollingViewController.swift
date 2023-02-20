@@ -74,6 +74,8 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
 
+    NotificationCenter.default.post(name: .muteAllPlayers, object: nibName)
+
     delegate?.scrollToItem(with: reactor?.currentState.videoPosts ?? [], index: reactor?.currentIndex ?? 0)
     navigationController?.interactivePopGestureRecognizer?.isEnabled = true
   }
