@@ -67,11 +67,11 @@ public final class VideoPlayerView: UIView {
   }
 
   // MARK: Methods
-  public func configure(videoPost: VideoPost, isMuted: Bool) {
+  public func configure(videoPost: VideoPost) {
     thumbnailImageView.setImage(with: videoPost.shorts.thumbnailURL)
 
     self.player = .init(url: videoPost.shorts.shortsURL).then {
-      $0.isMuted = isMuted
+      $0.isMuted = true
     }
 
     player?.currentItem?.rx.observe(\.status)

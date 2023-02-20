@@ -109,7 +109,7 @@ final class VideoPostCell: BaseCollectionViewCell {
   func configure(_ videoPost: VideoPost) {
     self.videoPost = videoPost
     nicknameLabel.text = videoPost.user.nickname
-    videoPlayerView.configure(videoPost: videoPost, isMuted: true)
+    videoPlayerView.configure(videoPost: videoPost)
 
     containerView.setGradient(
       startColor: .createColor(.monoGray, .w950, alpha: 0),

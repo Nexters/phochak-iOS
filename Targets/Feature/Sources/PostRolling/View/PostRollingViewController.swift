@@ -121,6 +121,7 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
   override func bind(reactor: PostRollingReactor) {
     bindAction(reactor: reactor)
     bindState(reactor: reactor)
+    bindExtra()
   }
 }
 
@@ -173,6 +174,27 @@ private extension PostRollingViewController {
             .disposed(by: cell.disposeBag)
         }
       }
+      .disposed(by: disposeBag)
+  }
+
+  func bindExtra() {
+    collectionView.rx.didEndDisplayingCell
+      .subscribe(onNext: { cell, index in
+        guard let cell = cell as? DetailPostCell else {
+          return
+        }
+        cell.updateMuteState(isMuted: true)
+      })
+      .disposed(by: disposeBag)
+
+    collectionView.rx.willDisplayCell
+      .subscribe(onNext: { cell, index in
+        guard let cell = cell as? DetailPostCell else {
+          return
+        }
+
+        cell.updateMuteState(isMuted: false)
+      })
       .disposed(by: disposeBag)
   }
 }

@@ -250,11 +250,7 @@ extension HomeViewController: PostRollingDelegate {
     updatedDataSourceSubject.onNext(videoPosts)
 
     currentIndex = index
-    if index == 0 {
-      previousIndex = 0
-    } else {
-      previousIndex = index - 1
-    }
+    previousIndex = index == 0 ? 0 : index - 1
 
     guard let rect = collectionView.layoutAttributesForItem(at: .init(item: index, section: 0)) else {
       return

@@ -116,10 +116,7 @@ final class HomeReactor: Reactor {
 private extension HomeReactor {
   func fetchVideoPosts(request: FetchVideoPostRequest) -> Observable<Mutation> {
     if existVideoPostRequest == request && isLastPage {
-      return .concat([
-        .empty(),
-        .just(.setLoading(false))
-      ])
+      return .just(.setLoading(false))
     }
 
     return depepdency.useCase.fetchVideoPosts(request: request)
