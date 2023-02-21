@@ -1,5 +1,5 @@
 //
-//  PhoChakAnimationView.swift
+//  PhoChakLoadingViewController.swift
 //  DesignKit
 //
 //  Created by 한상진 on 2023/02/12.
@@ -12,7 +12,7 @@ import Lottie
 import SnapKit
 import Then
 
-public final class PhoChakAnimationView: UIViewController {
+public final class PhoChakLoadingViewController: UIViewController {
 
   // MARK: Properties
   private let loadingIndicator: LottieAnimationView = .init(name: "PhoChak-LogoLoop")
@@ -40,15 +40,23 @@ public final class PhoChakAnimationView: UIViewController {
   public func play(on parentViewController: UIViewController) {
     parentViewController.present(self, animated: true)
     loadingIndicator.play()
+
+    UIView.animate(withDuration: 0.5, animations: {
+      self.view.backgroundColor = .createColor(.monoGray, .w950, alpha: 0.3)
+    })
   }
 
   public func stop() {
     dismiss(animated: true)
+
+    UIView.animate(withDuration: 0.5, animations: {
+      self.view.backgroundColor = .clear
+    })
   }
 }
 
 // MARK: - Private
-private extension PhoChakAnimationView {
+private extension PhoChakLoadingViewController {
 
   // MARK: Methods
   func setupModalStyle() {
@@ -57,7 +65,7 @@ private extension PhoChakAnimationView {
   }
 
   func setupView() {
-    view.backgroundColor = .createColor(.monoGray, .w950, alpha: 0.3)
+    view.backgroundColor = .clear
 
     loadingIndicator.do {
       $0.contentMode = .scaleAspectFit

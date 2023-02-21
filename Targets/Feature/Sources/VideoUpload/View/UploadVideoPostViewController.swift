@@ -34,7 +34,7 @@ final class UploadVideoPostViewController: BaseViewController<UploadVideoPostRea
     collectionViewLayout: flowLayout
   )
   private let completionButton: CompletionButton = .init()
-  private lazy var loadingAnimationView: PhoChakAnimationView = .init()
+  private lazy var loadingAnimationView: PhoChakLoadingViewController = .init()
   private lazy var alertViewController: PhoChakAlertViewController = .init(alertType: .networkError)
   private var videoFile: VideoFile?
 
