@@ -8,25 +8,19 @@
 
 import Foundation
 
-public struct PhoChakFileManager {
+public enum PhoChakFileManager {
 
   // MARK: Properties
-  public static let shared = PhoChakFileManager()
-  private let fileManager = FileManager.default
-
-  private var documentDirectoryURL: URL {
-    fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-  }
-
-  private var uploadedVideosFolderURL: URL {
-    documentDirectoryURL.appendingPathComponent("UploadedVideos")
-  }
+  private static let uploadedVideosFolderURL = FileManager.default.urls(
+    for: .documentDirectory,
+    in: .userDomainMask
+  )[0].appendingPathComponent("UploadedVideos")
 
   // MARK: Methods
-  public func saveVideo(name: String, data: Data) {
-    if !fileManager.fileExists(atPath: uploadedVideosFolderURL.path) {
+  public static func saveVideo(name: String, data: Data) {
+    if !FileManager.default.fileExists(atPath: uploadedVideosFolderURL.path) {
       do {
-        try fileManager.createDirectory(
+        try FileManager.default.createDirectory(
           atPath: uploadedVideosFolderURL.path,
           withIntermediateDirectories: true,
           attributes: nil
@@ -38,7 +32,7 @@ public struct PhoChakFileManager {
 
     let path = uploadedVideosFolderURL.appendingPathComponent(name)
 
-    DispatchQueue.global(qos: .userInteractive).async {
+    DispatchQueue.global().async {
       do {
         try data.write(to: path, options: .atomic)
       } catch {
@@ -47,13 +41,13 @@ public struct PhoChakFileManager {
     }
   }
 
-  public func fetchVideoURLString(name: String) -> String {
+  public static func fetchVideoURLString(name: String) -> String {
     return "\(uploadedVideosFolderURL.path)/\(name)"
   }
 
-  public func removeUploadedVideos() {
+  public static func removeUploadedVideos() {
     do {
-      try fileManager.removeItem(at: uploadedVideosFolderURL)
+      try FileManager.default.removeItem(at: uploadedVideosFolderURL)
     } catch {
       print("⚠️ \(#function) - \(#line)")
     }

@@ -368,7 +368,7 @@ extension UploadVideoPostViewController: UIImagePickerControllerDelegate, UINavi
       fileType: videoType
     )
 
-    PhoChakFileManager.shared.saveVideo(
+    PhoChakFileManager.saveVideo(
       name: videoName,
       data: videoData
     )
