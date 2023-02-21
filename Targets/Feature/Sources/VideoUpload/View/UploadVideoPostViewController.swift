@@ -315,7 +315,7 @@ private extension UploadVideoPostViewController {
       .disposed(by: disposeBag)
 
     hashTagTextField.rx.text.orEmpty
-      .map(hashTagChecker)
+      .map(changeValidHashTag)
       .bind(to: hashTagTextField.rx.text)
       .disposed(by: disposeBag)
 
@@ -327,7 +327,7 @@ private extension UploadVideoPostViewController {
       .disposed(by: disposeBag)
   }
 
-  func hashTagChecker(_ text: String) -> String {
+  func changeValidHashTag(_ text: String) -> String {
     guard let lastText = text.last else { return text }
 
     if lastText == " " || text.count > 20 {

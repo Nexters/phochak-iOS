@@ -10,7 +10,7 @@ import Foundation
 
 import RxSwift
 
-public enum UploadVideoPostEvent {
+public enum UploadVideoPostResult {
   case success
   case error
 }
@@ -18,7 +18,7 @@ public enum UploadVideoPostEvent {
 public protocol UploadVideoPostUseCaseType {
 
   // MARK: Properties
-  var uploadVideoPostEvent: PublishSubject<UploadVideoPostEvent> { get }
+  var uploadVideoPostResultSubject: PublishSubject<UploadVideoPostResult> { get }
 
   // MARK: Methods
   func uploadVideoPost(
@@ -31,7 +31,7 @@ public protocol UploadVideoPostUseCaseType {
 final class UploadVideoPostUseCase: UploadVideoPostUseCaseType {
 
   // MARK: Properties
-  public let uploadVideoPostEvent: PublishSubject<UploadVideoPostEvent> = .init()
+  public let uploadVideoPostResultSubject: PublishSubject<UploadVideoPostResult> = .init()
   private let service: UploadVideoPostServiceType
   private let disposeBag: DisposeBag = .init()
 
@@ -52,9 +52,9 @@ final class UploadVideoPostUseCase: UploadVideoPostUseCaseType {
       hashTags: hashTags
     )
     .subscribe(with: self, onSuccess: { owner, _ in
-      owner.uploadVideoPostEvent.onNext(.success)
+      owner.uploadVideoPostResultSubject.onNext(.success)
     }, onFailure: { owner, error in
-      owner.uploadVideoPostEvent.onNext(.error)
+      owner.uploadVideoPostResultSubject.onNext(.error)
     })
     .disposed(by: disposeBag)
 
