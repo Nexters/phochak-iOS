@@ -10,7 +10,7 @@ import Foundation
 
 import RxSwift
 
-public enum UploadVideoPostResult {
+public enum UploadVideoPostResult: Error {
   case success
   case error
 }

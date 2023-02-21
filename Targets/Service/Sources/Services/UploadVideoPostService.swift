@@ -39,10 +39,10 @@ public final class UploadVideoPostService: UploadVideoPostServiceType {
               let videoFileURL: URL = .init(
                 string: PhoChakFileManager.fetchVideoURLString(name: videoFile.fileName)
               )
-        else { return .just("") }
+        else { return .error(UploadVideoPostResult.error) }
 
         return self?.uploadToS3(to: presignedURL, with: videoFileURL)
-          .map { _ in response.uploadData.uploadKey } ?? .just("")
+          .map { _ in response.uploadData.uploadKey } ?? .error(UploadVideoPostResult.error)
       }
       .flatMap { [weak self] uploadKey in
         self?.uploadPost(category: category, uploadKey: uploadKey, hashTags: hashTags) ?? .just(())
