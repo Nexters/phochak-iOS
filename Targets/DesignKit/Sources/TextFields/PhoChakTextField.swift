@@ -30,9 +30,9 @@ public final class PhoChakTextField: UITextField {
   private let disposeBag: DisposeBag = .init()
 
   // MARK: Initializer
-  public init(frame: CGRect, fieldStyle: FieldStyle) {
+  public init(fieldStyle: FieldStyle) {
     self.fieldStyle = fieldStyle
-    super.init(frame: frame)
+    super.init(frame: .zero)
 
     setupUI()
     bind()
@@ -43,8 +43,10 @@ public final class PhoChakTextField: UITextField {
   }
 }
 
-// MARK: - Extension
+// MARK: - Private
 private extension PhoChakTextField {
+
+  // MARK: Methods
   func setupUI() {
     backgroundColor = .createColor(.monoGray, .w900)
     textColor = .createColor(.monoGray, .w50)
@@ -52,6 +54,13 @@ private extension PhoChakTextField {
     layer.cornerRadius = 10
     leftViewMode = .always
     leftView = .init(frame: .init(x: 0, y: 0, width: 20, height: 1))
+
+    attributedPlaceholder = NSAttributedString(
+      string: fieldStyle.placeholderText,
+      attributes: [
+        NSAttributedString.Key.foregroundColor : UIColor.createColor(.monoGray, .w400)
+      ]
+    )
   }
 
   func bind() {

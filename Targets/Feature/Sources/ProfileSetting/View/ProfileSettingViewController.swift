@@ -19,7 +19,7 @@ final class ProfileSettingViewController: BaseViewController<ProfileSettingReact
   // MARK: Properties
   private let titleLabel: UILabel = .init()
   private let subTitleLabel: UILabel = .init()
-  private let textField: PhoChakTextField = .init(frame: .init(), fieldStyle: .text)
+  private let textField: PhoChakTextField = .init(fieldStyle: .text)
   private let checkDuplicationButton: DuplicationCheckButton = .init()
   private let completeButton: CompletionButton = .init()
 

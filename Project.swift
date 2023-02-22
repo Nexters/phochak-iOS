@@ -84,7 +84,8 @@ let project: Project = .init(
       dependencies: [
         .target(name: Module.domain.moduleName),
         .external(name: "RxCocoa"),
-        .external(name: "RxSwift")
+        .external(name: "RxSwift"),
+        .external(name: "Lottie")
       ]),
 
     Project.makePhoChakFrameworkTargets(

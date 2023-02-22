@@ -8,7 +8,7 @@
 
 import RxDataSources
 
-struct HashTagSection {
+struct HashTagSection: Equatable {
 
   // MARK: Properties
   let header: String
