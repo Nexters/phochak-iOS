@@ -11,7 +11,8 @@ import RxSwift
 public protocol VideoPostServiceType {
 
   // MARK: Methods
-  func fetchVideoPosts(request: FetchVideoPostRequest) -> Single<[VideoPost]>
+  func fetchVideoPosts(request: FetchVideoPostRequest) -> Single<(posts: [VideoPost], isLastPage: Bool)>
   func exclameVideoPost(postID: Int) -> Single<Void>
   func likeVideoPost(postID: Int) -> Single<Void>
+  func unlikeVideoPost(postID: Int) -> Single<Void>
 }

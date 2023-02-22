@@ -6,6 +6,7 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import Core
 import Foundation
 import Domain
 
@@ -15,24 +16,25 @@ public enum VideoPostAPI {
   case fetchVideoPosts(request: FetchVideoPostRequest)
   case exclameVideoPost(postID: Int)
   case likeVideoPost(postID: Int)
+  case unlikeVideoPost(postID: Int)
 }
 
 // MARK: - TargetType
 extension VideoPostAPI: TargetType {
   public var baseURL: URL {
-    URL(string: "www.naver.com")!
+    URL(string: AppProperties.baseURL)!
   }
 
   public var path: String {
     switch self {
     case .fetchVideoPosts:
-      return ""
+      return "/v1/post/list"
 
     case .exclameVideoPost(let postID):
       return ""
 
-    case .likeVideoPost(let postID):
-      return ""
+    case .likeVideoPost(let postID), .unlikeVideoPost(let postID):
+      return "/v1/post/\(postID)/likes"
     }
   }
 
@@ -43,6 +45,9 @@ extension VideoPostAPI: TargetType {
 
     case .likeVideoPost, .exclameVideoPost:
       return .post
+
+    case .unlikeVideoPost:
+      return .delete
     }
   }
 
@@ -51,7 +56,7 @@ extension VideoPostAPI: TargetType {
   }
 
   public var headers: [String : String]? {
-    return [:]
+    return ["Authorization": AppProperties.accessToken]
   }
 
   public var task: Task {
@@ -71,10 +76,20 @@ extension VideoPostAPI: TargetType {
 
   private var parameters: [String: Any]? {
     switch self {
-    case .fetchVideoPosts:
-      return [:]
+    case .fetchVideoPosts(let request):
 
-    case .likeVideoPost:
+      var params: [String: Any] = [
+        "sortOption": request.sortOption.option,
+        "pageSize": "\(request.pageSize)"
+      ]
+
+      if let lastID = request.lastID {
+        params["lastId"] = "\(lastID)"
+      }
+
+      return params
+
+    case .likeVideoPost, .unlikeVideoPost:
       return [:]
 
     case .exclameVideoPost:

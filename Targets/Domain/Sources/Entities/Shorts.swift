@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Shorts {
+public struct Shorts: Decodable {
 
   // MARK: Properties
   let id: Int

@@ -82,6 +82,7 @@ let project: Project = .init(
       platform: .iOS,
       deploymentTarget: deploymentTarget,
       dependencies: [
+        .target(name: Module.domain.moduleName),
         .external(name: "RxCocoa"),
         .external(name: "RxSwift"),
         .external(name: "Lottie")

@@ -19,7 +19,7 @@ final class VideoPostCell: BaseCollectionViewCell {
   private let containerView: UIView = .init()
   private let nicknameLabel: UILabel = .init()
   private let exclameButton: UIButton = .init()
-  private let heartButton: UIButton = .init()
+  private let likeButton: UIButton = .init()
   private let videoPlayerView: VideoPlayerView = .init()
 
   private var videoPost: VideoPost?
@@ -36,8 +36,8 @@ final class VideoPostCell: BaseCollectionViewCell {
   override func prepareForReuse() {
     super.prepareForReuse()
 
-    videoPlayerView.player = nil
     nicknameLabel.text = nil
+    likeButton.imageView?.image = videoPost?.isLiked ?? false ? .createImage(.heartOn) : .createImage(.heartOff)
   }
 
   override func layoutSubviews() {
@@ -72,7 +72,7 @@ final class VideoPostCell: BaseCollectionViewCell {
       containerView.addSubview($0)
     }
 
-    heartButton.do {
+    likeButton.do {
       $0.setImage(.createImage(.heartOff), for: .normal)
       containerView.addSubview($0)
     }
@@ -94,14 +94,14 @@ final class VideoPostCell: BaseCollectionViewCell {
       $0.bottom.equalToSuperview().offset(-40)
     }
 
-    heartButton.snp.makeConstraints {
+    likeButton.snp.makeConstraints {
       $0.trailing.equalToSuperview().offset(-30)
       $0.bottom.equalToSuperview().offset(-40)
     }
 
     exclameButton.snp.makeConstraints {
-      $0.trailing.equalTo(heartButton.snp.leading).offset(-28)
-      $0.bottom.equalTo(heartButton)
+      $0.trailing.equalTo(likeButton.snp.leading).offset(-28)
+      $0.bottom.equalTo(likeButton)
     }
   }
 
@@ -109,18 +109,14 @@ final class VideoPostCell: BaseCollectionViewCell {
   func configure(_ videoPost: VideoPost) {
     self.videoPost = videoPost
     nicknameLabel.text = videoPost.user.nickname
-
-    // TODO: API 연동 이후 수정
-    let playerItem: AVPlayerItem = .init(url: videoPost.shorts.shortsURL)
-    playerItem.preferredForwardBufferDuration = 1.0
-    videoPlayerView.player = .init(playerItem: playerItem)
-    videoPlayerView.player?.isMuted = true
-    videoPlayerView.player?.play()
+    videoPlayerView.configure(videoPost: videoPost)
 
     containerView.setGradient(
       startColor: .createColor(.monoGray, .w950, alpha: 0),
       endColor: .createColor(.monoGray, .w950, alpha: 0.9)
     )
+
+    likeButton.setImage(videoPost.isLiked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
   }
 }
 
@@ -131,9 +127,18 @@ extension VideoPostCell {
       .map { [weak self] in self?.videoPost?.id ?? 0 }
   }
 
-  var heartButtonTapObservable: Observable<Int> {
-    heartButton.rx.tap
+  var likeButtonTapObservable: Observable<Int> {
+    likeButton.rx.tap
       .asObservable()
       .map { [weak self] in self?.videoPost?.id ?? 0 }
+      .do(onNext: { [weak self] _ in
+        self?.videoPost?.isLiked.toggle()
+
+        guard let liked = self?.videoPost?.isLiked else {
+          return
+        }
+
+        self?.likeButton.setImage(liked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
+      })
   }
 }

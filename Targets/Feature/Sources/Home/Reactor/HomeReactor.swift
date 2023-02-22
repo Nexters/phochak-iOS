@@ -14,7 +14,9 @@ final class HomeReactor: Reactor {
   
   // MARK: Properties
   private let depepdency: Dependency
-  var initialState: State = .init(videoPosts: [], isLoading: false, sortOption: .latest(lastPostID: nil))
+  var initialState: State = .init(videoPosts: [], isLoading: false)
+  private var isLastPage: Bool = false
+  private var existVideoPostRequest: FetchVideoPostRequest?
   
   struct Dependency {
     let coordinator: AppCoordinatorType
@@ -29,20 +31,22 @@ final class HomeReactor: Reactor {
   enum Action {
     case tapSearchButton
     case tapVideoCell(index: Int)
-    case fetchItems(size: Int)
+    case fetchItems(size: Int, currentIndex: Int)
     case exclameVideoPost(postID: Int)
     case likeVideoPost(postID: Int)
+    case updateDataSource(videoPosts: [VideoPost])
   }
   
   enum Mutation {
     case setLoading(Bool)
     case setVideoPosts([VideoPost])
+    case updateVideoPosts([VideoPost])
+    case updateVideoPostLikeStatus(index: Int, isLiked: Bool)
   }
   
   struct State {
     var videoPosts: [VideoPost]
     var isLoading: Bool
-    var sortOption: SortOption
   }
   
   // MARK: Methods
@@ -54,12 +58,24 @@ final class HomeReactor: Reactor {
     case .tapVideoCell(let index):
       return pushPostRollingScene(index: index)
       
-    case .fetchItems(let size):
-      return .concat([
-        .just(.setLoading(true)),
-        fetchVideoPosts(request: .init(sortOption: .latest(lastPostID: nil), pageSize: size))
-      ])
-      
+    case let .fetchItems(size, currentIndex):
+      if (currentIndex + 1 >= currentState.videoPosts.count - 3) {
+        return .concat([
+          .just(.setLoading(true)),
+          fetchVideoPosts(
+            request: .init(
+              sortOption: .latest,
+              lastID: currentState.videoPosts.last?.id ?? nil,
+              pageSize: size
+            )
+          )
+        ])
+      }
+      return .empty()
+
+    case .updateDataSource(let videoPosts):
+      return .just(.updateVideoPosts(videoPosts))
+
     case .exclameVideoPost(let postID):
       return depepdency.useCase.exclameVideoPost(postID: postID)
         .flatMap { _ -> Observable<Mutation> in
@@ -67,10 +83,7 @@ final class HomeReactor: Reactor {
         }
       
     case .likeVideoPost(let postID):
-      return depepdency.useCase.likeVideoPost(postID: postID)
-        .flatMap { _ -> Observable<Mutation> in
-          return .empty()
-        }
+      return updateVideoPostLikeStatus(postID: postID)
     }
   }
   
@@ -79,7 +92,17 @@ final class HomeReactor: Reactor {
     
     switch mutation {
     case .setVideoPosts(let videoPosts):
+      var updatedPosts = state.videoPosts
+      updatedPosts.append(contentsOf: videoPosts)
+      newState.videoPosts = updatedPosts
+
+    case .updateVideoPosts(let videoPosts):
       newState.videoPosts = videoPosts
+
+    case let .updateVideoPostLikeStatus(index, isLiked):
+      var updatedPosts = state.videoPosts
+      updatedPosts[index].isLiked = isLiked
+      newState.videoPosts = updatedPosts
       
     case .setLoading(let isLoading):
       newState.isLoading = isLoading
@@ -92,18 +115,19 @@ final class HomeReactor: Reactor {
 // MARK: Private
 private extension HomeReactor {
   func fetchVideoPosts(request: FetchVideoPostRequest) -> Observable<Mutation> {
-    return depepdency.useCase.fetchVideoPosts(
-      request: .init(
-        sortOption: currentState.sortOption,
-        pageSize: 6
-      )
-    )
-    .flatMap { videoPosts in
-      Observable<Mutation>.concat([
-        .just(.setVideoPosts(videoPosts)),
-        .just(.setLoading(false))
-      ])
+    if existVideoPostRequest == request && isLastPage {
+      return .just(.setLoading(false))
     }
+
+    return depepdency.useCase.fetchVideoPosts(request: request)
+      .flatMap { [weak self] (videoPosts, isLastPage) in
+        self?.isLastPage = isLastPage
+        self?.existVideoPostRequest = request
+        return Observable<Mutation>.concat([
+          .just(.setVideoPosts(videoPosts)),
+          .just(.setLoading(false))
+        ])
+      }
   }
   
   func pushSearchScene() -> Observable<Mutation> {
@@ -126,5 +150,23 @@ private extension HomeReactor {
     )
     
     return .empty()
+  }
+
+  func updateVideoPostLikeStatus(postID: Int) -> Observable<Mutation> {
+    guard let index = currentState.videoPosts.firstIndex(where: { $0.id == postID }) else {
+      return .empty()
+    }
+
+    if currentState.videoPosts[index].isLiked {
+      return depepdency.useCase.unLikeVideoPost(postID: postID)
+        .flatMap { _ -> Observable<Mutation> in
+          return .just(.updateVideoPostLikeStatus(index: index, isLiked: false))
+        }
+    } else {
+      return depepdency.useCase.likeVideoPost(postID: postID)
+        .flatMap { _ -> Observable<Mutation> in
+          return .just(.updateVideoPostLikeStatus(index: index, isLiked: true))
+        }
+    }
   }
 }

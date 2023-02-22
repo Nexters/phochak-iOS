@@ -8,14 +8,16 @@
 
 import Domain
 
-public struct VideoPostsResponse {
+public struct VideoPostsResponse: Decodable {
 
   // MARK: Properties
   let status: ResponseStatus
-  let posts: [VideoPost]
+  public let posts: [VideoPost]
+  public let isLastPage: Bool
 
   enum CodingKeys: String, CodingKey {
     case status
     case posts = "data"
+    case isLastPage
   }
 }

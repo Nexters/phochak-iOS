@@ -54,7 +54,7 @@ public final class AppCoordinator: AppCoordinatorType {
 
   // MARK: Initializer
   public init(dependency: Dependency) {
-    self.sceneFactory = .init(dependency: .init(injetor: dependency.injector))
+    self.sceneFactory = .init(dependency: .init(injector: dependency.injector))
   }
 
   public func start(from root: Scene) {

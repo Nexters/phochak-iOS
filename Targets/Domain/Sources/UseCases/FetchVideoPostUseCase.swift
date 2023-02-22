@@ -11,7 +11,7 @@ import RxSwift
 public protocol FetchVideoPostUseCaseType {
 
   // MARK: Methods
-  func fetchVideoPosts(request: FetchVideoPostRequest) -> Observable<[VideoPost]>
+  func fetchVideoPosts(request: FetchVideoPostRequest) -> Observable<(posts: [VideoPost], isLastPage: Bool)>
 }
 
 final class FetchVideoPostUseCase: FetchVideoPostUseCaseType {
@@ -25,9 +25,9 @@ final class FetchVideoPostUseCase: FetchVideoPostUseCaseType {
   }
 
   // MARK: Methods
-  func fetchVideoPosts(request: FetchVideoPostRequest) -> Observable<[VideoPost]> {
+  func fetchVideoPosts(request: FetchVideoPostRequest) -> Observable<(posts: [VideoPost], isLastPage: Bool)> {
     return service.fetchVideoPosts(request: request)
       .asObservable()
-      .catchAndReturn([])
+      .catchAndReturn(([], true))
   }
 }

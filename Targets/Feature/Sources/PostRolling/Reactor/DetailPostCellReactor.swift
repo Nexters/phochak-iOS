@@ -23,10 +23,12 @@ final class DetailPostCellReactor: Reactor {
 
   enum Action {
     case load(videoPost: VideoPost)
+    case likeVideoPost(isLiked: Bool)
   }
 
   enum Mutation {
     case setVideoPost(VideoPost)
+    case setVideoPostLikeStatus(isLiked: Bool)
   }
 
   struct State {
@@ -38,6 +40,9 @@ final class DetailPostCellReactor: Reactor {
     switch action {
     case .load(let videoPost):
       return .just(.setVideoPost(videoPost))
+
+    case .likeVideoPost(let isLiked):
+      return .just(.setVideoPostLikeStatus(isLiked: isLiked))
     }
   }
 
@@ -46,6 +51,11 @@ final class DetailPostCellReactor: Reactor {
 
     switch mutation {
     case .setVideoPost(let videoPost):
+      newState.videoPost = videoPost
+
+    case .setVideoPostLikeStatus(let isLiked):
+      var videoPost = state.videoPost
+      videoPost?.isLiked = isLiked
       newState.videoPost = videoPost
     }
 
