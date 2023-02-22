@@ -19,7 +19,10 @@ public struct ServiceAssembly: Assembly {
 
     container.register(SignInServiceType.self) { _ in return SignInService() }
 
-    container.register(UploadVideoPostServiceType.self) { _ in return UploadVideoPostService() }
+    container.register(UploadVideoPostServiceType.self) { resolver in
+      let fileManager = resolver.resolve(PhoChakFileManagerType.self)!
+      return UploadVideoPostService(fileManager: fileManager)
+    }
   }
 
   // MARK: Initializer

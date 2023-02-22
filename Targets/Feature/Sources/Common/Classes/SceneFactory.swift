@@ -52,13 +52,18 @@ final class SceneFactory: SceneFactoryType {
       return signInViewController
 
     case .uploadVideoPost:
+      let fileManager = injector.resolve(PhoChakFileManagerType.self)
       let useCase = injector.resolve(UploadVideoPostUseCaseType.self)
       let reactorDependency: UploadVideoPostReactor.Dependency = .init(
         coordinator: coordinator,
-        useCase: useCase
+        useCase: useCase,
+        fileManager: fileManager
       )
       let reactor: UploadVideoPostReactor = .init(dependency: reactorDependency)
-      let uploadVideoPostViewController: UploadVideoPostViewController = .init(reactor: reactor)
+      let uploadVideoPostViewController: UploadVideoPostViewController = .init(
+        reactor: reactor,
+        fileManager: fileManager
+      )
       return uploadVideoPostViewController
 
     case .search:

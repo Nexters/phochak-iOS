@@ -31,12 +31,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     window = .init(windowScene: windowScene)
     window?.makeKeyAndVisible()
 
-    injector.assemble([ServiceAssembly(), DomainAssembly()])
-
     setupAppearance()
 
+    fileManagerAssembly()
+    injector.assemble([ServiceAssembly(), DomainAssembly()])
     appCoordinator = AppCoordinator(dependency: .init(injector: injector))
-    coordinatorAssemby(coordinator: appCoordinator!)
+    coordinatorAssembly(coordinator: appCoordinator!)
 
     let firstScene: Scene = TokenManager.load(tokenType: .accessToken) == nil ? .signIn : .tab
     appCoordinator?.start(from: firstScene)
@@ -86,9 +86,12 @@ private extension SceneDelegate {
     UITabBar.appearance().tintColor = .white
   }
 
-  func coordinatorAssemby(coordinator: AppCoordinatorType) {
-    injector.register(
-      AppCoordinatorType.self,
-      coordinator)
+  func coordinatorAssembly(coordinator: AppCoordinatorType) {
+    injector.register(AppCoordinatorType.self, coordinator)
+  }
+
+  func fileManagerAssembly() {
+    let fileManager: PhoChakFileManager = .init()
+    injector.register(PhoChakFileManagerType.self, fileManager)
   }
 }

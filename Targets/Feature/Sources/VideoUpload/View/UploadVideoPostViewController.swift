@@ -36,10 +36,12 @@ final class UploadVideoPostViewController: BaseViewController<UploadVideoPostRea
   private let completionButton: CompletionButton = .init()
   private lazy var loadingAnimationView: PhoChakLoadingViewController = .init()
   private lazy var alertViewController: PhoChakAlertViewController = .init(alertType: .networkError)
+  private let fileManager: PhoChakFileManagerType
   private var videoFile: VideoFile?
 
   // MARK: Initializer
-  init(reactor: UploadVideoPostReactor) {
+  init(reactor: UploadVideoPostReactor, fileManager: PhoChakFileManagerType) {
+    self.fileManager = fileManager
     super.init()
 
     modalPresentationStyle = .fullScreen
@@ -368,10 +370,7 @@ extension UploadVideoPostViewController: UIImagePickerControllerDelegate, UINavi
       fileType: videoType
     )
 
-    PhoChakFileManager.saveVideo(
-      name: videoName,
-      data: videoData
-    )
+    fileManager.saveVideo(name: videoName,data: videoData)
   }
 
   public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {

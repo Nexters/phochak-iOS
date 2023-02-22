@@ -21,6 +21,7 @@ final class UploadVideoPostReactor: Reactor {
   struct Dependency {
     let coordinator: AppCoordinatorType
     let useCase: UploadVideoPostUseCaseType
+    let fileManager: PhoChakFileManagerType
   }
 
   enum Action {
@@ -94,7 +95,7 @@ final class UploadVideoPostReactor: Reactor {
 
     switch mutation {
     case .dismiss:
-      PhoChakFileManager.removeUploadedVideos()
+      depepdency.fileManager.removeUploadedVideos()
       depepdency.coordinator.close(style: .dismiss, animated: true, completion: nil)
 
     case .setCategory(let category):
