@@ -39,14 +39,15 @@ public final class UploadVideoPostService: UploadVideoPostServiceType {
     fetchPresignedURL(fileType: videoFile.fileType)
       .flatMap { [weak self] response -> Single<String> in
         guard let self = self,
-              let presignedURL: URL = .init(string: response.uploadData.uploadURL),
+              let uploadData = response.uploadData,
+              let presignedURL: URL = .init(string: uploadData.uploadURL),
               let videoFileURL: URL = .init(
                 string: self.fileManager.fetchVideoURLString(name: videoFile.fileName)
               )
         else { return .error(UploadVideoPostResult.error) }
 
         return self.uploadToS3(to: presignedURL, with: videoFileURL)
-          .map { _ in response.uploadData.uploadKey }
+          .map { _ in uploadData.uploadKey }
       }
       .flatMap { [weak self] uploadKey in
         self?.uploadPost(category: category, uploadKey: uploadKey, hashTags: hashTags) ?? .just(())
