@@ -120,6 +120,8 @@ public final class AppCoordinator: AppCoordinatorType {
           return $0 is PhoChakTabBarController
         case .signIn:
           return $0 is SignInViewController
+        case .splash:
+          return $0 is SplashViewController
         case .search:
           return true
         case .postRolling:

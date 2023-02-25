@@ -62,7 +62,7 @@ final class VideoPostCell: BaseCollectionViewCell {
     contentView.addSubview(containerView)
 
     nicknameLabel.do {
-      $0.font = .createFont(.HeadLine, .w700)
+      $0.font = .createFont(.HeadLine, .w800)
       $0.textColor = .createColor(.monoGray, .w200)
       containerView.addSubview($0)
     }

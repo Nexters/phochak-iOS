@@ -102,7 +102,7 @@ private extension HomeViewController {
       .asObservable()
       .startWith(())
       .withUnretained(self)
-      .map { owner, _ in HomeReactor.Action.fetchItems(size: 3, currentIndex: owner.currentIndex) }
+      .map { owner, _ in HomeReactor.Action.fetchItems(size: 6, currentIndex: owner.currentIndex) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
@@ -176,7 +176,8 @@ private extension HomeViewController {
 
     Observable.combineLatest(
       rx.viewWillAppear,
-      reactor.state.map { $0.videoPosts }.map { _ in }.debounce(.milliseconds(350), scheduler: MainScheduler.asyncInstance)) { _, _ in }
+      collectionView.rx.willDisplayCell.filter { $0.1.contains(where: { $0 == 0 }) }) { _, _ in }
+      .debounce(.milliseconds(50), scheduler: MainScheduler.instance)
       .take(1)
       .asSignal(onErrorSignalWith: .empty())
       .emit(with: self, onNext: { owner, _ in
