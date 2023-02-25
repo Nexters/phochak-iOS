@@ -12,6 +12,7 @@ import UIKit
 
 public enum Scene {
   case tab
+  case splash
   case signIn
   case search
   case postRolling(videoPosts: [VideoPost], currentIndex: Int)
@@ -52,6 +53,11 @@ final class SceneFactory: SceneFactoryType {
       let reactor: SignInReactor = .init(dependency: reactorDependency)
       let signInViewController: SignInViewController = .init(reactor: reactor)
       return signInViewController
+
+    case .splash:
+      let reactor: SplashReactor = .init(dependency: .init(coordinator: coordinator))
+      let viewController: SplashViewController = .init(reactor: reactor)
+      return viewController
 
     case .uploadVideoPost:
       let fileManager = injector.resolve(PhoChakFileManagerType.self)
