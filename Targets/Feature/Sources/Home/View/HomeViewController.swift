@@ -176,7 +176,8 @@ private extension HomeViewController {
 
     Observable.combineLatest(
       rx.viewWillAppear,
-      reactor.state.map { $0.videoPosts }.map { _ in }.debounce(.milliseconds(350), scheduler: MainScheduler.asyncInstance)) { _, _ in }
+      collectionView.rx.willDisplayCell.filter { $0.1.contains(where: { $0 == 0 }) }) { _, _ in }
+      .debounce(.milliseconds(50), scheduler: MainScheduler.instance)
       .take(1)
       .asSignal(onErrorSignalWith: .empty())
       .emit(with: self, onNext: { owner, _ in
