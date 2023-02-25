@@ -12,4 +12,6 @@ public protocol SignInServiceType {
 
   // MARK: Methods
   func tryKakaoSignIn() -> Observable<UserToken>
+  func tryAppleSignIn(token: String) -> Observable<UserToken>
 }
+

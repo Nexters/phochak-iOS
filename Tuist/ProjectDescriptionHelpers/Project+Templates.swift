@@ -167,6 +167,7 @@ extension Project {
       infoPlist: .extendingDefault(with: infoPlist),
       sources: ["Targets/PhoChak/Sources/**"],
       resources: ["Targets/PhoChak/Resources/**"],
+      entitlements: "./Phochak.entitlements",
       dependencies: dependencies,
       settings: .settings(base: .init()
         .automaticCodeSigning(devTeam: "857J3M5L6B")
