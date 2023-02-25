@@ -102,7 +102,7 @@ private extension HomeViewController {
       .asObservable()
       .startWith(())
       .withUnretained(self)
-      .map { owner, _ in HomeReactor.Action.fetchItems(size: 3, currentIndex: owner.currentIndex) }
+      .map { owner, _ in HomeReactor.Action.fetchItems(size: 6, currentIndex: owner.currentIndex) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
