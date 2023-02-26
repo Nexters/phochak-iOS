@@ -75,8 +75,10 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
     super.viewWillDisappear(animated)
 
     NotificationCenter.default.post(name: .muteAllPlayers, object: nibName)
+    if tabBarController?.selectedIndex == 0 {
+      delegate?.scrollToItem(with: reactor?.currentState.videoPosts ?? [], index: reactor?.currentIndex ?? 0)
+    }
 
-    delegate?.scrollToItem(with: reactor?.currentState.videoPosts ?? [], index: reactor?.currentIndex ?? 0)
     navigationController?.interactivePopGestureRecognizer?.isEnabled = true
   }
 
