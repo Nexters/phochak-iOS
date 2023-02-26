@@ -12,6 +12,7 @@ public extension UIImage {
 
   // MARK: Properties
   enum ImageLiteral: String {
+    case logo = "logo"
     case back = "back"
     case dots = "dots"
     case exclame = "exclame"
