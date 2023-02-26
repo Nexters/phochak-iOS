@@ -17,14 +17,11 @@ final class MyPageReactor: Reactor {
     case posts
   }
 
-  enum PostsFilter {
-    case uploaded
-    case liked
-  }
-
   // MARK: Properties
   var initialState: State = .init(likedPosts: [], uploadedPosts: [])
   private let dependency: Dependency
+  private var isLastPage: Bool = false
+  private var existVideoPostRequest: FetchVideoPostRequest?
 
   // MARK: Initializer
   init(dependency: Dependency) {
@@ -40,20 +37,24 @@ final class MyPageReactor: Reactor {
 
   enum Action {
     case viewWillAppear
-    case filterButtonTap(postFilter: PostsFilter)
+    case fetchItems(size: Int)
+    case updatePostsListFilter(postFilter: PostsFilterOption)
+    case editProfileButtonTap
+    case videoPostCellTap(videoPost: VideoPost)
   }
 
   enum Mutation {
     case setUser(user: User)
     case setLikedPosts(videoPosts: [VideoPost])
     case setUploadedPosts(videoPosts: [VideoPost])
+    case setPostFilter(postFilter: PostsFilterOption)
   }
 
   struct State {
     var user: User?
     var likedPosts: [VideoPost]
     var uploadedPosts: [VideoPost]
-    var postFilter: PostsFilter = .uploaded
+    var postFilter: PostsFilterOption = .uploaded
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
@@ -61,36 +62,99 @@ final class MyPageReactor: Reactor {
       .asObservable()
       .map { Mutation.setUser(user: $0) }
 
-    let fetchUploadedPosts = dependency.useCase.fetchVideoPosts(request: .init(sortOption: .latest, filterOption: .uploaded))
-      .asObservable()
-      .map { Mutation.setUploadedPosts(videoPosts: $0.posts) }
-
-    let fetchLikedPosts = dependency.useCase.fetchVideoPosts(request: .init(sortOption: .latest, filterOption: .liked))
-      .asObservable()
-      .map { Mutation.setLikedPosts(videoPosts: $0.posts) }
+    let fetchUploadedPosts = fetchVideoPosts(request: .init(sortOption: .latest, pageSize: 12, filterOption: .uploaded))
+    let fetchLikedPosts = fetchVideoPosts(request: .init(sortOption: .latest, pageSize: 12, filterOption: .liked))
 
     switch action {
     case .viewWillAppear:
       return Observable.merge(fetchUserProfile, fetchUploadedPosts, fetchLikedPosts)
 
-    case .filterButtonTap(let postFilter):
+    case let .fetchItems(size):
+      let postFilter = currentState.postFilter
+      let lastPostID: Int
+      if postFilter == .liked {
+        lastPostID = currentState.likedPosts.last?.id ?? 0
+      } else {
+        lastPostID = currentState.uploadedPosts.last?.id ?? 0
+      }
+      return fetchVideoPosts(
+        request: .init(
+          sortOption: .latest, lastID: lastPostID, pageSize: size, filterOption: postFilter
+        )
+      )
+
+    case .updatePostsListFilter(let postFilter):
+      return .just(.setPostFilter(postFilter: postFilter))
+
+    case .editProfileButtonTap:
+      // TODO: 프로필 편집화면 구현 이후 해당 화면으로 이동
+      return .empty()
+
+    case .videoPostCellTap(let videoPost):
+      var videoPosts: [VideoPost] = currentState.uploadedPosts
+      if currentState.postFilter == .liked {
+        videoPosts = currentState.likedPosts
+      }
+      guard let currentIndex = videoPosts.firstIndex(of: videoPost) else {
+        return .empty()
+      }
+
+      dependency.coordinator.transition(
+        to: .postRolling(videoPosts: videoPosts, currentIndex: currentIndex),
+        style: .push,
+        animated: true,
+        completion: nil
+      )
       return .empty()
     }
   }
 
   func reduce(state: State, mutation: Mutation) -> State {
     var newState = state
+
     switch mutation {
     case .setUser(let user):
       newState.user = user
 
-    case .setUploadedPosts(let uploadedPosts):
-      newState.uploadedPosts = uploadedPosts
+    case .setUploadedPosts(let videoPosts):
+      if state.uploadedPosts.first?.id != videoPosts.first?.id {
+        var uploadedPosts = state.uploadedPosts
+        uploadedPosts.append(contentsOf: videoPosts)
+        newState.uploadedPosts = uploadedPosts
+      }
 
-    case .setLikedPosts(let likedPosts):
-      newState.likedPosts = likedPosts
+    case .setLikedPosts(let videoPosts):
+      if state.likedPosts.first?.id != videoPosts.first?.id {
+        var likedPosts = state.likedPosts
+        likedPosts.append(contentsOf: videoPosts)
+        newState.likedPosts = likedPosts
+      }
+
+    case .setPostFilter(let postFilter):
+      newState.postFilter = postFilter
     }
 
     return newState
+  }
+}
+
+// MARK: - Private
+private extension MyPageReactor {
+  func fetchVideoPosts(request: FetchVideoPostRequest) -> Observable<Mutation> {
+    if existVideoPostRequest == request && isLastPage {
+      return .empty()
+    }
+
+    return dependency.useCase.fetchVideoPosts(request: request)
+      .flatMap { [weak self] (videoPosts, isLastPage) in
+        self?.isLastPage = isLastPage
+        self?.existVideoPostRequest = request
+
+        if request.filterOption == .uploaded {
+          return Observable<Mutation>.just(.setUploadedPosts(videoPosts: videoPosts))
+        }
+
+        return Observable<Mutation>.just(.setLikedPosts(videoPosts: videoPosts))
+      }
   }
 }

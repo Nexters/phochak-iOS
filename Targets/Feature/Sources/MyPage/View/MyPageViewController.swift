@@ -14,7 +14,6 @@ import Moya
 import RxCocoa
 import RxSwift
 
-// TODO: Conform BaseViewController
 final class MyPageViewController: BaseViewController<MyPageReactor> {
 
   // MARK: Properties
@@ -48,6 +47,7 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
       $0.sectionInset = .init(top: 0, left: 20, bottom: 0, right: 20)
       $0.minimumInteritemSpacing = 7
       $0.minimumLineSpacing = 7
+      $0.sectionHeadersPinToVisibleBounds = true
     }
 
     collectionView.do {
@@ -123,9 +123,13 @@ extension MyPageViewController: UICollectionViewDelegateFlowLayout {
     case .posts:
       return CGSize(
         width: collectionView.frame.width - 40,
-        height: view.frame.height * 0.12
+        height: view.frame.height * 0.08
       )
     }
+  }
+
+  func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    reactor?.action.onNext(.fetchItems(size: 3))
   }
 }
 
@@ -174,6 +178,7 @@ extension MyPageViewController: UICollectionViewDataSource {
       }
 
       let profileCell = collectionView.dequeue(cellType: MyPageProfileCell.self, indexPath: indexPath)
+      profileCell.delegate = self
       profileCell.configure(nickname: user.nickname)
       cell = profileCell
 
@@ -183,6 +188,7 @@ extension MyPageViewController: UICollectionViewDataSource {
       }
 
       let postCell = collectionView.dequeue(cellType: MyPagePostCell.self, indexPath: indexPath)
+      postCell.delegate = self
 
       if postFilter == .uploaded {
         guard let post = reactor?.currentState.uploadedPosts[safe: indexPath.item] else {
@@ -214,10 +220,32 @@ extension MyPageViewController: UICollectionViewDataSource {
 
     if indexPath.section == MyPageReactor.Section.posts.rawValue {
       let headerView = collectionView.dequeueHeader(viewType: PostsSectionHeaderView.self, indexPath: indexPath)
+      headerView.delegate = self
       return headerView
     } else {
       return collectionView.dequeueHeader(viewType: DefaultHeaderView.self, indexPath: indexPath)
     }
+  }
+}
+
+// MARK: - MyPagePostCellDelegate
+extension MyPageViewController: MyPagePostCellDelegate {
+  func tapPost(videoPost: VideoPost) {
+    reactor?.action.onNext(.videoPostCellTap(videoPost: videoPost))
+  }
+}
+
+// MARK: - MyPageProfileCellDelegate
+extension MyPageViewController: MyPageProfileCellDelegate {
+  func tapEditProfileButton() {
+    reactor?.action.onNext(.editProfileButtonTap)
+  }
+}
+
+// MARK: - PostsSectionHeaderDelegate
+extension MyPageViewController: PostsSectionHeaderDelegate {
+  func updateFilter(postFilter: PostsFilterOption) {
+    reactor?.action.onNext(.updatePostsListFilter(postFilter: postFilter))
   }
 }
 
@@ -240,6 +268,16 @@ private extension MyPageViewController {
           owner.collectionView.reloadData()
         }
       })
+      .disposed(by: disposeBag)
+
+    reactor.state
+      .map { $0.postFilter }
+      .subscribe()
+      .disposed(by: disposeBag)
+
+    reactor.state
+      .map { $0.likedPosts }
+      .subscribe()
       .disposed(by: disposeBag)
   }
 }
