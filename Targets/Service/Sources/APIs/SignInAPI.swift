@@ -14,6 +14,7 @@ import Moya
 
 enum SignInAPI {
   case tryKakaoSignIn(accessToken: String)
+  case tryAppleSignIn(token: String)
 }
 
 // MARK: - TargetType
@@ -28,6 +29,8 @@ extension SignInAPI: TargetType {
     switch self {
     case .tryKakaoSignIn:
       return basePath + "/kakao"
+    case .tryAppleSignIn:
+      return basePath + "/apple"
     }
   }
 
@@ -62,6 +65,8 @@ extension SignInAPI: TargetType {
     switch self {
     case .tryKakaoSignIn(let accessToken):
       return ["token": accessToken]
+    case .tryAppleSignIn(let token):
+      return ["token": token]
     }
   }
 }

@@ -6,6 +6,7 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import AuthenticationServices
 import DesignKit
 import UIKit
 
@@ -14,7 +15,6 @@ import RxCocoa
 import SnapKit
 import Then
 
-//TODO: appleLoginButton 관련 코드들은 추후 모두 수정 예정
 final class SignInViewController: BaseViewController<SignInReactor> {
 
   // MARK: Properties
@@ -35,16 +35,27 @@ final class SignInViewController: BaseViewController<SignInReactor> {
   // MARK: Methods
   override func bind(reactor: SignInReactor) {
     bindAction(reactor: reactor)
+
+    appleLoginButton.rx.tap
+      .asSignal()
+      .emit(with: self, onNext: { owner, _ in
+        owner.signinWithApple()
+      })
+      .disposed(by: disposeBag)
   }
 
   override func setupViews() {
     super.setupViews()
-    view.addSubview(kakaoLoginButton)
-    view.addSubview(appleLoginButton)
 
     appleLoginButton.do {
-      $0.backgroundColor = .white
+      $0.backgroundColor = .createColor(.monoGray, .w50)
+      $0.setImage(.createImage(.apple), for: .normal)
+      $0.setTitle("애플로 로그인", for: .normal)
+      $0.titleLabel?.font = .createFont(.CallOut, .w800)
+      $0.setTitleColor(.createColor(.monoGray, .w900), for: .normal)
       $0.cornerRadius(radius: 10)
+      $0.titleEdgeInsets = .init(top: 0, left: 12, bottom: 0, right: 0)
+      view.addSubview($0)
     }
 
     kakaoLoginButton.do {
@@ -55,6 +66,7 @@ final class SignInViewController: BaseViewController<SignInReactor> {
       $0.setTitleColor(.createColor(.monoGray, .w900), for: .normal)
       $0.cornerRadius(radius: 10)
       $0.titleEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
+      view.addSubview($0)
     }
   }
 
@@ -72,7 +84,32 @@ final class SignInViewController: BaseViewController<SignInReactor> {
   }
 }
 
-// MARK: - Extension
+// MARK: - Apple Authentication Services Extension
+extension SignInViewController: ASAuthorizationControllerPresentationContextProviding, ASAuthorizationControllerDelegate {
+  func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+    view.window!
+  }
+
+  func authorizationController(
+    controller: ASAuthorizationController,
+    didCompleteWithAuthorization authorization: ASAuthorization
+  ) {
+    switch authorization.credential {
+    case let appleIDCredential as ASAuthorizationAppleIDCredential:
+
+      guard let identityToken = appleIDCredential.identityToken,
+            let stringToken = String(data: identityToken, encoding: .utf8)
+      else { return }
+
+      reactor?.action.onNext(.receiveAppleSigninAuthCode(token: stringToken))
+
+    default:
+      break
+    }
+  }
+}
+
+// MARK: - Private Extenion
 private extension SignInViewController {
   func bindAction(reactor: SignInReactor) {
     typealias Action = SignInReactor.Action
@@ -82,5 +119,16 @@ private extension SignInViewController {
       .map { Action.tapKakaoSignInButton }
       .emit(to: reactor.action)
       .disposed(by: disposeBag)
+  }
+
+  func signinWithApple() {
+    let appleIDProvider: ASAuthorizationAppleIDProvider = .init()
+    let request = appleIDProvider.createRequest()
+    request.requestedScopes = [.fullName, .email]
+
+    let authController = ASAuthorizationController(authorizationRequests: [request])
+    authController.delegate = self
+    authController.presentationContextProvider = self
+    authController.performRequests()
   }
 }

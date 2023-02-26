@@ -21,6 +21,7 @@ public extension UIImage {
     case heartOn = "heart_on"
     case iconX = "iconX"
     case kakao = "kakao"
+    case apple = "apple"
     case search = "search"
     case setting = "setting"
     case tab_home = "tab_home"
