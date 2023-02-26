@@ -37,9 +37,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     injector.assemble([ServiceAssembly(), DomainAssembly()])
     appCoordinator = AppCoordinator(dependency: .init(injector: injector))
     coordinatorAssembly(coordinator: appCoordinator!)
-
-    let firstScene: Scene = TokenManager.load(tokenType: .accessToken) == nil ? .signIn : .tab
-    appCoordinator?.start(from: .signIn)
+    appCoordinator?.start(from: .splash)
   }
 
   func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
