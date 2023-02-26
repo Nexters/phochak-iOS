@@ -29,6 +29,7 @@ public extension UIImage {
     case tab_profile = "tab_profile"
     case tab_profile_selected = "tab_profile_selected"
     case close = "close"
+    case option = "option"
   }
 
   // MARK: Methods
