@@ -10,6 +10,8 @@ import Core
 import DesignKit
 import UIKit
 
+import RxSwift
+
 public enum TransitionStyle {
   case push
   case modal
@@ -43,6 +45,7 @@ public final class AppCoordinator: AppCoordinatorType {
   // MARK: Properties
   private var currentNavController: UINavigationController?
   private let sceneFactory: SceneFactory
+  private lazy var disposeBag: DisposeBag = .init()
 
   public struct Dependency {
     let injector: DependencyResolvable
@@ -55,6 +58,7 @@ public final class AppCoordinator: AppCoordinatorType {
   // MARK: Initializer
   public init(dependency: Dependency) {
     self.sceneFactory = .init(dependency: .init(injector: dependency.injector))
+    addTokenObserver()
   }
 
   public func start(from root: Scene) {
@@ -131,5 +135,31 @@ public final class AppCoordinator: AppCoordinatorType {
 
       currentNavController?.popToViewController(target, animated: animated)
     }
+  }
+}
+
+// MARK: - Private
+private extension AppCoordinator {
+
+  // MARK: Methods
+  func addTokenObserver() {
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(exitToSignIn),
+      name: NSNotification.Name("reSignIn"),
+      object: nil
+    )
+  }
+
+  @objc func exitToSignIn() {
+    let alertViewController: PhoChakAlertViewController = .init(alertType: .tokenExpired)
+
+    alertViewController.acceptButtonAction
+      .emit(with: self, onNext: { owner, _ in
+        owner.start(from: .signIn)
+      })
+      .disposed(by: disposeBag)
+
+    UIApplication.keyWindow?.rootViewController?.present(alertViewController, animated: true)
   }
 }
