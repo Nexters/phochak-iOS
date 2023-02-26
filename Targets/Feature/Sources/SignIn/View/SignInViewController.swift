@@ -19,7 +19,7 @@ final class SignInViewController: BaseViewController<SignInReactor> {
 
   // MARK: Properties
   private let kakaoLoginButton: UIButton = .init()
-  private let appleLoginButton: ASAuthorizationAppleIDButton = .init(authorizationButtonType: .signIn, authorizationButtonStyle: .whiteOutline)
+  private let appleLoginButton: UIButton = .init()
 
   // MARK: Initializer
   init(reactor: SignInReactor) {
@@ -35,14 +35,26 @@ final class SignInViewController: BaseViewController<SignInReactor> {
   // MARK: Methods
   override func bind(reactor: SignInReactor) {
     bindAction(reactor: reactor)
+
+    appleLoginButton.rx.tap
+      .asSignal()
+      .emit(with: self, onNext: { owner, _ in
+        owner.signinWithApple()
+      })
+      .disposed(by: disposeBag)
   }
 
   override func setupViews() {
     super.setupViews()
 
     appleLoginButton.do {
-      $0.addTarget(self, action: #selector(signinWithApple), for: .touchUpInside)
+      $0.backgroundColor = .createColor(.monoGray, .w50)
+      $0.setImage(.createImage(.apple), for: .normal)
+      $0.setTitle("애플로 로그인", for: .normal)
+      $0.titleLabel?.font = .createFont(.CallOut, .w800)
+      $0.setTitleColor(.createColor(.monoGray, .w900), for: .normal)
       $0.cornerRadius(radius: 10)
+      $0.titleEdgeInsets = .init(top: 0, left: 12, bottom: 0, right: 0)
       view.addSubview($0)
     }
 
@@ -86,9 +98,8 @@ extension SignInViewController: ASAuthorizationControllerPresentationContextProv
     case let appleIDCredential as ASAuthorizationAppleIDCredential:
 
       guard let identityToken = appleIDCredential.identityToken,
-            let stringToken = String(data: identityToken, encoding: .utf8) else {
-        return
-      }
+            let stringToken = String(data: identityToken, encoding: .utf8)
+      else { return }
 
       reactor?.action.onNext(.receiveAppleSigninAuthCode(token: stringToken))
 
@@ -110,7 +121,7 @@ private extension SignInViewController {
       .disposed(by: disposeBag)
   }
 
-  @objc func signinWithApple() {
+  func signinWithApple() {
     let appleIDProvider: ASAuthorizationAppleIDProvider = .init()
     let request = appleIDProvider.createRequest()
     request.requestedScopes = [.fullName, .email]
