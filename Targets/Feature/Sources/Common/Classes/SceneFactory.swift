@@ -115,7 +115,11 @@ final class SceneFactory: SceneFactoryType {
         selectedImage: .createImage(.tab_videoUpload)
       )
 
-      let myPageViewController: MyPageViewController = .init(nibName: nil, bundle: nil)
+      let reactorDependency: MyPageReactor.Dependency = .init(
+        coordinator: coordinator,
+        useCase: injector.resolve(MyPageUseCaseType.self)
+      )
+      let myPageViewController: MyPageViewController = .init(reactor: .init(dependency: reactorDependency))
       myPageViewController.tabBarItem = .init(
         title: nil,
         image: .createImage(.tab_profile),
