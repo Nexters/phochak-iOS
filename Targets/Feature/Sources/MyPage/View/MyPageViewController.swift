@@ -47,7 +47,6 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
       $0.sectionInset = .init(top: 0, left: 20, bottom: 0, right: 20)
       $0.minimumInteritemSpacing = 7
       $0.minimumLineSpacing = 7
-      $0.sectionHeadersPinToVisibleBounds = true
     }
 
     collectionView.do {
