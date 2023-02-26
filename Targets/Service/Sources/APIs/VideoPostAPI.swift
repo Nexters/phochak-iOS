@@ -87,6 +87,10 @@ extension VideoPostAPI: TargetType {
         params["lastId"] = "\(lastID)"
       }
 
+      if let filterOption = request.filterOption {
+        params["filter"] = "\(filterOption.option)"
+      }
+
       return params
 
     case .likeVideoPost, .unlikeVideoPost:
