@@ -14,11 +14,16 @@ import RxSwift
 import SnapKit
 import Then
 
+protocol MyPageProfileCellDelegate: AnyObject {
+  func tapEditProfileButton()
+}
+
 final class MyPageProfileCell: BaseCollectionViewCell {
 
   // MARK: Properties
   private let nicknameLabel: UILabel = .init()
   private let editProfileButton: UIButton = .init()
+  weak var delegate: MyPageProfileCellDelegate?
 
   override init(frame: CGRect) {
     super.init(frame: frame)
@@ -60,12 +65,11 @@ final class MyPageProfileCell: BaseCollectionViewCell {
   // MARK: Methods
   func configure(nickname: String) {
     self.nicknameLabel.text = nickname
-  }
-}
 
-extension MyPageProfileCell {
-  var editProfileButtonTap: Observable<Void> {
-    return editProfileButton.rx.tap
-      .asObservable()
+    editProfileButton.rx.tap
+      .subscribe(with: self, onNext: { owner, _ in
+        owner.delegate?.tapEditProfileButton()
+      })
+      .disposed(by: disposeBag)
   }
 }

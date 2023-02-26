@@ -9,6 +9,10 @@
 import Domain
 import UIKit
 
+protocol MyPagePostCellDelegate: AnyObject {
+  func tapPost(videoPost: VideoPost)
+}
+
 final class MyPagePostCell: BaseCollectionViewCell {
 
   // MARK: Properties
@@ -16,6 +20,7 @@ final class MyPagePostCell: BaseCollectionViewCell {
   private let likeImageView: UIImageView = .init()
   private let likeCountLabel: UILabel = .init()
   private let optionButton: UIButton = .init()
+  weak var delegate: MyPagePostCellDelegate?
 
   override init(frame: CGRect) {
     super.init(frame: frame)
@@ -30,6 +35,7 @@ final class MyPagePostCell: BaseCollectionViewCell {
     super.prepareForReuse()
 
     thumbnailImageView.image = nil
+    likeCountLabel.text = nil
   }
 
   override func setupViews() {
@@ -70,7 +76,7 @@ final class MyPagePostCell: BaseCollectionViewCell {
 
     likeCountLabel.snp.makeConstraints {
       $0.leading.equalTo(likeImageView.snp.trailing).offset(7)
-      $0.bottom.equalTo(likeImageView)
+      $0.centerY.equalTo(likeImageView)
       $0.trailing.lessThanOrEqualToSuperview()
     }
 
@@ -85,5 +91,12 @@ final class MyPagePostCell: BaseCollectionViewCell {
   func configure(videoPost: VideoPost) {
     thumbnailImageView.kf.setImage(with: videoPost.shorts.thumbnailURL)
     likeCountLabel.text = "\(videoPost.likeCount)"
+
+    contentView.addTapGesture().rx.event
+      .filter { $0.state == .recognized }
+      .subscribe(with: self, onNext: { owner, _ in
+        owner.delegate?.tapPost(videoPost: videoPost)
+      })
+      .disposed(by: disposeBag)
   }
 }
