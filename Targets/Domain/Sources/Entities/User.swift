@@ -13,11 +13,14 @@ public struct User: Decodable {
   // MARK: Properties
   public let id: Int
   public let nickname: String
-  private let profileImageURLString: String
+  private let profileImageURLString: String?
   private let isMe: Bool?
 
-  public var profileImageURL: URL {
-    .init(string: profileImageURLString)!
+  public var profileImageURL: URL? {
+    if let profileImageURLString = profileImageURLString {
+      return .init(string: profileImageURLString)
+    }
+    return nil
   }
 
   private enum CodingKeys: String, CodingKey {
