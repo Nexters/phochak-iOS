@@ -12,7 +12,7 @@ public struct FetchPresignedURLResponse: Decodable {
 
   // MARK: Properties
   let status: ResponseStatus
-  let uploadData: UploadData
+  let uploadData: UploadData?
 
   enum CodingKeys: String, CodingKey {
     case status

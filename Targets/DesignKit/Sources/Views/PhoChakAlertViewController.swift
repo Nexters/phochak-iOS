@@ -33,6 +33,7 @@ public final class PhoChakAlertViewController: UIViewController {
     case .signOut: return "로그아웃"
     case .cacheDeletion: return "캐시삭제"
     case .networkError: return "네트워크 불안정"
+    case .tokenExpired: return "세션이 만료되었습니다"
     }
   }
 
@@ -43,6 +44,7 @@ public final class PhoChakAlertViewController: UIViewController {
     case .signOut: return "소셜계정을 다시 연결하면 정보가 복구됩니다"
     case .cacheDeletion: return "영상 캐시 데이터를 삭제합니다"
     case .networkError: return "인터넷 연결을 확인해주세요"
+    case .tokenExpired: return "다시 로그인 후 시도해 주세요"
     }
   }
 
@@ -56,6 +58,7 @@ public final class PhoChakAlertViewController: UIViewController {
     case signOut
     case cacheDeletion
     case networkError
+    case tokenExpired
   }
 
   // MARK: Initializer
@@ -154,7 +157,7 @@ private extension PhoChakAlertViewController {
 
   func setupButtons() {
     switch alertType {
-    case .networkError:
+    case .networkError, .tokenExpired:
       acceptButton.snp.makeConstraints {
         $0.leading.trailing.bottom.equalToSuperview()
         $0.height.equalTo(view.frame.height * 0.066)

@@ -1,5 +1,5 @@
 //
-//  PhoChakNetworkError.swift
+//  PhoChakNetworkResult.swift
 //  Service
 //
 //  Created by 한상진 on 2023/02/10.
@@ -8,23 +8,23 @@
 
 import Foundation
 
-public enum PhoChakNetworkError: Error {
-  case P000
-  case P100
-  case P200
-  case P201
-  case P202
-  case P203
-  case P204
-  case P205
-  case P300
-  case P400
-  case P410
-  case P411
-  case P412
-  case P413
-  case P414
-  case P450
+public enum PhoChakNetworkResult: String, Error {
+  case P000 = "P000"
+  case P100 = "P100"
+  case P200 = "P200"
+  case P201 = "P201"
+  case P202 = "P202"
+  case P203 = "P203"
+  case P204 = "P204"
+  case P205 = "P205"
+  case P300 = "P300"
+  case P400 = "P400"
+  case P410 = "P410"
+  case P411 = "P411"
+  case P412 = "P412"
+  case P413 = "P413"
+  case P414 = "P414"
+  case P450 = "P450"
 
   public var description: String {
     switch self {
