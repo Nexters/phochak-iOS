@@ -43,6 +43,17 @@ public struct DomainAssembly: Assembly {
       let service = resolver.resolve(UploadVideoPostServiceType.self)!
       return UploadVideoPostUseCase(service: service)
     }
+
+    container.register(FetchProfileUseCaseType.self) { resolver in
+      let service = resolver.resolve(ProfileServiceType.self)!
+      return FetchProfileUseCase(service: service)
+    }
+
+    container.register(MyPageUseCaseType.self) { resolver in
+      let postsService = resolver.resolve(VideoPostServiceType.self)!
+      let profileService = resolver.resolve(ProfileServiceType.self)!
+      return MyPageUseCase(postsService: postsService, profileService: profileService)
+    }
   }
 
   // MARK: Initializer

@@ -13,22 +13,28 @@ public struct User: Decodable {
   // MARK: Properties
   public let id: Int
   public let nickname: String
-  private let profileImageURLString: String
+  private let profileImageURLString: String?
+  private let isMe: Bool?
 
-  public var profileImageURL: URL {
-    .init(string: profileImageURLString)!
+  public var profileImageURL: URL? {
+    if let profileImageURLString = profileImageURLString {
+      return .init(string: profileImageURLString)
+    }
+    return nil
   }
 
   private enum CodingKeys: String, CodingKey {
     case id
     case nickname
     case profileImageURLString = "profileImgUrl"
+    case isMe = "isMyPage"
   }
 
   // MARK: Initializer
-  public init(id: Int, nickname: String, profileImageURLString: String) {
+  public init(id: Int, nickname: String, profileImageURLString: String, isMe: Bool) {
     self.id = id
     self.nickname = nickname
     self.profileImageURLString = profileImageURLString
+    self.isMe = isMe
   }
 }

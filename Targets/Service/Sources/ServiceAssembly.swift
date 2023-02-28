@@ -23,6 +23,8 @@ public struct ServiceAssembly: Assembly {
       let fileManager = resolver.resolve(PhoChakFileManagerType.self)!
       return UploadVideoPostService(fileManager: fileManager)
     }
+
+    container.register(ProfileServiceType.self) { _ in return ProfileService() }
   }
 
   // MARK: Initializer

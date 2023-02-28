@@ -18,8 +18,7 @@ import Then
 final class HomeViewController: BaseViewController<HomeReactor> {
 
   // MARK: Properties
-  private let titleLabel: UILabel = .init()
-  private let searchBarButton: UIBarButtonItem = .init()
+  private let titleImageView: UIImageView = .init()
   private let flowLayout: UICollectionViewFlowLayout = .init()
   private lazy var collectionView: UICollectionView = .init(
     frame: .zero,
@@ -51,16 +50,9 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   override func setupViews() {
     super.setupViews()
 
-    titleLabel.do {
-      $0.textColor = .white
-      $0.font = .systemFont(ofSize: 32, weight: .bold)
-      $0.text = "Phochak"
+    titleImageView.do {
+      $0.image = .createImage(.logo)
       navigationItem.leftBarButtonItem = .init(customView: $0)
-    }
-
-    searchBarButton.do {
-      $0.image = .createImage(.search)
-      navigationItem.rightBarButtonItem = $0
     }
 
     flowLayout.do {
@@ -108,11 +100,6 @@ private extension HomeViewController {
 
     collectionView.rx.itemSelected
       .map { HomeReactor.Action.tapVideoCell(index: $0.item) }
-      .bind(to: reactor.action)
-      .disposed(by: disposeBag)
-
-    searchBarButton.rx.tap
-      .map { HomeReactor.Action.tapSearchButton }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
