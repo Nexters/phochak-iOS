@@ -88,9 +88,10 @@ final class MyPagePostCell: BaseCollectionViewCell {
   }
 
   // MARK: Methods
-  func configure(videoPost: VideoPost) {
+  func configure(videoPost: VideoPost, hideOption: Bool = false) {
     thumbnailImageView.kf.setImage(with: videoPost.shorts.thumbnailURL)
     likeCountLabel.text = "\(videoPost.likeCount)"
+    optionButton.isHidden = hideOption
 
     contentView.addTapGesture().rx.event
       .filter { $0.state == .recognized }

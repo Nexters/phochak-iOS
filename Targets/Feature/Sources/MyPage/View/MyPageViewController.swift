@@ -200,7 +200,7 @@ extension MyPageViewController: UICollectionViewDataSource {
           return collectionView.dequeue(cellType: DefaultCell.self, indexPath: indexPath)
         }
 
-        postCell.configure(videoPost: post)
+        postCell.configure(videoPost: post, hideOption: true)
       }
       cell = postCell
     }
