@@ -206,7 +206,7 @@ private extension ProfileSettingViewController {
     }
 
     if text.count > 10 {
-      subTitleLabel.text = "10자 이하의 다른 닉네임을 입력해주세요"
+      subTitleLabel.text = "10자를 넘길 수 없어요"
       subTitleLabel.textColor = .createColor(.red, .w400)
       return String(text.dropLast())
     }
