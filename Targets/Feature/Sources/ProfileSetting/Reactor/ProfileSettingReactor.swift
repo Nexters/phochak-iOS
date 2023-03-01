@@ -14,29 +14,58 @@ import ReactorKit
 final class ProfileSettingReactor: Reactor {
 
   // MARK: - Properties
-  var initialState: State = .init(isEnableComplete: false)
+  var initialState: State = .init(isEnableComplete: false, isError: false)
+  let isDuplicatedSubject: PublishSubject<Bool> = .init()
+  private let depepdency: Dependency
+
+  struct Dependency {
+    let coordinator: AppCoordinatorType
+    let useCase: ProfileSettingUseCaseType
+  }
 
   // MARK: - Initializer
-  init() {
-
+  init(dependency: Dependency) {
+    self.depepdency = dependency
   }
 
   enum Action {
+    case inputNickName
     case tapCheckButton(nickName: String)
+    case tapCompleteButton(nickName: String)
+    case tapAlertAcceptButton
   }
 
   enum Mutation {
-    case setIsEnableComplete(nickName: String)
+    case setIsEnableComplete(isEnable: Bool)
+    case popViewController
+    case setIsError(Bool)
   }
 
   struct State {
     var isEnableComplete: Bool
+    var isError: Bool
   }
 
+  // MARK: Methods
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case .tapCheckButton(let nickName):
-      return .just(.setIsEnableComplete(nickName: nickName))
+      return depepdency.useCase.checkNickName(nickName: nickName)
+        .map { [weak self] isDuplicated -> Mutation in
+          self?.isDuplicatedSubject.onNext(isDuplicated)
+          return .setIsEnableComplete(isEnable: !isDuplicated)
+        }
+
+    case .inputNickName:
+      return .just(.setIsEnableComplete(isEnable: false))
+
+    case .tapCompleteButton(let nickName):
+      return depepdency.useCase.changeNickName(nickName: nickName).flatMap { _ in Observable<Mutation>
+        .empty()
+      }
+
+    case .tapAlertAcceptButton:
+      return .just(.setIsError(false))
     }
   }
 
@@ -44,10 +73,26 @@ final class ProfileSettingReactor: Reactor {
     var newState: State = state
 
     switch mutation {
-    case .setIsEnableComplete(let nickName):
-      newState.isEnableComplete = nickName.count <= 10
+    case .setIsEnableComplete(let isEnable):
+      newState.isEnableComplete = isEnable
+    case .popViewController:
+      depepdency.coordinator.close(style: .pop, animated: true, completion: nil)
+    case .setIsError(let isError):
+      newState.isError = isError
     }
 
     return newState
+  }
+
+  func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
+    let eventMutation = depepdency.useCase.profileSettingResultSubject
+      .flatMap { event -> Observable<Mutation> in
+      switch event {
+      case .success: return .just(.popViewController)
+      case .error: return .just(.setIsError(true))
+      }
+    }
+
+    return .merge(mutation, eventMutation)
   }
 }

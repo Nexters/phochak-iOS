@@ -87,7 +87,12 @@ final class MyPageReactor: Reactor {
       return .just(.setPostFilter(postFilter: postFilter))
 
     case .editProfileButtonTap:
-      // TODO: 프로필 편집화면 구현 이후 해당 화면으로 이동
+      dependency.coordinator.transition(
+        to: .profileSetting,
+        style: .push,
+        animated: true,
+        completion: nil
+      )
       return .empty()
 
     case .videoPostCellTap(let videoPost):
