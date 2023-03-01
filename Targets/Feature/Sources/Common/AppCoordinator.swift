@@ -108,7 +108,7 @@ public final class AppCoordinator: AppCoordinatorType {
       completion?()
 
     case .pop:
-      self.currentNavController?.navigationController?.popViewController(animated: true)
+      self.currentNavController?.popViewController(animated: true)
 
     case .dismiss:
       self.currentNavController?.dismiss(animated: animated, completion: completion)
@@ -132,6 +132,8 @@ public final class AppCoordinator: AppCoordinatorType {
           return $0 is PostRollingViewController
         case .uploadVideoPost:
           return $0 is UploadVideoPostViewController
+        case .profileSetting:
+          return $0 is ProfileSettingViewController
         }
       }) else { return }
 
