@@ -50,7 +50,7 @@ final class ProfileSettingReactor: Reactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case .tapCheckButton(let nickName):
-      return depepdency.useCase.checkNickName(nickName: nickName)
+      return depepdency.useCase.checkDuplicationNickName(nickName: nickName)
         .map { [weak self] isDuplicated -> Mutation in
           self?.isDuplicatedSubject.onNext(isDuplicated)
           return .setIsEnableComplete(isEnable: !isDuplicated)
@@ -60,9 +60,10 @@ final class ProfileSettingReactor: Reactor {
       return .just(.setIsEnableComplete(isEnable: false))
 
     case .tapCompleteButton(let nickName):
-      return depepdency.useCase.changeNickName(nickName: nickName).flatMap { _ in Observable<Mutation>
-        .empty()
-      }
+      return depepdency.useCase.changeNickName(nickName: nickName)
+        .flatMap { _ -> Observable<Mutation> in
+          return .empty()
+        }
 
     case .tapAlertAcceptButton:
       return .just(.setIsError(false))

@@ -19,7 +19,7 @@ public protocol ProfileSettingUseCaseType {
   var profileSettingResultSubject: PublishSubject<ProfileSettingResult> { get }
 
   // MARK: Methods
-  func checkNickName(nickName: String) -> Observable<Bool>
+  func checkDuplicationNickName(nickName: String) -> Observable<Bool>
   func changeNickName(nickName: String) -> Observable<Void>
 }
 
@@ -36,7 +36,7 @@ final class ProfileSettingUseCase: ProfileSettingUseCaseType {
   }
 
   // MARK: Methods
-  func checkNickName(nickName: String) -> Observable<Bool> {
+  func checkDuplicationNickName(nickName: String) -> Observable<Bool> {
     service.checkDuplicationNickName(nickName: nickName).asObservable()
   }
 
