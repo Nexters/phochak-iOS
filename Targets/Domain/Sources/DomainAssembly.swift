@@ -54,6 +54,11 @@ public struct DomainAssembly: Assembly {
       let profileService = resolver.resolve(ProfileServiceType.self)!
       return MyPageUseCase(postsService: postsService, profileService: profileService)
     }
+
+    container.register(ProfileSettingUseCaseType.self) { resolver in
+      let service = resolver.resolve(ProfileSettingServiceType.self)!
+      return ProfileSettingUseCase(service: service)
+    }
   }
 
   // MARK: Initializer

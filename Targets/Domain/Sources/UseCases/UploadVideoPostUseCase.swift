@@ -18,7 +18,7 @@ public enum UploadVideoPostResult: Error {
 public protocol UploadVideoPostUseCaseType {
 
   // MARK: Properties
-  var uploadVideoPostResultSubject: PublishSubject<UploadVideoPostResult> { get }
+  var uploadVideoPostResultObservable: Observable<UploadVideoPostResult> { get }
 
   // MARK: Methods
   func uploadVideoPost(
@@ -31,7 +31,10 @@ public protocol UploadVideoPostUseCaseType {
 final class UploadVideoPostUseCase: UploadVideoPostUseCaseType {
 
   // MARK: Properties
-  public let uploadVideoPostResultSubject: PublishSubject<UploadVideoPostResult> = .init()
+  public var uploadVideoPostResultObservable: Observable<UploadVideoPostResult> {
+    uploadVideoPostResultSubject.asObservable()
+  }
+  private let uploadVideoPostResultSubject: PublishSubject<UploadVideoPostResult> = .init()
   private let service: UploadVideoPostServiceType
   private let disposeBag: DisposeBag = .init()
 

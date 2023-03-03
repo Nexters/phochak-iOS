@@ -11,7 +11,6 @@ import Domain
 import UIKit
 
 import Moya
-import RxMoya
 import RxSwift
 
 public extension Reactive where Base: MoyaProviderType {
@@ -34,13 +33,19 @@ public extension Reactive where Base: MoyaProviderType {
     }
 
     return requestSingle
-      .map(TokenErrorResponse.self)
-      .catchAndReturn(.init(
-        status: .init(code: PhoChakNetworkResult.P000.rawValue, message: ""),
-        data: nil
-      ))
-      .flatMap { tokenErrorResponse in
-        guard !isValidationToken(tokenErrorResponse) else { return requestSingle }
+      .map { response -> (Response, TokenErrorResponse) in
+        do {
+          let tokenErrorResponse = try response.map(TokenErrorResponse.self)
+          return (response, tokenErrorResponse)
+        } catch {
+          return (response, TokenErrorResponse.init(
+            status: .init(code: PhoChakNetworkResult.P000.rawValue, message: ""),
+            data: nil)
+          )
+        }
+      }
+      .flatMap { (requestResponse, tokenErrorResponse) in
+        guard !isValidationToken(tokenErrorResponse) else { return .just(requestResponse) }
 
         return requestUpdateToken()
           .filter { response in

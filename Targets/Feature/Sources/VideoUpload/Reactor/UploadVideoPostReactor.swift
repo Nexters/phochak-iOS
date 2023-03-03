@@ -125,7 +125,7 @@ final class UploadVideoPostReactor: Reactor {
   }
 
   func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
-    let eventMutation = depepdency.useCase.uploadVideoPostResultSubject.flatMap { event -> Observable<Mutation> in
+    let eventMutation = depepdency.useCase.uploadVideoPostResultObservable.flatMap { event -> Observable<Mutation> in
       switch event {
       case .success:
         return .concat([

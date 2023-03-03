@@ -17,6 +17,7 @@ public enum Scene {
   case search
   case postRolling(videoPosts: [VideoPost], currentIndex: Int)
   case uploadVideoPost
+  case profileSetting
 }
 
 public protocol SceneFactoryType {
@@ -58,6 +59,16 @@ final class SceneFactory: SceneFactoryType {
       let reactor: SplashReactor = .init(dependency: .init(coordinator: coordinator))
       let viewController: SplashViewController = .init(reactor: reactor)
       return viewController
+
+    case .profileSetting:
+      let useCase = injector.resolve(ProfileSettingUseCaseType.self)
+      let reactorDependency: ProfileSettingReactor.Dependency = .init(
+        coordinator: coordinator,
+        useCase: useCase
+      )
+      let reactor: ProfileSettingReactor = .init(dependency: reactorDependency)
+      let profileSettingViewController: ProfileSettingViewController = .init(reactor: reactor)
+      return profileSettingViewController
 
     case .uploadVideoPost:
       let fileManager = injector.resolve(PhoChakFileManagerType.self)

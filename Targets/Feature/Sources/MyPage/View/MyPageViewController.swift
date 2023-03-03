@@ -9,8 +9,6 @@
 import Domain
 import UIKit
 
-import RxMoya
-import Moya
 import RxCocoa
 import RxSwift
 
