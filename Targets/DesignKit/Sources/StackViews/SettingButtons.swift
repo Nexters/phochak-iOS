@@ -31,7 +31,7 @@ public final class SettingButtons: UIStackView {
   private let withdrawalButton: UIButton = .init()
   private let signOutButton: UIButton = .init()
   private let clearCacheButton: UIButton = .init()
-  public var allButtons: [UIButton] {
+  private var allButtons: [UIButton] {
     return [withdrawalButton, signOutButton, clearCacheButton]
   }
 
