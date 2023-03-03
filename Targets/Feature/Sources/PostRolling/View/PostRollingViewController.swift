@@ -47,20 +47,6 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
     navigationController?.interactivePopGestureRecognizer?.isEnabled = false
   }
 
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-
-    let gradient = CAGradientLayer().then {
-      $0.frame = .init(x: 0, y: 0, width: view.frame.width, height: view.frame.height * 0.1)
-      $0.colors = [
-        UIColor.createColor(.monoGray, .w950, alpha: 0.3).cgColor,
-        UIColor.createColor(.monoGray, .w950, alpha: 0.0).cgColor
-      ]
-      $0.locations = [0.0, 1.0]
-    }
-    topGradientView.layer.insertSublayer(gradient, at: 0)
-  }
-
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
 
@@ -68,6 +54,11 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
       at: .init(item: reactor?.currentIndex ?? 0, section: 0),
       at: .centeredHorizontally,
       animated: false
+    )
+
+    topGradientView.setGradient(
+      startColor: .createColor(.monoGray, .w950, alpha: 0.5),
+      endColor: .createColor(.monoGray, .w950, alpha: 0)
     )
   }
 
@@ -105,7 +96,7 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
       view.addSubview($0)
     }
 
-    collectionView.addSubview(topGradientView)
+    view.addSubview(topGradientView)
   }
 
   override func setupLayoutConstraints() {
@@ -116,7 +107,7 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
     topGradientView.snp.makeConstraints {
       $0.top.equalTo(view.snp.top)
       $0.leading.trailing.equalToSuperview()
-      $0.height.equalTo(view.frame.height * 0.15)
+      $0.height.equalTo(view.frame.height * 0.213)
     }
   }
 
