@@ -43,17 +43,10 @@ final class VideoPostCell: BaseCollectionViewCell {
   override func layoutSubviews() {
     super.layoutSubviews()
 
-    let gradient: CAGradientLayer = .init()
-    gradient.frame = .init(
-      x: 0, y: 0, width: contentView.frame.width,
-      height: contentView.frame.height * 0.18
+    containerView.setGradient(
+      startColor: .createColor(.monoGray, .w950, alpha: 0),
+      endColor: .createColor(.monoGray, .w950, alpha: 0.9)
     )
-    gradient.colors = [
-      UIColor.clear.cgColor,
-      UIColor.createColor(.monoGray, .w950, alpha: 0.9).cgColor
-    ]
-    gradient.locations = [0.0, 1.0]
-    containerView.layer.insertSublayer(gradient, at: 0)
   }
 
   override func setupViews() {
@@ -110,12 +103,6 @@ final class VideoPostCell: BaseCollectionViewCell {
     self.videoPost = videoPost
     nicknameLabel.text = videoPost.user.nickname
     videoPlayerView.configure(videoPost: videoPost)
-
-    containerView.setGradient(
-      startColor: .createColor(.monoGray, .w950, alpha: 0),
-      endColor: .createColor(.monoGray, .w950, alpha: 0.9)
-    )
-
     likeButton.setImage(videoPost.isLiked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
   }
 }

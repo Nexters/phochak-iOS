@@ -47,6 +47,18 @@ final class DetailPostCell: BaseCollectionViewCell, View {
     }
   }
 
+  override func layoutSubviews() {
+    firstGradientView.setGradient(
+      startColor: .createColor(.monoGray, .w950, alpha: 0),
+      endColor: .createColor(.monoGray, .w950, alpha: 0.9)
+    )
+
+    secondGradeintView.setGradient(
+      startColor: .createColor(.monoGray, .w950, alpha: 0),
+      endColor: .createColor(.monoGray, .w950, alpha: 0.9)
+    )
+  }
+
   override func setupLayoutConstraints() {
     videoPlayerView.snp.makeConstraints {
       $0.edges.equalToSuperview()
@@ -60,35 +72,15 @@ final class DetailPostCell: BaseCollectionViewCell, View {
 
     firstGradientView.snp.makeConstraints {
       $0.leading.trailing.equalToSuperview()
-      $0.height.equalTo(hashTagListView)
-      $0.bottom.equalTo(hashTagListView)
+      $0.height.equalToSuperview().multipliedBy(0.26)
+      $0.bottom.equalToSuperview()
     }
 
     secondGradeintView.snp.makeConstraints {
       $0.leading.trailing.equalToSuperview()
-      $0.height.equalToSuperview().multipliedBy(0.44)
+      $0.height.equalToSuperview().multipliedBy(0.473)
       $0.bottom.equalToSuperview()
     }
-    let firstGradient = CAGradientLayer().then {
-      $0.frame = .init(x: 0, y: 0, width: contentView.frame.width, height: contentView.frame.height * 0.30)
-      $0.locations = [0.0, 1.0]
-      $0.colors = [
-        UIColor.createColor(.monoGray, .w950, alpha: 0.0).cgColor,
-        UIColor.createColor(.monoGray, .w950, alpha: 0.9).cgColor
-      ]
-    }
-    firstGradientView.layer.insertSublayer(firstGradient, at: 0)
-
-
-    let secondGradient = CAGradientLayer().then {
-      $0.frame = .init(x: 0, y: 0, width: contentView.frame.width, height: contentView.frame.height * 0.47)
-      $0.locations = [0.0, 1.0]
-      $0.colors = [
-        UIColor.createColor(.monoGray, .w950, alpha: 0.0).cgColor,
-        UIColor.createColor(.monoGray, .w950, alpha: 0.8).cgColor
-      ]
-    }
-    secondGradeintView.layer.insertSublayer(secondGradient, at: 0)
   }
 
   // MARK: Methods
