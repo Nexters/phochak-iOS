@@ -128,18 +128,7 @@ private extension HomeViewController {
         cellType: VideoPostCell.self)
       ) { [weak self] _, post, cell in
         cell.configure(post)
-
-        if let likeVideoPostSubject = self?.likeVideoPostSubject {
-          cell.likeButtonTapObservable
-            .subscribe(likeVideoPostSubject)
-            .disposed(by: cell.disposeBag)
-        }
-
-        if let exclameVideoPostSubject = self?.exclameVideoPostSubject {
-          cell.exclameButtonTapObservable
-            .subscribe(exclameVideoPostSubject)
-            .disposed(by: cell.disposeBag)
-        }
+        cell.delegate = self
       }
       .disposed(by: disposeBag)
 
@@ -173,6 +162,14 @@ private extension HomeViewController {
           cell.transform = .init(scaleX: 1.1, y: 1.1).translatedBy(x: 0, y: -20)
           owner.isFirstEnter.toggle()
         }
+      })
+      .disposed(by: disposeBag)
+
+    rx.viewWillAppear
+      .skip(1)
+      .asDriver(onErrorDriveWith: .empty())
+      .drive(with: self, onNext: { owner, _ in
+        owner.collectionView.reloadData()
       })
       .disposed(by: disposeBag)
   }
@@ -230,6 +227,15 @@ private extension HomeViewController {
         }
       }
     }
+  }
+}
+
+extension HomeViewController: VideoPostCellDelegate {
+  func didTapLikeButton(postID: Int) {
+    reactor?.action.onNext(.likeVideoPost(postID: postID))
+  }
+  func didTapExclameButton(postID: Int) {
+    reactor?.action.onNext(.exclameVideoPost(postID: postID))
   }
 }
 
