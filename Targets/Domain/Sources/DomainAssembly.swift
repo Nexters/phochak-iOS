@@ -52,7 +52,8 @@ public struct DomainAssembly: Assembly {
     container.register(MyPageUseCaseType.self) { resolver in
       let postsService = resolver.resolve(VideoPostServiceType.self)!
       let profileService = resolver.resolve(ProfileServiceType.self)!
-      return MyPageUseCase(postsService: postsService, profileService: profileService)
+      let settingService = resolver.resolve(SettingServiceType.self)!
+      return MyPageUseCase(postsService: postsService, profileService: profileService, settingService: settingService)
     }
 
     container.register(ProfileSettingUseCaseType.self) { resolver in
