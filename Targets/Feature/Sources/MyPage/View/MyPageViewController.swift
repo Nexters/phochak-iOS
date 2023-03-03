@@ -6,6 +6,7 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import DesignKit
 import Domain
 import UIKit
 
@@ -20,6 +21,20 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
   private lazy var collectionView: UICollectionView = .init(
     frame: .zero,
     collectionViewLayout: flowLayout
+  )
+
+  private lazy var settingButtons: SettingButtons = .init()
+  private lazy var deleteVideoPostButton: UIButton = .init()
+  private lazy var selectedOptionButtonIndexNumber: Int = .init()
+
+  private lazy var withdrawlAlertViewController: PhoChakAlertViewController = .init(
+    alertType: .withdrawl
+  )
+  private lazy var signOutAlertViewController: PhoChakAlertViewController = .init(
+    alertType: .signOut
+  )
+  private lazy var clearCacheAlertViewController: PhoChakAlertViewController = .init(
+    alertType: .clearCache
   )
 
   // MARK: Initializer
@@ -65,6 +80,16 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
       $0.image = .createImage(.setting)
       navigationItem.rightBarButtonItem = $0
     }
+
+    settingButtons.do {
+      $0.withdrawlButtonDelegate = self
+      $0.signOutButtonDelegate = self
+      $0.clearCacheButtonDelegate = self
+    }
+
+    deleteVideoPostButton.do {
+      $0.setImage(.createImage(.deleteVideoPost), for: .normal)
+    }
   }
 
   override func setupLayoutConstraints() {
@@ -77,9 +102,11 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
   override func bind(reactor: MyPageReactor) {
     bindAction(reactor: reactor)
     bindState(reactor: reactor)
+    bindExtra()
   }
 }
 
+// MARK: - Extension
 extension MyPageViewController: UICollectionViewDelegateFlowLayout {
   func collectionView(
     _ collectionView: UICollectionView,
@@ -192,13 +219,13 @@ extension MyPageViewController: UICollectionViewDataSource {
           return collectionView.dequeue(cellType: DefaultCell.self, indexPath: indexPath)
         }
 
-        postCell.configure(videoPost: post)
+        postCell.configure(videoPost: post, indexNumber: indexPath.row)
       } else {
         guard let post = reactor?.currentState.likedPosts[safe: indexPath.item] else {
           return collectionView.dequeue(cellType: DefaultCell.self, indexPath: indexPath)
         }
 
-        postCell.configure(videoPost: post, hideOption: true)
+        postCell.configure(videoPost: post, hideOption: true, indexNumber: indexPath.row)
       }
       cell = postCell
     }
@@ -230,6 +257,18 @@ extension MyPageViewController: MyPagePostCellDelegate {
   func tapPost(videoPost: VideoPost) {
     reactor?.action.onNext(.videoPostCellTap(videoPost: videoPost))
   }
+
+  func tapOptionButton(indexNumber: Int, optionButton: UIButton) {
+    selectedOptionButtonIndexNumber = indexNumber
+    deleteVideoPostButton.removeFromSuperview()
+    view.addSubview(deleteVideoPostButton)
+
+    deleteVideoPostButton.snp.makeConstraints {
+      $0.bottom.equalTo(optionButton.snp.top).offset(-7.5)
+      $0.size.equalTo(CGSize(width: 58, height: 40.5))
+      $0.centerX.equalTo(optionButton)
+    }
+  }
 }
 
 // MARK: - MyPageProfileCellDelegate
@@ -246,12 +285,60 @@ extension MyPageViewController: PostsSectionHeaderDelegate {
   }
 }
 
+// MARK: - SettingButtonsDelegate
+extension MyPageViewController
+: WithdrawalButtonDelegate, SignOutButtonDelegate, ClearCacheButtonDelegate {
+  func tapWithdrawalButton() {
+    present(withdrawlAlertViewController, animated: true)
+  }
+
+  func tapSignOutButton() {
+    present(signOutAlertViewController, animated: true)
+  }
+
+  func tapClearCacheButton() {
+    present(clearCacheAlertViewController, animated: true)
+  }
+}
+
 // MARK: Private
 private extension MyPageViewController {
   func bindAction(reactor: MyPageReactor) {
+    typealias Action = MyPageReactor.Action
+
     rx.viewWillAppear
       .map { MyPageReactor.Action.viewWillAppear }
       .bind(to: reactor.action)
+      .disposed(by: disposeBag)
+
+    withdrawlAlertViewController.acceptButtonAction
+      .map { _ in Action.tapWithdrawalButton }
+      .emit(to: reactor.action)
+      .disposed(by: disposeBag)
+
+    signOutAlertViewController.acceptButtonAction
+      .map { _ in Action.tapSignOutButton }
+      .emit(to: reactor.action)
+      .disposed(by: disposeBag)
+
+    clearCacheAlertViewController.acceptButtonAction
+      .map { _ in Action.tapClearCacheButton }
+      .emit(with: self, onNext: { owner, action in
+        reactor.action.onNext(action)
+        owner.clearCacheAlertViewController.dismiss(animated: true)
+      })
+      .disposed(by: disposeBag)
+
+    deleteVideoPostButton.rx.tap
+      .asSignal()
+      .withUnretained(self)
+      .map { owner, _ in
+        Action.tapPostDeletionButton(indexNumber: owner.selectedOptionButtonIndexNumber)
+      }
+      .emit(with: self, onNext: { owner, action in
+        reactor.action.onNext(action)
+        owner.deleteVideoPostButton.removeFromSuperview()
+      })
       .disposed(by: disposeBag)
   }
 
@@ -275,6 +362,36 @@ private extension MyPageViewController {
     reactor.state
       .map { $0.likedPosts }
       .subscribe()
+      .disposed(by: disposeBag)
+  }
+
+  func bindExtra() {
+    settingBarButton.rx.tap
+      .asSignal()
+      .emit(with: self, onNext: { owner, _ in
+        guard let screen = owner.view.window?.windowScene?.screen.bounds else { return }
+        owner.view.addSubview(owner.settingButtons)
+
+        owner.settingButtons.snp.makeConstraints {
+          $0.top.equalTo(owner.view.safeAreaLayoutGuide)
+          $0.trailing.equalToSuperview().inset(20)
+          $0.width.equalTo(screen.width * 0.641)
+        }
+      })
+      .disposed(by: disposeBag)
+
+    let viewTapGestureSignal = view.addTapGesture().rx.event
+      .filter { $0.state == .recognized }
+      .map { _ in }
+      .asSignal(onErrorSignalWith: .empty())
+
+    let collectionViewDidScrollSignal = collectionView.rx.didScroll.asSignal()
+
+    Signal.merge(viewTapGestureSignal, collectionViewDidScrollSignal)
+      .emit(with: self, onNext: { owner, _ in
+        owner.settingButtons.removeFromSuperview()
+        owner.deleteVideoPostButton.removeFromSuperview()
+      })
       .disposed(by: disposeBag)
   }
 }

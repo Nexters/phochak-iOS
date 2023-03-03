@@ -11,6 +11,7 @@ import UIKit
 
 protocol MyPagePostCellDelegate: AnyObject {
   func tapPost(videoPost: VideoPost)
+  func tapOptionButton(indexNumber: Int, optionButton: UIButton)
 }
 
 final class MyPagePostCell: BaseCollectionViewCell {
@@ -81,14 +82,13 @@ final class MyPagePostCell: BaseCollectionViewCell {
     }
 
     optionButton.snp.makeConstraints {
-      $0.top.equalToSuperview().offset(22)
-      $0.trailing.equalToSuperview().offset(-15)
-      $0.size.equalTo(CGSize(width: 18, height: 6))
+      $0.top.trailing.equalToSuperview().inset(12)
+      $0.size.equalTo(CGSize(width: 24, height: 24))
     }
   }
 
   // MARK: Methods
-  func configure(videoPost: VideoPost, hideOption: Bool = false) {
+  func configure(videoPost: VideoPost, hideOption: Bool = false, indexNumber: Int) {
     thumbnailImageView.kf.setImage(with: videoPost.shorts.thumbnailURL)
     likeCountLabel.text = "\(videoPost.likeCount)"
     optionButton.isHidden = hideOption
@@ -97,6 +97,16 @@ final class MyPagePostCell: BaseCollectionViewCell {
       .filter { $0.state == .recognized }
       .subscribe(with: self, onNext: { owner, _ in
         owner.delegate?.tapPost(videoPost: videoPost)
+      })
+      .disposed(by: disposeBag)
+
+    optionButton.rx.tap
+      .asSignal()
+      .emit(with: self, onNext: { owner, _ in
+        owner.delegate?.tapOptionButton(
+          indexNumber: indexNumber,
+          optionButton: owner.optionButton
+        )
       })
       .disposed(by: disposeBag)
   }

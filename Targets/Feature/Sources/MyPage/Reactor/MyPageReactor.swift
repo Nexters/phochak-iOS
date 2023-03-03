@@ -6,7 +6,9 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import Core
 import Domain
+import Foundation
 
 import ReactorKit
 
@@ -41,6 +43,10 @@ final class MyPageReactor: Reactor {
     case updatePostsListFilter(postFilter: PostsFilterOption)
     case editProfileButtonTap
     case videoPostCellTap(videoPost: VideoPost)
+    case tapWithdrawalButton
+    case tapSignOutButton
+    case tapClearCacheButton
+    case tapPostDeletionButton(indexNumber: Int)
   }
 
   enum Mutation {
@@ -48,6 +54,8 @@ final class MyPageReactor: Reactor {
     case setLikedPosts(videoPosts: [VideoPost])
     case setUploadedPosts(videoPosts: [VideoPost])
     case setPostFilter(postFilter: PostsFilterOption)
+    case reSignIn
+    case deletePost(indexNumber: Int)
   }
 
   struct State {
@@ -111,6 +119,23 @@ final class MyPageReactor: Reactor {
         completion: nil
       )
       return .empty()
+
+    case .tapWithdrawalButton:
+      return dependency.useCase.withdrawl().map { .reSignIn }
+
+    case .tapSignOutButton:
+      return dependency.useCase.signOut().map { .reSignIn }
+
+    case .tapClearCacheButton:
+      return dependency.useCase.clearCache()
+        .flatMap { _ -> Observable<Mutation> in
+            return .empty()
+        }
+
+    case .tapPostDeletionButton(let indexNumber):
+      let postID = currentState.uploadedPosts[indexNumber].id
+      return dependency.useCase.deleteVideoPost(postID: postID)
+        .map { .deletePost(indexNumber: indexNumber) }
     }
   }
 
@@ -137,6 +162,13 @@ final class MyPageReactor: Reactor {
 
     case .setPostFilter(let postFilter):
       newState.postFilter = postFilter
+
+    case .reSignIn:
+      TokenManager.deleteAll()
+      NotificationCenter.default.post(name: Notification.Name("reSignIn"), object: nil)
+
+    case .deletePost(let indexNumber):
+      newState.uploadedPosts.remove(at: indexNumber)
     }
 
     return newState
