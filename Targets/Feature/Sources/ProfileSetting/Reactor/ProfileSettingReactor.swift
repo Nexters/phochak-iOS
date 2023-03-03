@@ -86,7 +86,7 @@ final class ProfileSettingReactor: Reactor {
   }
 
   func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
-    let eventMutation = depepdency.useCase.profileSettingResultSubject
+    let eventMutation = depepdency.useCase.profileSettingResultObservable
       .flatMap { event -> Observable<Mutation> in
       switch event {
       case .success: return .just(.popViewController)

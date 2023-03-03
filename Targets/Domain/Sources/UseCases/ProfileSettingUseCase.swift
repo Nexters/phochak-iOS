@@ -16,7 +16,7 @@ public enum ProfileSettingResult: Error {
 public protocol ProfileSettingUseCaseType {
 
   // MARK: Properties
-  var profileSettingResultSubject: PublishSubject<ProfileSettingResult> { get }
+  var profileSettingResultObservable: Observable<ProfileSettingResult> { get }
 
   // MARK: Methods
   func checkDuplicationNickName(nickName: String) -> Observable<Bool>
@@ -26,7 +26,10 @@ public protocol ProfileSettingUseCaseType {
 final class ProfileSettingUseCase: ProfileSettingUseCaseType {
   
   // MARK: Properties
-  public let profileSettingResultSubject: PublishSubject<ProfileSettingResult> = .init()
+  public var profileSettingResultObservable: Observable<ProfileSettingResult> {
+    profileSettingResultSubject.asObservable()
+  }
+  private let profileSettingResultSubject: PublishSubject<ProfileSettingResult> = .init()
   private let service: ProfileSettingServiceType
   private let disposeBag: DisposeBag = .init()
 
