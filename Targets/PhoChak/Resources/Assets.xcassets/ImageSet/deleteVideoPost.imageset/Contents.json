@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "icon-setting-mono.png",
+      "filename" : "Edit Menu.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "icon-setting-mono@2x.png",
+      "filename" : "Edit Menu@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "icon-setting-mono@3x.png",
+      "filename" : "Edit Menu@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
@@ -19,8 +19,5 @@
   "info" : {
     "author" : "xcode",
     "version" : 1
-  },
-  "properties" : {
-    "template-rendering-intent" : "original"
   }
 }
