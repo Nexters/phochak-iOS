@@ -17,6 +17,7 @@ public enum VideoPostAPI {
   case exclameVideoPost(postID: Int)
   case likeVideoPost(postID: Int)
   case unlikeVideoPost(postID: Int)
+  case deleteVideoPost(postID: Int)
 }
 
 // MARK: - TargetType
@@ -30,11 +31,14 @@ extension VideoPostAPI: TargetType {
     case .fetchVideoPosts:
       return "/v1/post/list"
 
-    case .exclameVideoPost(let postID):
+    case .exclameVideoPost:
       return ""
 
     case .likeVideoPost(let postID), .unlikeVideoPost(let postID):
       return "/v1/post/\(postID)/likes"
+
+    case .deleteVideoPost(let postID):
+      return "/v1/post/\(postID)"
     }
   }
 
@@ -46,7 +50,7 @@ extension VideoPostAPI: TargetType {
     case .likeVideoPost, .exclameVideoPost:
       return .post
 
-    case .unlikeVideoPost:
+    case .unlikeVideoPost, .deleteVideoPost:
       return .delete
     }
   }
@@ -93,11 +97,7 @@ extension VideoPostAPI: TargetType {
 
       return params
 
-    case .likeVideoPost, .unlikeVideoPost:
-      return [:]
-
-    case .exclameVideoPost:
-      return [:]
+    default: return [:]
     }
   }
 }

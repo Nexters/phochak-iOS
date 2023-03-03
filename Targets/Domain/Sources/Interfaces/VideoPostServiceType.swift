@@ -15,4 +15,5 @@ public protocol VideoPostServiceType {
   func exclameVideoPost(postID: Int) -> Single<Void>
   func likeVideoPost(postID: Int) -> Single<Void>
   func unlikeVideoPost(postID: Int) -> Single<Void>
+  func deleteVideoPost(postID: Int) -> Single<Void>
 }
