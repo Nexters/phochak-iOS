@@ -13,6 +13,11 @@ import UIKit
 
 import RxSwift
 
+protocol VideoPostCellDelegate: AnyObject {
+  func didTapLikeButton(postID: Int)
+  func didTapExclameButton(postID: Int)
+}
+
 final class VideoPostCell: BaseCollectionViewCell {
 
   // MARK: Properties
@@ -23,6 +28,8 @@ final class VideoPostCell: BaseCollectionViewCell {
   private let videoPlayerView: VideoPlayerView = .init()
 
   private var videoPost: VideoPost?
+
+  weak var delegate: VideoPostCellDelegate?
 
   // MARK: Override
   override init(frame: CGRect) {
@@ -104,28 +111,21 @@ final class VideoPostCell: BaseCollectionViewCell {
     nicknameLabel.text = videoPost.user.nickname
     videoPlayerView.configure(videoPost: videoPost)
     likeButton.setImage(videoPost.isLiked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
-  }
-}
 
-extension VideoPostCell {
-  var exclameButtonTapObservable: Observable<Int> {
     exclameButton.rx.tap
-      .asObservable()
-      .map { [weak self] in self?.videoPost?.id ?? 0 }
-  }
-
-  var likeButtonTapObservable: Observable<Int> {
-    likeButton.rx.tap
-      .asObservable()
-      .map { [weak self] in self?.videoPost?.id ?? 0 }
-      .do(onNext: { [weak self] _ in
-        self?.videoPost?.isLiked.toggle()
-
-        guard let liked = self?.videoPost?.isLiked else {
-          return
-        }
-
-        self?.likeButton.setImage(liked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
+      .subscribe(with: self, onNext: { owner, _ in
+        owner.delegate?.didTapExclameButton(postID: videoPost.id)
       })
+      .disposed(by: disposeBag)
+
+    likeButton.rx.tap
+      .subscribe(on: MainScheduler.instance)
+      .subscribe(with: self, onNext: { owner, _ in
+        let isLiked = owner.videoPost!.isLiked
+        owner.delegate?.didTapLikeButton(postID: videoPost.id)
+        owner.videoPost?.isLiked = !isLiked
+        owner.likeButton.setImage(!isLiked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
+      })
+      .disposed(by: disposeBag)
   }
 }

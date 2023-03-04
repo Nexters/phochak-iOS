@@ -49,9 +49,8 @@ public final class VideoPlayerView: UIView {
     }
 
     NotificationCenter.default.rx.notification(.AVPlayerItemDidPlayToEndTime)
-      .subscribe(with: self, onNext: { owner, _ in
-        owner.player?.seek(to: .zero)
-        owner.player?.play()
+      .subscribe(with: self, onNext: { owner, notification in
+        owner.playerDidReachEnd(notification: notification)
       })
       .disposed(by: disposeBag)
 
@@ -82,5 +81,14 @@ public final class VideoPlayerView: UIView {
         owner.player?.play()
       })
       .disposed(by: disposeBag)
+  }
+}
+
+private extension VideoPlayerView {
+  func playerDidReachEnd(notification: Notification) {
+    if let playerItem = notification.object as? AVPlayerItem {
+      playerItem.seek(to: CMTime.zero, completionHandler: nil)
+      player?.play()
+    }
   }
 }
