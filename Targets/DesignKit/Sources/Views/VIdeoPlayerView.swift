@@ -18,7 +18,7 @@ public final class VideoPlayerView: UIView {
   // MARK: Properties
   private var playerLayer: AVPlayerLayer {
     let layer = layer as! AVPlayerLayer
-    layer.videoGravity = .resizeAspect
+    layer.videoGravity = .resizeAspectFill
     return layer
   }
 
@@ -43,7 +43,7 @@ public final class VideoPlayerView: UIView {
     super.init(frame: frame)
 
     addSubview(thumbnailImageView)
-    thumbnailImageView.contentMode = .scaleAspectFit
+    thumbnailImageView.contentMode = .scaleAspectFill
     thumbnailImageView.snp.makeConstraints {
       $0.edges.equalToSuperview()
     }
