@@ -69,15 +69,10 @@ public final class AppCoordinator: AppCoordinatorType {
   }
 
   public func transition(to scene: Scene, style: TransitionStyle, animated: Bool, completion: (() -> Void)?) {
-    let navController: UINavigationController
-
-    if let currentNavController = currentNavController {
-      navController = currentNavController
-    } else {
-      navController = (UIApplication.keyWindow?.rootViewController as? PhoChakTabBarController)?
-        .selectedViewController as! UINavigationController
-      self.currentNavController = navController
+    guard let navController = (UIApplication.keyWindow?.rootViewController as? PhoChakTabBarController)?.selectedViewController as? UINavigationController else {
+      return
     }
+    self.currentNavController = navController
 
     let createdViewController = sceneFactory.create(scene: scene)
 
