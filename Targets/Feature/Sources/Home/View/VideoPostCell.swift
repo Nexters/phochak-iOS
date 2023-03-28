@@ -113,6 +113,7 @@ final class VideoPostCell: BaseCollectionViewCell {
     likeButton.setImage(videoPost.isLiked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
 
     exclameButton.rx.tap
+      .subscribe(on: MainScheduler.instance)
       .subscribe(with: self, onNext: { owner, _ in
         owner.delegate?.didTapExclameButton(postID: videoPost.id)
       })
@@ -121,10 +122,7 @@ final class VideoPostCell: BaseCollectionViewCell {
     likeButton.rx.tap
       .subscribe(on: MainScheduler.instance)
       .subscribe(with: self, onNext: { owner, _ in
-        let isLiked = owner.videoPost!.isLiked
         owner.delegate?.didTapLikeButton(postID: videoPost.id)
-        owner.videoPost?.isLiked = !isLiked
-        owner.likeButton.setImage(!isLiked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
       })
       .disposed(by: disposeBag)
   }

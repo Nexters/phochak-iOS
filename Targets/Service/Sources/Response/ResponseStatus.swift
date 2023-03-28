@@ -17,3 +17,27 @@ public struct ResponseStatus: Decodable {
     case message = "resMessage"
   }
 }
+
+extension ResponseStatus {
+  var isSuccess: Bool {
+    code == PhoChakNetworkResult.P000.rawValue
+  }
+}
+
+public struct BaseResponse: Decodable {
+
+  // MARK: Properties
+  let status: ResponseStatus
+  let data: String?
+
+  enum CodingKeys: String, CodingKey {
+    case status
+    case data
+  }
+}
+
+extension BaseResponse {
+  var isSuccess: Bool {
+    status.code == PhoChakNetworkResult.P000.rawValue
+  }
+}
