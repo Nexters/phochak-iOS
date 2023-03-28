@@ -33,6 +33,7 @@ public final class VideoPlayerView: UIView {
 
   private let thumbnailImageView: UIImageView = .init()
   private let disposeBag: DisposeBag = .init()
+  private(set) var currentVideoPost: VideoPost?
 
   // MARK: Override
   public override class var layerClass: AnyClass {
@@ -67,6 +68,11 @@ public final class VideoPlayerView: UIView {
 
   // MARK: Methods
   public func configure(videoPost: VideoPost) {
+    guard currentVideoPost?.id != videoPost.id else {
+      return
+    }
+
+    self.currentVideoPost = videoPost
     thumbnailImageView.setImage(with: videoPost.shorts.thumbnailURL)
 
     self.player = .init(url: videoPost.shorts.shortsURL).then {
