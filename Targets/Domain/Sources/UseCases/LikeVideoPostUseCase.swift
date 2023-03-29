@@ -11,8 +11,8 @@ import RxSwift
 public protocol LikeVideoPostUseCaseType {
 
   // MARK: Methods
-  func likeVideoPost(postID: Int) -> Observable<Void>
-  func unLikeVideoPost(postID: Int) -> Observable<Void>
+  func likeVideoPost(postID: Int) -> Observable<Bool>
+  func unLikeVideoPost(postID: Int) -> Observable<Bool>
 }
 
 final class LikeVideoPostUseCase: LikeVideoPostUseCaseType {
@@ -26,12 +26,12 @@ final class LikeVideoPostUseCase: LikeVideoPostUseCaseType {
   }
 
   // MARK: Methods
-  func likeVideoPost(postID: Int) -> Observable<Void> {
+  func likeVideoPost(postID: Int) -> Observable<Bool> {
     service.likeVideoPost(postID: postID)
       .asObservable()
   }
 
-  func unLikeVideoPost(postID: Int) -> Observable<Void> {
+  func unLikeVideoPost(postID: Int) -> Observable<Bool> {
     service.unlikeVideoPost(postID: postID)
       .asObservable()
   }

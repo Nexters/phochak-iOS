@@ -100,9 +100,11 @@ final class HomeReactor: Reactor {
       newState.videoPosts = videoPosts
 
     case let .updateVideoPostLikeStatus(index, isLiked):
-      var updatedPosts = state.videoPosts
-      updatedPosts[index].isLiked = isLiked
-      newState.videoPosts = updatedPosts
+      guard var post = currentState.videoPosts[safe: index] else {
+        return .init(videoPosts: [], isLoading: false)
+      }
+      post.isLiked = isLiked
+      newState.videoPosts[index] = post
       
     case .setLoading(let isLoading):
       newState.isLoading = isLoading
@@ -157,15 +159,15 @@ private extension HomeReactor {
       return .empty()
     }
 
-    if currentState.videoPosts[index].isLiked {
+    if currentState.videoPosts[safe: index]?.isLiked ?? false {
       return depepdency.useCase.unLikeVideoPost(postID: postID)
-        .flatMap { _ -> Observable<Mutation> in
-          return .just(.updateVideoPostLikeStatus(index: index, isLiked: false))
+        .flatMap { isSuccess -> Observable<Mutation> in
+          return .just(.updateVideoPostLikeStatus(index: index, isLiked: isSuccess ? false : true))
         }
     } else {
       return depepdency.useCase.likeVideoPost(postID: postID)
-        .flatMap { _ -> Observable<Mutation> in
-          return .just(.updateVideoPostLikeStatus(index: index, isLiked: true))
+        .flatMap { isSuccess -> Observable<Mutation> in
+          return .just(.updateVideoPostLikeStatus(index: index, isLiked: isSuccess ? true : false))
         }
     }
   }

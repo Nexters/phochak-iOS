@@ -29,12 +29,12 @@ final class VideoPostUseCase: VideoPostUseCaseType {
       .catchAndReturn(([], true))
   }
 
-  func likeVideoPost(postID: Int) -> Observable<Void> {
+  func likeVideoPost(postID: Int) -> Observable<Bool> {
     service.likeVideoPost(postID: postID)
       .asObservable()
   }
 
-  func unLikeVideoPost(postID: Int) -> Observable<Void> {
+  func unLikeVideoPost(postID: Int) -> Observable<Bool> {
     service.unlikeVideoPost(postID: postID)
       .asObservable()
   }

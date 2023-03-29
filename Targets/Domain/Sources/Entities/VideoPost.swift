@@ -30,7 +30,7 @@ public struct VideoPost: Equatable, Decodable {
   }
 
   public static func == (lhs: VideoPost, rhs: VideoPost) -> Bool {
-    lhs.id == rhs.id
+    lhs.id == rhs.id && lhs.isLiked == rhs.isLiked
   }
 
   // MARK: Initializer

@@ -34,14 +34,16 @@ final class VideoPostService: VideoPostServiceType {
       .map { _ in }
   }
 
-  func likeVideoPost(postID: Int) -> Single<Void> {
+  func likeVideoPost(postID: Int) -> Single<Bool> {
     provider.rx.request(.likeVideoPost(postID: postID))
-      .map { _ in }
+      .map(BaseResponse.self)
+      .map { $0.isSuccess }
   }
 
-  func unlikeVideoPost(postID: Int) -> Single<Void> {
+  func unlikeVideoPost(postID: Int) -> Single<Bool> {
     provider.rx.request(.unlikeVideoPost(postID: postID))
-      .map { _ in }
+      .map(BaseResponse.self)
+      .map { $0.isSuccess }
   }
 
   func deleteVideoPost(postID: Int) -> Single<Void> {
