@@ -147,18 +147,30 @@ final class MyPageReactor: Reactor {
       newState.user = user
 
     case .setUploadedPosts(let videoPosts):
-      if state.uploadedPosts.first?.id != videoPosts.first?.id {
-        var uploadedPosts = state.uploadedPosts
-        uploadedPosts.append(contentsOf: videoPosts)
-        newState.uploadedPosts = uploadedPosts
+      var uploadedPosts = state.uploadedPosts
+
+      videoPosts.forEach { videoPost in
+        if let index = uploadedPosts.firstIndex(where: { $0.id == videoPost.id }),
+           uploadedPosts[index] != videoPost {
+          uploadedPosts[index] = videoPost
+        } else {
+          uploadedPosts.append(videoPost)
+        }
       }
+      newState.uploadedPosts = videoPosts
 
     case .setLikedPosts(let videoPosts):
-      if state.likedPosts.first?.id != videoPosts.first?.id {
-        var likedPosts = state.likedPosts
-        likedPosts.append(contentsOf: videoPosts)
-        newState.likedPosts = likedPosts
+      var likedPosts = state.likedPosts
+
+      videoPosts.forEach { videoPost in
+        if let index = likedPosts.firstIndex(where: { $0.id == videoPost.id }),
+           likedPosts[index] != videoPost {
+          likedPosts[index] = videoPost
+        } else {
+          likedPosts.append(videoPost)
+        }
       }
+      newState.likedPosts = videoPosts
 
     case .setPostFilter(let postFilter):
       newState.postFilter = postFilter
@@ -178,10 +190,6 @@ final class MyPageReactor: Reactor {
 // MARK: - Private
 private extension MyPageReactor {
   func fetchVideoPosts(request: FetchVideoPostRequest) -> Observable<Mutation> {
-    if existVideoPostRequest == request && isLastPage {
-      return .empty()
-    }
-
     return dependency.useCase.fetchVideoPosts(request: request)
       .flatMap { [weak self] (videoPosts, isLastPage) in
         self?.isLastPage = isLastPage

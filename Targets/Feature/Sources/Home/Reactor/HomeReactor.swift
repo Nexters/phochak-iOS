@@ -31,7 +31,8 @@ final class HomeReactor: Reactor {
   enum Action {
     case tapSearchButton
     case tapVideoCell(index: Int)
-    case fetchItems(size: Int, currentIndex: Int)
+    case fetchInitialItems
+    case fetchMoreItems(size: Int, currentIndex: Int)
     case exclameVideoPost(postID: Int)
     case likeVideoPost(postID: Int)
     case updateDataSource(videoPosts: [VideoPost])
@@ -39,6 +40,7 @@ final class HomeReactor: Reactor {
   
   enum Mutation {
     case setLoading(Bool)
+    case setInitialVideoPosts([VideoPost])
     case setVideoPosts([VideoPost])
     case updateVideoPosts([VideoPost])
     case updateVideoPostLikeStatus(index: Int, isLiked: Bool)
@@ -57,8 +59,14 @@ final class HomeReactor: Reactor {
       
     case .tapVideoCell(let index):
       return pushPostRollingScene(index: index)
+
+    case .fetchInitialItems:
+      return .concat([
+        .just(.setLoading(true)),
+        fetchVideoPosts(request: .init(sortOption: .latest, pageSize: 10))
+      ])
       
-    case let .fetchItems(size, currentIndex):
+    case let .fetchMoreItems(size, currentIndex):
       if (currentIndex + 1 >= currentState.videoPosts.count - 3) {
         return .concat([
           .just(.setLoading(true)),
@@ -91,6 +99,9 @@ final class HomeReactor: Reactor {
     var newState = state
     
     switch mutation {
+    case .setInitialVideoPosts(let videoPosts):
+      newState.videoPosts = videoPosts
+
     case .setVideoPosts(let videoPosts):
       var updatedPosts = state.videoPosts
       updatedPosts.append(contentsOf: videoPosts)
@@ -117,7 +128,7 @@ final class HomeReactor: Reactor {
 // MARK: Private
 private extension HomeReactor {
   func fetchVideoPosts(request: FetchVideoPostRequest) -> Observable<Mutation> {
-    if existVideoPostRequest == request && isLastPage {
+    if isLastPage {
       return .just(.setLoading(false))
     }
 
@@ -125,10 +136,20 @@ private extension HomeReactor {
       .flatMap { [weak self] (videoPosts, isLastPage) in
         self?.isLastPage = isLastPage
         self?.existVideoPostRequest = request
-        return Observable<Mutation>.concat([
-          .just(.setVideoPosts(videoPosts)),
-          .just(.setLoading(false))
-        ])
+
+        if request.lastID == nil {
+          // 첫 데이터 요청시
+          return Observable<Mutation>.concat([
+            .just(.setInitialVideoPosts(videoPosts)),
+            .just(.setLoading(false))
+          ])
+        } else {
+          // 추가 데이터 요청시
+          return Observable<Mutation>.concat([
+            .just(.setVideoPosts(videoPosts)),
+            .just(.setLoading(false))
+          ])
+        }
       }
   }
   

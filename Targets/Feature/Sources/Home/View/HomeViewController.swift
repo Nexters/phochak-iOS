@@ -92,9 +92,8 @@ private extension HomeViewController {
   func bindAction(reactor: HomeReactor) {
     collectionView.rx.didEndDragging.map { _ in }
       .asObservable()
-      .startWith(())
       .withUnretained(self)
-      .map { owner, _ in HomeReactor.Action.fetchItems(size: 6, currentIndex: owner.currentIndex) }
+      .map { owner, _ in HomeReactor.Action.fetchMoreItems(size: 6, currentIndex: owner.currentIndex) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
@@ -117,6 +116,11 @@ private extension HomeViewController {
       .map { HomeReactor.Action.updateDataSource(videoPosts: $0) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
+
+    rx.viewWillAppear
+      .map { HomeReactor.Action.fetchInitialItems }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
   }
 
   func bindState(reactor: HomeReactor) {
@@ -126,9 +130,13 @@ private extension HomeViewController {
       .bind(to: collectionView.rx.items(
         cellIdentifier: "\(VideoPostCell.self)",
         cellType: VideoPostCell.self)
-      ) { [weak self] _, post, cell in
+      ) { [weak self] index, post, cell in
         cell.configure(post)
         cell.delegate = self
+
+        if index == self?.currentIndex {
+          self?.applyTransform(cell: cell)
+        }
       }
       .disposed(by: disposeBag)
 
@@ -227,6 +235,10 @@ private extension HomeViewController {
         }
       }
     }
+  }
+
+  func applyTransform(cell: VideoPostCell) {
+    cell.transform = .init(scaleX: 1.1, y: 1.1).translatedBy(x: 0, y: -20)
   }
 }
 
