@@ -37,6 +37,7 @@ public final class PhoChakAlertViewController: UIViewController {
     case .nickNameDuplicated: return "닉네임이 중복되었습니다"
     case .exclame: return "포스팅 신고"
     case .exclameDuplicated: return "신고된 게시물"
+    case .blind: return "포스팅 신고누적"
     }
   }
 
@@ -51,6 +52,7 @@ public final class PhoChakAlertViewController: UIViewController {
     case .nickNameDuplicated: return "수정 후 다시 시도해 주세요"
     case .exclame: return "신고가 누적된 영상은 볼 수 없게 됩니다"
     case .exclameDuplicated: return "이미 신고가 완료된 영상입니다"
+    case .blind: return "이 영상은 다른 사용자에게 보이지 않습니다"
     }
   }
 
@@ -68,6 +70,7 @@ public final class PhoChakAlertViewController: UIViewController {
     case nickNameDuplicated
     case exclame
     case exclameDuplicated
+    case blind
   }
 
   // MARK: Initializer
@@ -166,7 +169,7 @@ private extension PhoChakAlertViewController {
 
   func setupButtons() {
     switch alertType {
-    case .networkError, .tokenExpired, .nickNameDuplicated, .exclameDuplicated:
+    case .networkError, .tokenExpired, .nickNameDuplicated, .exclameDuplicated, .blind:
       acceptButton.snp.makeConstraints {
         $0.leading.trailing.bottom.equalToSuperview()
         $0.height.equalTo(view.frame.height * 0.066)

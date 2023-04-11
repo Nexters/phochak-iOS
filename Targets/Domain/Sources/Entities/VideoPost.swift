@@ -17,6 +17,7 @@ public struct VideoPost: Equatable, Decodable {
   public let likeCount: Int
   public let hashTags: [String]?
   public var isLiked: Bool
+  public let isBlind: Bool
 
   private enum CodingKeys: String, CodingKey {
     case id
@@ -24,6 +25,7 @@ public struct VideoPost: Equatable, Decodable {
     case shorts
     case category
     case isLiked
+    case isBlind
     case viewCount = "view"
     case likeCount = "like"
     case hashTags = "hashtags"
@@ -42,7 +44,8 @@ public struct VideoPost: Equatable, Decodable {
     category: String,
     likeCount: Int,
     hashTags: [String]? = nil,
-    isLiked: Bool
+    isLiked: Bool,
+    isBlind: Bool
   ) {
     self.id = id
     self.user = user
@@ -52,5 +55,6 @@ public struct VideoPost: Equatable, Decodable {
     self.likeCount = likeCount
     self.hashTags = hashTags
     self.isLiked = isLiked
+    self.isBlind = isBlind
   }
 }
