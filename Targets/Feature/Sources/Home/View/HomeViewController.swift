@@ -6,6 +6,7 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import DesignKit
 import Domain
 import UIKit
 
@@ -24,6 +25,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     frame: .zero,
     collectionViewLayout: flowLayout
   )
+  private let exclameAlertViewController: PhoChakAlertViewController = .init(alertType: .exclame)
   private let exclameVideoPostSubject: PublishSubject<Int> = .init()
   private let likeVideoPostSubject: PublishSubject<Int> = .init()
   private let updatedDataSourceSubject: PublishSubject<[VideoPost]> = .init()
@@ -102,9 +104,14 @@ private extension HomeViewController {
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
-    exclameVideoPostSubject
+    exclameAlertViewController.acceptButtonAction.asObservable()
+      .withLatestFrom(exclameVideoPostSubject)
       .map { HomeReactor.Action.exclameVideoPost(postID: $0) }
-      .bind(to: reactor.action)
+      .asSignal(onErrorSignalWith: .empty())
+      .emit(with: self, onNext: { owner, action in
+        reactor.action.onNext(action)
+        owner.exclameAlertViewController.dismiss(animated: true)
+      })
       .disposed(by: disposeBag)
 
     likeVideoPostSubject
@@ -247,7 +254,8 @@ extension HomeViewController: VideoPostCellDelegate {
     reactor?.action.onNext(.likeVideoPost(postID: postID))
   }
   func didTapExclameButton(postID: Int) {
-    reactor?.action.onNext(.exclameVideoPost(postID: postID))
+    exclameVideoPostSubject.onNext(postID)
+    present(exclameAlertViewController, animated: true)
   }
 }
 

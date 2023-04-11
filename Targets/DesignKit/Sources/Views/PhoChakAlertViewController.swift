@@ -35,6 +35,7 @@ public final class PhoChakAlertViewController: UIViewController {
     case .networkError: return "네트워크 불안정"
     case .tokenExpired: return "세션이 만료되었습니다"
     case .nickNameDuplicated: return "닉네임이 중복되었습니다"
+    case .exclame: return "포스팅 신고"
     }
   }
 
@@ -47,6 +48,7 @@ public final class PhoChakAlertViewController: UIViewController {
     case .networkError: return "인터넷 연결을 확인해주세요"
     case .tokenExpired: return "다시 로그인 후 시도해 주세요"
     case .nickNameDuplicated: return "수정 후 다시 시도해 주세요"
+    case .exclame: return "신고가 누적된 영상은 볼 수 없게 됩니다"
     }
   }
 
@@ -62,6 +64,7 @@ public final class PhoChakAlertViewController: UIViewController {
     case networkError
     case tokenExpired
     case nickNameDuplicated
+    case exclame
   }
 
   // MARK: Initializer

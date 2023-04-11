@@ -31,8 +31,8 @@ extension VideoPostAPI: TargetType {
     case .fetchVideoPosts:
       return "/v1/post/list"
 
-    case .exclameVideoPost:
-      return ""
+    case .exclameVideoPost(let postID):
+      return "v1/post/\(postID)/report"
 
     case .likeVideoPost(let postID), .unlikeVideoPost(let postID):
       return "/v1/post/\(postID)/likes"
