@@ -33,6 +33,7 @@ public extension UIImage {
     case close = "close"
     case option = "option"
     case deleteVideoPost = "deleteVideoPost"
+    case exclamed = "exclamed"
   }
 
   // MARK: Methods
