@@ -25,6 +25,7 @@ public enum PhoChakNetworkResult: String, Error {
   case P412 = "P412"
   case P413 = "P413"
   case P414 = "P414"
+  case P415 = "P415"
   case P450 = "P450"
 
   public var description: String {
@@ -45,6 +46,7 @@ public enum PhoChakNetworkResult: String, Error {
     case .P412: return "최신순이 아닌 경우 정렬 기준의 값은 필수입니다"
     case .P413: return "지원하지 않는 정렬 기준입니다"
     case .P414: return "정렬 기준이 존재하지 않습니다"
+    case .P415: return "이미 신고된 게시글입니다"
     case .P450: return "지원하지 않는 비디오 확장자입니다"
     }
   }

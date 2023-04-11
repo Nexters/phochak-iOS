@@ -8,6 +8,7 @@
 
 import Domain
 
+import RxSwift
 import ReactorKit
 
 final class HomeReactor: Reactor {
@@ -17,6 +18,7 @@ final class HomeReactor: Reactor {
   var initialState: State = .init(videoPosts: [], isLoading: false)
   private var isLastPage: Bool = false
   private var existVideoPostRequest: FetchVideoPostRequest?
+  private (set) var exclameDuplicatedSubject: PublishSubject<Void> = .init()
   
   struct Dependency {
     let coordinator: AppCoordinatorType
@@ -86,10 +88,11 @@ final class HomeReactor: Reactor {
 
     case .exclameVideoPost(let postID):
       return depepdency.useCase.exclameVideoPost(postID: postID)
-        .flatMap { _ -> Observable<Mutation> in
+        .flatMap { [weak self] isError -> Observable<Mutation> in
+          if isError { self?.exclameDuplicatedSubject.onNext(()) }
           return .empty()
         }
-      
+
     case .likeVideoPost(let postID):
       return updateVideoPostLikeStatus(postID: postID)
     }

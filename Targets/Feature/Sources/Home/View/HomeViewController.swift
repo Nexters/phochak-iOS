@@ -25,7 +25,8 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     frame: .zero,
     collectionViewLayout: flowLayout
   )
-  private let exclameAlertViewController: PhoChakAlertViewController = .init(alertType: .exclame)
+  private lazy var exclameAlertViewController: PhoChakAlertViewController = .init(alertType: .exclame)
+  private lazy var exclameErrorAlertViewController: PhoChakAlertViewController = .init(alertType: .exclameDuplicated)
   private let exclameVideoPostSubject: PublishSubject<Int> = .init()
   private let likeVideoPostSubject: PublishSubject<Int> = .init()
   private let updatedDataSourceSubject: PublishSubject<[VideoPost]> = .init()
@@ -152,6 +153,13 @@ private extension HomeViewController {
       .distinctUntilChanged()
       .subscribe()
       .disposed(by: disposeBag)
+
+    reactor.exclameDuplicatedSubject
+      .asSignal(onErrorJustReturn: ())
+      .emit(with: self, onNext: { owner, _ in
+        owner.present(owner.exclameErrorAlertViewController, animated: true)
+      })
+      .disposed(by: disposeBag)
   }
 
   func bindExtra(reactor: HomeReactor) {
@@ -185,6 +193,13 @@ private extension HomeViewController {
       .asDriver(onErrorDriveWith: .empty())
       .drive(with: self, onNext: { owner, _ in
         owner.collectionView.reloadData()
+      })
+      .disposed(by: disposeBag)
+
+    exclameErrorAlertViewController.acceptButtonAction
+      .asSignal()
+      .emit(with: self, onNext: { owner, _ in
+        owner.exclameErrorAlertViewController.dismiss(animated: true)
       })
       .disposed(by: disposeBag)
   }

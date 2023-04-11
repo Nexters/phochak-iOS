@@ -12,7 +12,7 @@ public protocol VideoPostServiceType {
 
   // MARK: Methods
   func fetchVideoPosts(request: FetchVideoPostRequest) -> Single<(posts: [VideoPost], isLastPage: Bool)>
-  func exclameVideoPost(postID: Int) -> Single<Void>
+  func exclameVideoPost(postID: Int) -> Single<Bool>
   func deleteVideoPost(postID: Int) -> Single<Void>
 
 

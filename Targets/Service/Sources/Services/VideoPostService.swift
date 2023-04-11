@@ -29,9 +29,10 @@ final class VideoPostService: VideoPostServiceType {
       .map { ($0.posts, $0.isLastPage) }
   }
 
-  func exclameVideoPost(postID: Int) -> Single<Void> {
+  func exclameVideoPost(postID: Int) -> Single<Bool> {
     provider.rx.request(.exclameVideoPost(postID: postID))
-      .map { _ in }
+      .map(BaseResponse.self)
+      .map { $0.status.code == PhoChakNetworkResult.P415.rawValue }
   }
 
   func likeVideoPost(postID: Int) -> Single<Bool> {
