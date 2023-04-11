@@ -6,6 +6,7 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import DesignKit
 import Domain
 import UIKit
 
@@ -24,7 +25,9 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
     frame: .zero,
     collectionViewLayout: flowLayout
   )
-  private let exclameButtonTapSubject: PublishSubject<Int> = .init()
+  private lazy var exclameAlertViewController: PhoChakAlertViewController = .init(alertType: .exclame)
+  private lazy var exclameErrorAlertViewController: PhoChakAlertViewController = .init(alertType: .exclameDuplicated)
+  private let exclameButtonTapRelay: BehaviorRelay<Int> = .init(value: -1)
   private let likeButtonTapSubject: PublishSubject<Int> = .init()
   private let topGradientView: UIView = .init()
   weak var delegate: PostRollingDelegate?
@@ -114,7 +117,7 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
   override func bind(reactor: PostRollingReactor) {
     bindAction(reactor: reactor)
     bindState(reactor: reactor)
-    bindExtra()
+    bindExtra(reactor: reactor)
   }
 }
 
@@ -136,9 +139,21 @@ private extension PostRollingViewController {
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
-    exclameButtonTapSubject
+    exclameButtonTapRelay
+      .asSignal(onErrorJustReturn: -1)
+      .emit(with: self, onNext: { owner, _ in
+        owner.present(owner.exclameAlertViewController, animated: true)
+      })
+      .disposed(by: disposeBag)
+
+    exclameAlertViewController.acceptButtonAction.asObservable()
+      .withLatestFrom(exclameButtonTapRelay)
       .map { PostRollingReactor.Action.exclameVideoPost(postID: $0) }
-      .bind(to: reactor.action)
+      .asSignal(onErrorSignalWith: .empty())
+      .emit(with: self, onNext: { owner, action in
+        reactor.action.onNext(action)
+        owner.exclameAlertViewController.dismiss(animated: true)
+      })
       .disposed(by: disposeBag)
 
     likeButtonTapSubject
@@ -156,11 +171,12 @@ private extension PostRollingViewController {
         cellType: DetailPostCell.self)
       ) { [weak self] _, post, cell in
         cell.configure(reactor: .init(videoPost: post))
-        if let exclameButtonTapSubject = self?.exclameButtonTapSubject {
-          cell.exclameButtonTapSubject
-            .subscribe(exclameButtonTapSubject)
-            .disposed(by: cell.disposeBag)
-        }
+
+        cell.exclameButtonTapSubject
+          .subscribe(onNext: { [weak self] in
+            self?.exclameButtonTapRelay.accept($0)
+          })
+          .disposed(by: cell.disposeBag)
 
         if let likeButtonTapSubject = self?.likeButtonTapSubject {
           cell.likeButtonTapSubject
@@ -171,7 +187,7 @@ private extension PostRollingViewController {
       .disposed(by: disposeBag)
   }
 
-  func bindExtra() {
+  func bindExtra(reactor: PostRollingReactor) {
     collectionView.rx.didEndDisplayingCell
       .subscribe(onNext: { cell, index in
         guard let cell = cell as? DetailPostCell else {
@@ -188,6 +204,20 @@ private extension PostRollingViewController {
         }
 
         cell.updateMuteState(isMuted: false)
+      })
+      .disposed(by: disposeBag)
+
+    reactor.exclameDuplicatedSubject
+      .asSignal(onErrorJustReturn: ())
+      .emit(with: self, onNext: { owner, _ in
+        owner.present(owner.exclameErrorAlertViewController, animated: true)
+      })
+      .disposed(by: disposeBag)
+
+    exclameErrorAlertViewController.acceptButtonAction
+      .asSignal()
+      .emit(with: self, onNext: { owner, _ in
+        owner.exclameErrorAlertViewController.dismiss(animated: true)
       })
       .disposed(by: disposeBag)
   }
