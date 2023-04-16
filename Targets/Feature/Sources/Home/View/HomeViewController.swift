@@ -265,11 +265,5 @@ extension HomeViewController: PostRollingDelegate {
 
     collectionView.scrollRectToVisible(rect.frame, animated: false)
     collectionView.layoutIfNeeded()
-
-    if let currentCell = collectionView.cellForItem(at: .init(item: index, section: 0)) {
-      DispatchQueue.main.async { [weak currentCell] in
-        currentCell?.transform = .init(scaleX: 1.1, y: 1.1).translatedBy(x: 0, y: -20)
-      }
-    }
   }
 }
