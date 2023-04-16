@@ -153,7 +153,7 @@ extension MyPageViewController: UICollectionViewDelegateFlowLayout {
   }
 
   func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-    reactor?.action.onNext(.fetchItems(size: 3))
+    reactor?.action.onNext(.fetchItems(size: 6))
   }
 }
 
