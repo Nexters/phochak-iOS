@@ -13,4 +13,4 @@
 KAKAO_NATIVE_APP_KEY = 90c2a33697ae1ea550f63ac017f7fb70
 
 // MARK: BASE URL
-BASE_URL = 101.101.209.228
+BASE_URL = phochak-lb-813451034.ap-northeast-2.elb.amazonaws.com
