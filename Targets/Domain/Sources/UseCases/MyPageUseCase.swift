@@ -11,8 +11,8 @@ import RxSwift
 import Kingfisher
 
 public protocol MyPageUseCaseType: FetchVideoPostUseCaseType, FetchProfileUseCaseType {
-  func withdrawl() -> Observable<Void>
   func signOut() -> Observable<Void>
+  func logout() -> Observable<Void>
   func clearCache() -> Observable<Void>
   func deleteVideoPost(postID: Int) -> Observable<Void>
 }
@@ -41,12 +41,12 @@ final class MyPageUseCase: MyPageUseCaseType {
       .asObservable()
   }
 
-  func withdrawl() -> Observable<Void> {
-    settingService.withdrawal().asObservable()
-  }
-
   func signOut() -> Observable<Void> {
     settingService.signOut().asObservable()
+  }
+
+  func logout() -> Observable<Void> {
+    settingService.logout().asObservable()
   }
 
   func clearCache() -> Observable<Void> {

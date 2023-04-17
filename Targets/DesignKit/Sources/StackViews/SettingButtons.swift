@@ -12,12 +12,12 @@ import RxSwift
 import SnapKit
 import Then
 
-public protocol WithdrawalButtonDelegate: AnyObject {
-  func tapWithdrawalButton()
-}
-
 public protocol SignOutButtonDelegate: AnyObject {
   func tapSignOutButton()
+}
+
+public protocol LogoutButtonDelegate: AnyObject {
+  func tapLogoutButton()
 }
 
 public protocol ClearCacheButtonDelegate: AnyObject {
@@ -28,15 +28,15 @@ public final class SettingButtons: UIStackView {
 
   // MARK: Properties
   private let disposeBag: DisposeBag = .init()
-  private let withdrawalButton: UIButton = .init()
   private let signOutButton: UIButton = .init()
+  private let logoutButton: UIButton = .init()
   private let clearCacheButton: UIButton = .init()
   private var allButtons: [UIButton] {
-    return [withdrawalButton, signOutButton, clearCacheButton]
+    return [signOutButton, logoutButton, clearCacheButton]
   }
 
-  public weak var withdrawlButtonDelegate: WithdrawalButtonDelegate?
   public weak var signOutButtonDelegate: SignOutButtonDelegate?
+  public weak var logoutButtonDelegate: LogoutButtonDelegate?
   public weak var clearCacheButtonDelegate: ClearCacheButtonDelegate?
 
   // MARK: Initializer
@@ -69,11 +69,11 @@ private extension SettingButtons {
     axis = .vertical
     backgroundColor = .createColor(.monoGray, .w800)
 
-    withdrawalButton.do {
+    signOutButton.do {
       $0.setTitle("회원탈퇴", for: .normal)
     }
 
-    signOutButton.do {
+    logoutButton.do {
       $0.setTitle("로그아웃", for: .normal)
     }
 
@@ -131,17 +131,17 @@ private extension SettingButtons {
   }
 
   func setupBind() {
-    withdrawalButton.rx.tap
-      .asSignal()
-      .emit(with: self, onNext: { owner, _ in
-        owner.withdrawlButtonDelegate?.tapWithdrawalButton()
-      })
-      .disposed(by: disposeBag)
-
     signOutButton.rx.tap
       .asSignal()
       .emit(with: self, onNext: { owner, _ in
         owner.signOutButtonDelegate?.tapSignOutButton()
+      })
+      .disposed(by: disposeBag)
+
+    logoutButton.rx.tap
+      .asSignal()
+      .emit(with: self, onNext: { owner, _ in
+        owner.logoutButtonDelegate?.tapLogoutButton()
       })
       .disposed(by: disposeBag)
 
