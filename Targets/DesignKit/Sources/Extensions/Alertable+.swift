@@ -57,6 +57,7 @@ public extension Alertable where Self: UIViewController {
     alertController.modalPresentationStyle = .overCurrentContext
     alertController.modalTransitionStyle = .crossDissolve
     alertController.view.backgroundColor = .createColor(.monoGray, .w950, alpha: 0.3)
+    alertController.view.cornerRadius(radius: 16)
     alertController.addAction(.init(title: "확인", style: .default, handler: { _ in okAction() }))
 
     if let cancelAction {
