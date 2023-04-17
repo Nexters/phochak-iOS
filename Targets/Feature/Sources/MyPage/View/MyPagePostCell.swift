@@ -101,6 +101,10 @@ final class MyPagePostCell: BaseCollectionViewCell {
 
   // MARK: Methods
   func configure(videoPost: VideoPost, hideOption: Bool = false, indexNumber: Int) {
+    if videoPost.isBlind {
+      setBlind()
+    }
+
     thumbnailImageView.kf.setImage(with: videoPost.shorts.thumbnailURL)
     likeCountLabel.text = "\(videoPost.likeCount)"
     optionButton.isHidden = hideOption
@@ -121,13 +125,9 @@ final class MyPagePostCell: BaseCollectionViewCell {
         )
       })
       .disposed(by: disposeBag)
-
-    if videoPost.isBlind {
-      setBlind()
-    }
   }
 
-  func setBlind() {
+  private func setBlind() {
     thumbnailImageView.addSubview(alphaView)
     alphaView.addSubview(exclamedImageView)
 
