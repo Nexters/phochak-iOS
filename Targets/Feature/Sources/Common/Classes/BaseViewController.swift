@@ -12,7 +12,7 @@ import UIKit
 import ReactorKit
 import RxSwift
 
-class BaseViewController<T: Reactor>: UIViewController, View {
+class BaseViewController<T: Reactor>: UIViewController, View, Alertable {
   typealias Reactor = T
 
   // MARK: Properties
