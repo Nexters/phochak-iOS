@@ -149,9 +149,10 @@ final class MyPageReactor: Reactor {
         var uploadedPosts = state.uploadedPosts
 
         videoPosts.forEach { videoPost in
-          if let index = uploadedPosts.firstIndex(where: { $0.id == videoPost.id }),
-             uploadedPosts[index] != videoPost {
-            uploadedPosts[index] = videoPost
+          if let index = uploadedPosts.firstIndex(where: { $0.id == videoPost.id }) {
+            if uploadedPosts[index] != videoPost {
+              uploadedPosts[index] = videoPost
+            }
           } else {
             uploadedPosts.append(videoPost)
           }
@@ -164,9 +165,10 @@ final class MyPageReactor: Reactor {
         var likedPosts = state.likedPosts
 
         videoPosts.forEach { videoPost in
-          if let index = likedPosts.firstIndex(where: { $0.id == videoPost.id }),
-             likedPosts[index] != videoPost {
-            likedPosts[index] = videoPost
+          if let index = likedPosts.firstIndex(where: { $0.id == videoPost.id }) {
+            if likedPosts[index] != videoPost {
+              likedPosts[index] = videoPost
+            }
           } else {
             likedPosts.append(videoPost)
           }
