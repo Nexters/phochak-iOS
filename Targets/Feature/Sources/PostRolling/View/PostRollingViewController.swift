@@ -27,7 +27,7 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
   )
   private lazy var exclameAlertViewController: PhoChakAlertViewController = .init(alertType: .exclame)
   private lazy var exclameErrorAlertViewController: PhoChakAlertViewController = .init(alertType: .alreadyExclamed)
-  private let exclameButtonTapRelay: BehaviorRelay<Int> = .init(value: -1)
+  private let exclameButtonTapSubject: PublishSubject<Int> = .init()
   private let likeButtonTapSubject: PublishSubject<Int> = .init()
   private let topGradientView: UIView = .init()
   weak var delegate: PostRollingDelegate?
@@ -139,15 +139,15 @@ private extension PostRollingViewController {
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
-    exclameButtonTapRelay
-      .asSignal(onErrorJustReturn: -1)
+    exclameButtonTapSubject
+      .asSignal(onErrorSignalWith: .empty())
       .emit(with: self, onNext: { owner, _ in
         owner.present(owner.exclameAlertViewController, animated: true)
       })
       .disposed(by: disposeBag)
 
     exclameAlertViewController.acceptButtonAction.asObservable()
-      .withLatestFrom(exclameButtonTapRelay)
+      .withLatestFrom(exclameButtonTapSubject)
       .map { PostRollingReactor.Action.exclameVideoPost(postID: $0) }
       .asSignal(onErrorSignalWith: .empty())
       .emit(with: self, onNext: { owner, action in
@@ -172,11 +172,11 @@ private extension PostRollingViewController {
       ) { [weak self] _, post, cell in
         cell.configure(reactor: .init(videoPost: post))
 
-        cell.exclameButtonTapSubject
-          .subscribe(onNext: { [weak self] in
-            self?.exclameButtonTapRelay.accept($0)
-          })
-          .disposed(by: cell.disposeBag)
+        if let exclameButtonTapSubject = self?.exclameButtonTapSubject {
+          cell.exclameButtonTapSubject
+            .subscribe(exclameButtonTapSubject)
+            .disposed(by: cell.disposeBag)
+        }
 
         if let likeButtonTapSubject = self?.likeButtonTapSubject {
           cell.likeButtonTapSubject

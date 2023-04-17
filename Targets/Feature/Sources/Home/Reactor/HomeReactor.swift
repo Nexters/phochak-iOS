@@ -88,7 +88,7 @@ final class HomeReactor: Reactor {
 
     case .exclameVideoPost(let postID):
       return depepdency.useCase.exclameVideoPost(postID: postID)
-        .flatMap { [weak self] isError -> Observable<Mutation> in
+        .flatMapLatest { [weak self] isError -> Observable<Mutation> in
           if isError { self?.alreadyExclamedSubject.onNext(()) }
           return .empty()
         }

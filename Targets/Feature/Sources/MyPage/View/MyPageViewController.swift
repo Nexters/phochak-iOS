@@ -399,6 +399,7 @@ private extension MyPageViewController {
       .disposed(by: disposeBag)
   }
 
+  //TODO: - 추후 변경 예정
   func presentBlindAlertView() {
     let alert: PhoChakAlertViewController = .init(alertType: .blind)
     present(alert, animated: true)
