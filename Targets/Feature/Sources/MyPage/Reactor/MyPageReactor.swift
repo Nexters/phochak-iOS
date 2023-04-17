@@ -41,8 +41,8 @@ final class MyPageReactor: Reactor {
     case updatePostsListFilter(postFilter: PostsFilterOption)
     case editProfileButtonTap
     case videoPostCellTap(videoPost: VideoPost)
-    case tapWithdrawalButton
     case tapSignOutButton
+    case tapLogoutButton
     case tapClearCacheButton
     case tapPostDeletionButton(indexNumber: Int)
   }
@@ -118,11 +118,11 @@ final class MyPageReactor: Reactor {
       )
       return .empty()
 
-    case .tapWithdrawalButton:
-      return dependency.useCase.withdrawl().map { .reSignIn }
-
     case .tapSignOutButton:
       return dependency.useCase.signOut().map { .reSignIn }
+
+    case .tapLogoutButton:
+      return dependency.useCase.logout().map { .reSignIn }
 
     case .tapClearCacheButton:
       return dependency.useCase.clearCache()
@@ -182,7 +182,7 @@ final class MyPageReactor: Reactor {
 
     case .reSignIn:
       TokenManager.deleteAll()
-      NotificationCenter.default.post(name: Notification.Name("reSignIn"), object: nil)
+      NotificationCenter.default.post(name: .logout, object: nil)
 
     case .deletePost(let indexNumber):
       newState.uploadedPosts.remove(at: indexNumber)

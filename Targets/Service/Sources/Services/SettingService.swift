@@ -23,12 +23,12 @@ final class SettingService: SettingServiceType {
   }
 
   // MARK: Methods
-  func withdrawal() -> Single<Void> {
+  func signOut() -> Single<Void> {
     provider.rx.request(.withdrawl)
       .map { _ in }
   }
 
-  func signOut() -> Single<Void> {
+  func logout() -> Single<Void> {
     provider.rx.request(.signOut)
       .map { _ in }
   }

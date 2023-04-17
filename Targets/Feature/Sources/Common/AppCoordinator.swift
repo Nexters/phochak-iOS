@@ -145,7 +145,14 @@ private extension AppCoordinator {
     NotificationCenter.default.addObserver(
       self,
       selector: #selector(exitToSignIn),
-      name: NSNotification.Name("reSignIn"),
+      name: .reSignIn,
+      object: nil
+    )
+
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(transitionToSignIn),
+      name: .logout,
       object: nil
     )
   }
@@ -160,5 +167,9 @@ private extension AppCoordinator {
       .disposed(by: disposeBag)
 
     UIApplication.keyWindow?.rootViewController?.present(alertViewController, animated: true)
+  }
+
+  @objc func transitionToSignIn() {
+    start(from: .signIn)
   }
 }

@@ -13,6 +13,6 @@ import RxSwift
 public protocol SettingServiceType {
 
   // MARK: Methods
-  func withdrawal() -> Single<Void>
   func signOut() -> Single<Void>
+  func logout() -> Single<Void>
 }

@@ -27,16 +27,6 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
   private lazy var deleteVideoPostButton: UIButton = .init()
   private lazy var selectedOptionButtonIndexNumber: Int = .init()
 
-  private lazy var withdrawlAlertViewController: PhoChakAlertViewController = .init(
-    alertType: .withdrawl
-  )
-  private lazy var signOutAlertViewController: PhoChakAlertViewController = .init(
-    alertType: .signOut
-  )
-  private lazy var clearCacheAlertViewController: PhoChakAlertViewController = .init(
-    alertType: .clearCache
-  )
-
   // MARK: Initializer
   init(reactor: MyPageReactor) {
     super.init()
@@ -82,8 +72,8 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
     }
 
     settingButtons.do {
-      $0.withdrawlButtonDelegate = self
       $0.signOutButtonDelegate = self
+      $0.logoutButtonDelegate = self
       $0.clearCacheButtonDelegate = self
     }
 
@@ -291,17 +281,23 @@ extension MyPageViewController: PostsSectionHeaderDelegate {
 
 // MARK: - SettingButtonsDelegate
 extension MyPageViewController
-: WithdrawalButtonDelegate, SignOutButtonDelegate, ClearCacheButtonDelegate {
-  func tapWithdrawalButton() {
-    present(withdrawlAlertViewController, animated: true)
+: SignOutButtonDelegate, LogoutButtonDelegate, ClearCacheButtonDelegate {
+  func tapSignOutButton() {
+    presentAlert(type: .signOut, okAction: { [weak self] in
+      self?.reactor?.action.onNext(.tapSignOutButton)
+    })
   }
 
-  func tapSignOutButton() {
-    present(signOutAlertViewController, animated: true)
+  func tapLogoutButton() {
+    presentAlert(type: .logout, okAction: { [weak self] in
+      self?.reactor?.action.onNext(.tapLogoutButton)
+    })
   }
 
   func tapClearCacheButton() {
-    present(clearCacheAlertViewController, animated: true)
+    presentAlert(type: .clearCache, okAction: { [weak self] in
+      self?.reactor?.action.onNext(.tapClearCacheButton)
+    })
   }
 }
 
@@ -313,24 +309,6 @@ private extension MyPageViewController {
     rx.viewWillAppear
       .map { MyPageReactor.Action.viewWillAppear }
       .bind(to: reactor.action)
-      .disposed(by: disposeBag)
-
-    withdrawlAlertViewController.acceptButtonAction
-      .map { _ in Action.tapWithdrawalButton }
-      .emit(to: reactor.action)
-      .disposed(by: disposeBag)
-
-    signOutAlertViewController.acceptButtonAction
-      .map { _ in Action.tapSignOutButton }
-      .emit(to: reactor.action)
-      .disposed(by: disposeBag)
-
-    clearCacheAlertViewController.acceptButtonAction
-      .map { _ in Action.tapClearCacheButton }
-      .emit(with: self, onNext: { owner, action in
-        reactor.action.onNext(action)
-        owner.clearCacheAlertViewController.dismiss(animated: true)
-      })
       .disposed(by: disposeBag)
 
     deleteVideoPostButton.rx.tap
