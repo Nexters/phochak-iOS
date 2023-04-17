@@ -35,8 +35,6 @@ final class MyPageReactor: Reactor {
     let useCase: MyPageUseCaseType
   }
 
-  // MARK: Initializer
-
   enum Action {
     case viewWillAppear
     case fetchItems(size: Int)
@@ -147,33 +145,40 @@ final class MyPageReactor: Reactor {
       newState.user = user
 
     case .setUploadedPosts(let videoPosts):
-      var uploadedPosts = state.uploadedPosts
+      if !videoPosts.isEmpty {
+        var uploadedPosts = state.uploadedPosts
 
-      videoPosts.forEach { videoPost in
-        if let index = uploadedPosts.firstIndex(where: { $0.id == videoPost.id }),
-           uploadedPosts[index] != videoPost {
-          uploadedPosts[index] = videoPost
-        } else {
-          uploadedPosts.append(videoPost)
+        videoPosts.forEach { videoPost in
+          if let index = uploadedPosts.firstIndex(where: { $0.id == videoPost.id }) {
+            if uploadedPosts[index] != videoPost {
+              uploadedPosts[index] = videoPost
+            }
+          } else {
+            uploadedPosts.append(videoPost)
+          }
         }
+        newState.uploadedPosts = uploadedPosts
       }
-      newState.uploadedPosts = videoPosts
 
     case .setLikedPosts(let videoPosts):
-      var likedPosts = state.likedPosts
+      if !videoPosts.isEmpty {
+        var likedPosts = state.likedPosts
 
-      videoPosts.forEach { videoPost in
-        if let index = likedPosts.firstIndex(where: { $0.id == videoPost.id }),
-           likedPosts[index] != videoPost {
-          likedPosts[index] = videoPost
-        } else {
-          likedPosts.append(videoPost)
+        videoPosts.forEach { videoPost in
+          if let index = likedPosts.firstIndex(where: { $0.id == videoPost.id }) {
+            if likedPosts[index] != videoPost {
+              likedPosts[index] = videoPost
+            }
+          } else {
+            likedPosts.append(videoPost)
+          }
         }
+        newState.likedPosts = likedPosts
       }
-      newState.likedPosts = videoPosts
 
     case .setPostFilter(let postFilter):
       newState.postFilter = postFilter
+      isLastPage = false
 
     case .reSignIn:
       TokenManager.deleteAll()
@@ -190,6 +195,14 @@ final class MyPageReactor: Reactor {
 // MARK: - Private
 private extension MyPageReactor {
   func fetchVideoPosts(request: FetchVideoPostRequest) -> Observable<Mutation> {
+    guard !isLastPage else {
+      if request.filterOption == .liked {
+        return .just(.setLikedPosts(videoPosts: []))
+      } else {
+        return .just(.setUploadedPosts(videoPosts: []))
+      }
+    }
+
     return dependency.useCase.fetchVideoPosts(request: request)
       .flatMap { [weak self] (videoPosts, isLastPage) in
         self?.isLastPage = isLastPage
