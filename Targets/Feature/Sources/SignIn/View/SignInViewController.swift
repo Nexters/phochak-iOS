@@ -18,6 +18,9 @@ import Then
 final class SignInViewController: BaseViewController<SignInReactor> {
 
   // MARK: Properties
+  private let iconImageView: UIImageView = .init(image: .createImage(.loginIcon))
+  private let logoImageView: UIImageView = .init(image: .createImage(.loginLogo))
+  private let titleImageView: UIImageView = .init(image: .createImage(.loginTitle))
   private let kakaoLoginButton: UIButton = .init()
   private let appleLoginButton: UIButton = .init()
 
@@ -46,6 +49,10 @@ final class SignInViewController: BaseViewController<SignInReactor> {
 
   override func setupViews() {
     super.setupViews()
+
+    [iconImageView, logoImageView, titleImageView].forEach {
+      view.addSubview($0)
+    }
 
     appleLoginButton.do {
       $0.backgroundColor = .createColor(.monoGray, .w50)
@@ -80,6 +87,21 @@ final class SignInViewController: BaseViewController<SignInReactor> {
     kakaoLoginButton.snp.makeConstraints {
       $0.leading.trailing.height.equalTo(appleLoginButton)
       $0.bottom.equalTo(appleLoginButton.snp.top).offset(-15)
+    }
+
+    titleImageView.snp.makeConstraints {
+      $0.bottom.equalTo(kakaoLoginButton.snp.top).offset(-248)
+      $0.centerX.equalToSuperview()
+    }
+
+    logoImageView.snp.makeConstraints {
+      $0.bottom.equalTo(titleImageView.snp.top).offset(-20)
+      $0.centerX.equalToSuperview()
+    }
+
+    iconImageView.snp.makeConstraints {
+      $0.bottom.equalTo(logoImageView.snp.top).offset(-40)
+      $0.centerX.equalToSuperview()
     }
   }
 }

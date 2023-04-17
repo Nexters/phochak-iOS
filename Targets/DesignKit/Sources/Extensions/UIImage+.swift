@@ -34,6 +34,9 @@ public extension UIImage {
     case option = "option"
     case deleteVideoPost = "deleteVideoPost"
     case exclamed = "exclamed"
+    case loginLogo = "loginLogo"
+    case loginIcon = "loginIcon"
+    case loginTitle = "loginTitle"
   }
 
   // MARK: Methods
