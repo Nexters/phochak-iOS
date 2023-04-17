@@ -255,7 +255,11 @@ extension MyPageViewController: UICollectionViewDataSource {
 // MARK: - MyPagePostCellDelegate
 extension MyPageViewController: MyPagePostCellDelegate {
   func tapPost(videoPost: VideoPost) {
-    reactor?.action.onNext(.videoPostCellTap(videoPost: videoPost))
+    if !videoPost.isBlind {
+      reactor?.action.onNext(.videoPostCellTap(videoPost: videoPost))
+    } else {
+      presentBlindAlertView()
+    }
   }
 
   func tapOptionButton(indexNumber: Int, optionButton: UIButton) {
@@ -392,6 +396,19 @@ private extension MyPageViewController {
         owner.settingButtons.removeFromSuperview()
         owner.deleteVideoPostButton.removeFromSuperview()
       })
+      .disposed(by: disposeBag)
+  }
+
+  //TODO: - 추후 변경 예정
+  func presentBlindAlertView() {
+    let alert: PhoChakAlertViewController = .init(alertType: .blind)
+    present(alert, animated: true)
+
+    alert.acceptButtonAction
+      .asSignal()
+      .emit { _ in
+        alert.dismiss(animated: true)
+      }
       .disposed(by: disposeBag)
   }
 }

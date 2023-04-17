@@ -11,7 +11,7 @@ import RxSwift
 public protocol ExclameVideoPostUseCaseType {
 
   // MARK: Methods
-  func exclameVideoPost(postID: Int) -> Observable<Void>
+  func exclameVideoPost(postID: Int) -> Observable<Bool>
 }
 
 final class ExclameVideoPostUseCase: ExclameVideoPostUseCaseType {
@@ -25,7 +25,7 @@ final class ExclameVideoPostUseCase: ExclameVideoPostUseCaseType {
   }
 
   // MARK: Methods
-  func exclameVideoPost(postID: Int) -> Observable<Void> {
+  func exclameVideoPost(postID: Int) -> Observable<Bool> {
     service.exclameVideoPost(postID: postID)
       .asObservable()
   }

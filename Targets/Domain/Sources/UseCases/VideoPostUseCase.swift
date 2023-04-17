@@ -39,7 +39,7 @@ final class VideoPostUseCase: VideoPostUseCaseType {
       .asObservable()
   }
 
-  func exclameVideoPost(postID: Int) -> Observable<Void> {
+  func exclameVideoPost(postID: Int) -> Observable<Bool> {
     service.exclameVideoPost(postID: postID)
       .asObservable()
   }

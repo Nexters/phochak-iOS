@@ -21,6 +21,8 @@ final class MyPagePostCell: BaseCollectionViewCell {
   private let likeImageView: UIImageView = .init()
   private let likeCountLabel: UILabel = .init()
   private let optionButton: UIButton = .init()
+  private lazy var alphaView: UIView = .init()
+  private lazy var exclamedImageView: UIImageView = .init()
   weak var delegate: MyPagePostCellDelegate?
 
   override init(frame: CGRect) {
@@ -37,6 +39,8 @@ final class MyPagePostCell: BaseCollectionViewCell {
 
     thumbnailImageView.image = nil
     likeCountLabel.text = nil
+    alphaView.removeFromSuperview()
+    exclamedImageView.removeFromSuperview()
   }
 
   override func setupViews() {
@@ -61,6 +65,14 @@ final class MyPagePostCell: BaseCollectionViewCell {
     optionButton.do {
       $0.setImage(.createImage(.option), for: .normal)
       contentView.addSubview($0)
+    }
+
+    alphaView.do {
+      $0.backgroundColor = .createColor(.monoGray, .w950, alpha: 0.5)
+    }
+
+    exclamedImageView.do {
+      $0.image = .createImage(.exclamed)
     }
   }
 
@@ -89,6 +101,10 @@ final class MyPagePostCell: BaseCollectionViewCell {
 
   // MARK: Methods
   func configure(videoPost: VideoPost, hideOption: Bool = false, indexNumber: Int) {
+    if videoPost.isBlind {
+      setBlind()
+    }
+
     thumbnailImageView.kf.setImage(with: videoPost.shorts.thumbnailURL)
     likeCountLabel.text = "\(videoPost.likeCount)"
     optionButton.isHidden = hideOption
@@ -109,5 +125,18 @@ final class MyPagePostCell: BaseCollectionViewCell {
         )
       })
       .disposed(by: disposeBag)
+  }
+
+  private func setBlind() {
+    thumbnailImageView.addSubview(alphaView)
+    alphaView.addSubview(exclamedImageView)
+
+    alphaView.snp.makeConstraints {
+      $0.edges.equalToSuperview()
+    }
+
+    exclamedImageView.snp.makeConstraints {
+      $0.center.equalToSuperview()
+    }
   }
 }
