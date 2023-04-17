@@ -26,7 +26,7 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
     collectionViewLayout: flowLayout
   )
   private lazy var exclameAlertViewController: PhoChakAlertViewController = .init(alertType: .exclame)
-  private lazy var exclameErrorAlertViewController: PhoChakAlertViewController = .init(alertType: .exclameDuplicated)
+  private lazy var exclameErrorAlertViewController: PhoChakAlertViewController = .init(alertType: .alreadyExclamed)
   private let exclameButtonTapRelay: BehaviorRelay<Int> = .init(value: -1)
   private let likeButtonTapSubject: PublishSubject<Int> = .init()
   private let topGradientView: UIView = .init()

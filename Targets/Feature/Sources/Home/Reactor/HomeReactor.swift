@@ -18,7 +18,7 @@ final class HomeReactor: Reactor {
   var initialState: State = .init(videoPosts: [], isLoading: false)
   private var isLastPage: Bool = false
   private var existVideoPostRequest: FetchVideoPostRequest?
-  private (set) var exclameDuplicatedSubject: PublishSubject<Void> = .init()
+  private (set) var alreadyExclamedSubject: PublishSubject<Void> = .init()
   
   struct Dependency {
     let coordinator: AppCoordinatorType
@@ -89,7 +89,7 @@ final class HomeReactor: Reactor {
     case .exclameVideoPost(let postID):
       return depepdency.useCase.exclameVideoPost(postID: postID)
         .flatMap { [weak self] isError -> Observable<Mutation> in
-          if isError { self?.exclameDuplicatedSubject.onNext(()) }
+          if isError { self?.alreadyExclamedSubject.onNext(()) }
           return .empty()
         }
 

@@ -26,7 +26,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     collectionViewLayout: flowLayout
   )
   private lazy var exclameAlertViewController: PhoChakAlertViewController = .init(alertType: .exclame)
-  private lazy var exclameErrorAlertViewController: PhoChakAlertViewController = .init(alertType: .exclameDuplicated)
+  private lazy var exclameErrorAlertViewController: PhoChakAlertViewController = .init(alertType: .alreadyExclamed)
   private let exclameVideoPostSubject: PublishSubject<Int> = .init()
   private let likeVideoPostSubject: PublishSubject<Int> = .init()
   private let updatedDataSourceSubject: PublishSubject<[VideoPost]> = .init()
@@ -154,7 +154,7 @@ private extension HomeViewController {
       .subscribe()
       .disposed(by: disposeBag)
 
-    reactor.exclameDuplicatedSubject
+    reactor.alreadyExclamedSubject
       .asSignal(onErrorJustReturn: ())
       .emit(with: self, onNext: { owner, _ in
         owner.present(owner.exclameErrorAlertViewController, animated: true)
