@@ -7,6 +7,7 @@
 //
 
 import Core
+import DesignKit
 import Domain
 import UIKit
 
@@ -52,7 +53,7 @@ public extension Reactive where Base: MoyaProviderType {
             do {
               if !isValidationToken(try response.map(TokenErrorResponse.self)) {
                 TokenManager.deleteAll()
-                NotificationCenter.default.post(name: .reSignIn, object: nil)
+                presentAlert()
                 return false
               }
             } catch {
@@ -103,5 +104,23 @@ public extension Reactive where Base: MoyaProviderType {
     else { return true }
 
     return false
+  }
+
+  private func presentAlert() {
+    let alertController: UIAlertController = .init(
+      title: "세션이 만료되었습니다",
+      message: "다시 로그인 후 시도해 주세요",
+      preferredStyle: .alert
+    )
+    alertController.modalPresentationStyle = .overCurrentContext
+    alertController.modalTransitionStyle = .crossDissolve
+    alertController.view.backgroundColor = .createColor(.monoGray, .w800)
+    alertController.view.cornerRadius(radius: 16)
+
+    alertController.addAction(.init(title: "확인", style: .default, handler: { _ in
+      NotificationCenter.default.post(name: .logout, object: nil)
+    }))
+
+    UIApplication.keyWindow?.rootViewController?.present(alertController, animated: true)
   }
 }

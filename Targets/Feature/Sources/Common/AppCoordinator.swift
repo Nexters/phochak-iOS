@@ -141,32 +141,10 @@ private extension AppCoordinator {
   func addTokenObserver() {
     NotificationCenter.default.addObserver(
       self,
-      selector: #selector(exitToSignIn),
-      name: .reSignIn,
-      object: nil
-    )
-
-    NotificationCenter.default.addObserver(
-      self,
       selector: #selector(transitionToSignIn),
       name: .logout,
       object: nil
     )
-  }
-
-  @objc func exitToSignIn() {
-    let alertController: UIAlertController = .init(
-      title: AlertType.tokenExpired.title,
-      message: AlertType.tokenExpired.message,
-      preferredStyle: .alert
-    )
-    alertController.modalPresentationStyle = .overCurrentContext
-    alertController.modalTransitionStyle = .crossDissolve
-    alertController.view.backgroundColor = .createColor(.monoGray, .w950, alpha: 0.3)
-    alertController.view.cornerRadius(radius: 16)
-    alertController.addAction(.init(title: "확인", style: .default, handler: { _ in }))
-
-    UIApplication.keyWindow?.rootViewController?.present(alertController, animated: true)
   }
 
   @objc func transitionToSignIn() {
