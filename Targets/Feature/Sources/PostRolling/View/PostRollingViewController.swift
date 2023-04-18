@@ -25,8 +25,6 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
     frame: .zero,
     collectionViewLayout: flowLayout
   )
-  private lazy var exclameAlertViewController: PhoChakAlertViewController = .init(alertType: .exclame)
-  private lazy var exclameErrorAlertViewController: PhoChakAlertViewController = .init(alertType: .alreadyExclamed)
   private let exclameButtonTapSubject: PublishSubject<Int> = .init()
   private let likeButtonTapSubject: PublishSubject<Int> = .init()
   private let topGradientView: UIView = .init()
@@ -141,18 +139,14 @@ private extension PostRollingViewController {
 
     exclameButtonTapSubject
       .asSignal(onErrorSignalWith: .empty())
-      .emit(with: self, onNext: { owner, _ in
-        owner.present(owner.exclameAlertViewController, animated: true)
-      })
-      .disposed(by: disposeBag)
-
-    exclameAlertViewController.acceptButtonAction.asObservable()
-      .withLatestFrom(exclameButtonTapSubject)
-      .map { PostRollingReactor.Action.exclameVideoPost(postID: $0) }
-      .asSignal(onErrorSignalWith: .empty())
-      .emit(with: self, onNext: { owner, action in
-        reactor.action.onNext(action)
-        owner.exclameAlertViewController.dismiss(animated: true)
+      .emit(with: self, onNext: { owner, postID in
+        owner.presentAlert(
+          type: .exclamePost,
+          okAction: { [weak self] in
+            self?.reactor?.action.onNext(.exclameVideoPost(postID: postID))
+          },
+          cancelAction: {}
+        )
       })
       .disposed(by: disposeBag)
 
@@ -207,17 +201,13 @@ private extension PostRollingViewController {
       })
       .disposed(by: disposeBag)
 
-    reactor.exclameDuplicatedSubject
+    reactor.alreadyExclamedSubject
       .asSignal(onErrorJustReturn: ())
       .emit(with: self, onNext: { owner, _ in
-        owner.present(owner.exclameErrorAlertViewController, animated: true)
-      })
-      .disposed(by: disposeBag)
-
-    exclameErrorAlertViewController.acceptButtonAction
-      .asSignal()
-      .emit(with: self, onNext: { owner, _ in
-        owner.exclameErrorAlertViewController.dismiss(animated: true)
+        owner.presentAlert(
+          type: .alreadyExclamed,
+          okAction: {}
+        )
       })
       .disposed(by: disposeBag)
   }

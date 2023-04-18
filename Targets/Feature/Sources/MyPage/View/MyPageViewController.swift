@@ -283,21 +283,33 @@ extension MyPageViewController: PostsSectionHeaderDelegate {
 extension MyPageViewController
 : SignOutButtonDelegate, LogoutButtonDelegate, ClearCacheButtonDelegate {
   func tapSignOutButton() {
-    presentAlert(type: .signOut, okAction: { [weak self] in
-      self?.reactor?.action.onNext(.tapSignOutButton)
-    })
+    presentAlert(
+      type: .signOut,
+      okAction: { [weak self] in
+        self?.reactor?.action.onNext(.tapSignOutButton)
+      },
+      cancelAction: {}
+    )
   }
 
   func tapLogoutButton() {
-    presentAlert(type: .logout, okAction: { [weak self] in
-      self?.reactor?.action.onNext(.tapLogoutButton)
-    })
+    presentAlert(
+      type: .logout,
+      okAction: { [weak self] in
+        self?.reactor?.action.onNext(.tapLogoutButton)
+      },
+      cancelAction: {}
+    )
   }
 
   func tapClearCacheButton() {
-    presentAlert(type: .clearCache, okAction: { [weak self] in
-      self?.reactor?.action.onNext(.tapClearCacheButton)
-    })
+    presentAlert(
+      type: .clearCache,
+      okAction: { [weak self] in
+        self?.reactor?.action.onNext(.tapClearCacheButton)
+      },
+      cancelAction: {}
+    )
   }
 }
 
@@ -377,16 +389,10 @@ private extension MyPageViewController {
       .disposed(by: disposeBag)
   }
 
-  //TODO: - 추후 변경 예정
   func presentBlindAlertView() {
-    let alert: PhoChakAlertViewController = .init(alertType: .blind)
-    present(alert, animated: true)
-
-    alert.acceptButtonAction
-      .asSignal()
-      .emit { _ in
-        alert.dismiss(animated: true)
-      }
-      .disposed(by: disposeBag)
+    presentAlert(
+      type: .clearCache,
+      okAction: {}
+    )
   }
 }

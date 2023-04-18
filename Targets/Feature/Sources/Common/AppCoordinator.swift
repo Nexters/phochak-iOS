@@ -10,8 +10,6 @@ import Core
 import DesignKit
 import UIKit
 
-import RxSwift
-
 public enum TransitionStyle {
   case push
   case modal
@@ -45,7 +43,6 @@ public final class AppCoordinator: AppCoordinatorType {
   // MARK: Properties
   private var currentNavController: UINavigationController?
   private let sceneFactory: SceneFactory
-  private lazy var disposeBag: DisposeBag = .init()
 
   public struct Dependency {
     let injector: DependencyResolvable
@@ -158,15 +155,18 @@ private extension AppCoordinator {
   }
 
   @objc func exitToSignIn() {
-    let alertViewController: PhoChakAlertViewController = .init(alertType: .tokenExpired)
+    let alertController: UIAlertController = .init(
+      title: AlertType.tokenExpired.title,
+      message: AlertType.tokenExpired.message,
+      preferredStyle: .alert
+    )
+    alertController.modalPresentationStyle = .overCurrentContext
+    alertController.modalTransitionStyle = .crossDissolve
+    alertController.view.backgroundColor = .createColor(.monoGray, .w950, alpha: 0.3)
+    alertController.view.cornerRadius(radius: 16)
+    alertController.addAction(.init(title: "확인", style: .default, handler: { _ in }))
 
-    alertViewController.acceptButtonAction
-      .emit(with: self, onNext: { owner, _ in
-        owner.start(from: .signIn)
-      })
-      .disposed(by: disposeBag)
-
-    UIApplication.keyWindow?.rootViewController?.present(alertViewController, animated: true)
+    UIApplication.keyWindow?.rootViewController?.present(alertController, animated: true)
   }
 
   @objc func transitionToSignIn() {
