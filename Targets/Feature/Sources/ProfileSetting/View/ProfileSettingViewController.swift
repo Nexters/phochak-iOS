@@ -115,20 +115,20 @@ private extension ProfileSettingViewController {
     typealias Action = ProfileSettingReactor.Action
 
     checkDuplicationButton.rx.tap
-      .withLatestFrom(textField.rx.text.orEmpty)
-      .map { Action.tapCheckButton(nickName: String($0)) }
+      .map { Action.tapCheckButton }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
     textField.rx.text.orEmpty
       .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-      .map { _ in Action.inputNickName }
+      .filter { $0.count < 11 }
+      .distinctUntilChanged()
+      .map { Action.inputNickName($0) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
     completeButton.rx.tap
-      .withLatestFrom(textField.rx.text.orEmpty)
-      .map { Action.tapCompleteButton(nickName: $0) }
+      .map { Action.tapCompleteButton }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
   }

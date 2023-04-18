@@ -17,6 +17,7 @@ final class ProfileSettingReactor: Reactor {
   var initialState: State = .init(isEnableComplete: false, isError: false)
   let isDuplicatedSubject: PublishSubject<Bool> = .init()
   private let depepdency: Dependency
+  private var currentNickName: String = ""
 
   struct Dependency {
     let coordinator: AppCoordinatorType
@@ -29,9 +30,9 @@ final class ProfileSettingReactor: Reactor {
   }
 
   enum Action {
-    case inputNickName
-    case tapCheckButton(nickName: String)
-    case tapCompleteButton(nickName: String)
+    case inputNickName(String)
+    case tapCheckButton
+    case tapCompleteButton
     case tapAlertAcceptButton
   }
 
@@ -49,18 +50,19 @@ final class ProfileSettingReactor: Reactor {
   // MARK: Methods
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
-    case .tapCheckButton(let nickName):
-      return depepdency.useCase.checkDuplicationNickName(nickName: nickName)
+    case .tapCheckButton:
+      return depepdency.useCase.checkDuplicationNickName(nickName: currentNickName)
         .map { [weak self] isDuplicated -> Mutation in
           self?.isDuplicatedSubject.onNext(isDuplicated)
           return .setIsEnableComplete(isEnable: !isDuplicated)
         }
 
-    case .inputNickName:
+    case .inputNickName(let nickName):
+      currentNickName = nickName
       return .just(.setIsEnableComplete(isEnable: false))
 
-    case .tapCompleteButton(let nickName):
-      return depepdency.useCase.changeNickName(nickName: nickName)
+    case .tapCompleteButton:
+      return depepdency.useCase.changeNickName(nickName: currentNickName)
         .flatMap { _ -> Observable<Mutation> in
           return .empty()
         }
