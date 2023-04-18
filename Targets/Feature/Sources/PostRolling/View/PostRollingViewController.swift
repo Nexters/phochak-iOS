@@ -145,7 +145,7 @@ private extension PostRollingViewController {
           okAction: { [weak self] in
             self?.reactor?.action.onNext(.exclameVideoPost(postID: postID))
           },
-          cancelAction: {}
+          isNeededCancel: true
         )
       })
       .disposed(by: disposeBag)

@@ -288,7 +288,7 @@ extension MyPageViewController
       okAction: { [weak self] in
         self?.reactor?.action.onNext(.tapSignOutButton)
       },
-      cancelAction: {}
+      isNeededCancel: true
     )
   }
 
@@ -298,7 +298,7 @@ extension MyPageViewController
       okAction: { [weak self] in
         self?.reactor?.action.onNext(.tapLogoutButton)
       },
-      cancelAction: {}
+      isNeededCancel: true
     )
   }
 
@@ -308,7 +308,7 @@ extension MyPageViewController
       okAction: { [weak self] in
         self?.reactor?.action.onNext(.tapClearCacheButton)
       },
-      cancelAction: {}
+      isNeededCancel: true
     )
   }
 }

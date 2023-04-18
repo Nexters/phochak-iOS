@@ -54,7 +54,7 @@ public extension Alertable where Self: UIViewController {
   func presentAlert(
     type: AlertType,
     okAction: @escaping (() -> Void?),
-    cancelAction: (() -> Void)? = nil
+    isNeededCancel: Bool = false
   ) {
     let alertController: UIAlertController = .init(title: type.title, message: type.message, preferredStyle: .alert)
     alertController.modalPresentationStyle = .overCurrentContext
@@ -63,8 +63,8 @@ public extension Alertable where Self: UIViewController {
     alertController.view.cornerRadius(radius: 16)
     alertController.addAction(.init(title: "확인", style: .default, handler: { _ in okAction() }))
 
-    if let cancelAction {
-      alertController.addAction(.init(title: "취소", style: .cancel, handler: { _ in cancelAction() }))
+    if isNeededCancel {
+      alertController.addAction(.init(title: "취소", style: .cancel, handler: { _ in }))
     }
 
     present(alertController, animated: true)
