@@ -391,7 +391,7 @@ private extension MyPageViewController {
 
   func presentBlindAlertView() {
     presentAlert(
-      type: .clearCache,
+      type: .blind,
       okAction: {}
     )
   }
