@@ -8,12 +8,9 @@
 
 import RxSwift
 
-import Kingfisher
-
 public protocol MyPageUseCaseType: FetchVideoPostUseCaseType, FetchProfileUseCaseType {
   func signOut() -> Observable<Void>
   func logout() -> Observable<Void>
-  func clearCache() -> Observable<Void>
   func deleteVideoPost(postID: Int) -> Observable<Void>
 }
 
@@ -24,7 +21,11 @@ final class MyPageUseCase: MyPageUseCaseType {
   private let profileService: ProfileServiceType
   private let settingService: SettingServiceType
 
-  init(postsService: VideoPostServiceType, profileService: ProfileServiceType, settingService: SettingServiceType) {
+  init(
+    postsService: VideoPostServiceType,
+    profileService: ProfileServiceType,
+    settingService: SettingServiceType
+  ) {
     self.postsService = postsService
     self.profileService = profileService
     self.settingService = settingService
@@ -47,12 +48,6 @@ final class MyPageUseCase: MyPageUseCaseType {
 
   func logout() -> Observable<Void> {
     settingService.logout().asObservable()
-  }
-
-  func clearCache() -> Observable<Void> {
-    KingfisherManager.shared.cache.clearCache()
-    KingfisherManager.shared.cache.cleanExpiredCache()
-    return .empty()
   }
 
   func deleteVideoPost(postID: Int) -> Observable<Void> {

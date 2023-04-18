@@ -10,6 +10,7 @@ import Core
 import Domain
 import Foundation
 
+import Kingfisher
 import ReactorKit
 
 final class MyPageReactor: Reactor {
@@ -125,9 +126,11 @@ final class MyPageReactor: Reactor {
       return dependency.useCase.logout().map { .reSignIn }
 
     case .tapClearCacheButton:
-      return dependency.useCase.clearCache()
+      return Observable<Void>.just(())
         .flatMap { _ -> Observable<Mutation> in
-            return .empty()
+          KingfisherManager.shared.cache.clearCache()
+          KingfisherManager.shared.cache.clearMemoryCache()
+          return .empty()
         }
 
     case .tapPostDeletionButton(let indexNumber):
