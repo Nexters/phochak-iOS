@@ -16,6 +16,7 @@ public enum AlertType {
   case logout
   case clearCache
   case networkError
+  case tokenExpired
   case nicknameDuplicated
   case exclamePost
   case alreadyExclamed
@@ -28,6 +29,7 @@ public enum AlertType {
     case .logout: return "로그아웃"
     case .clearCache: return "캐시삭제"
     case .networkError: return "네트워크 불안정"
+    case .tokenExpired: return "세션이 만료되었습니다"
     case .nicknameDuplicated: return "닉네임이 중복되었습니다"
     case .exclamePost: return "포스팅 신고"
     case .alreadyExclamed: return "신고된 게시물"
@@ -42,6 +44,7 @@ public enum AlertType {
     case .logout: return "소셜계정을 다시 연결하면 정보가 복구됩니다"
     case .clearCache: return "영상 캐시 데이터를 삭제합니다"
     case .networkError: return "인터넷 연결을 확인해주세요"
+    case .tokenExpired: return "다시 로그인 후 시도해 주세요"
     case .nicknameDuplicated: return "수정 후 다시 시도해 주세요"
     case .exclamePost: return "신고가 누적된 영상은 볼 수 없게 됩니다"
     case .alreadyExclamed: return "이미 신고가 완료된 영상입니다"

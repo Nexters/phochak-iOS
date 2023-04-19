@@ -10,5 +10,6 @@ import Foundation
 
 public extension Notification.Name {
   static let muteAllPlayers = Notification.Name("muteAllPlayers")
+  static let reSignIn = Notification.Name("reSignIn")
   static let logout = Notification.Name("logout")
 }

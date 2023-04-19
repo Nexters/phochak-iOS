@@ -52,7 +52,7 @@ public extension Reactive where Base: MoyaProviderType {
             do {
               if !isValidationToken(try response.map(TokenErrorResponse.self)) {
                 TokenManager.deleteAll()
-                UIApplication.presentTokenExpiredAlert()
+                NotificationCenter.default.post(name: .reSignIn, object: nil)
                 return false
               }
             } catch {
