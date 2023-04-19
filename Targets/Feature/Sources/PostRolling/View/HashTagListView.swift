@@ -6,6 +6,7 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import DesignKit
 import Domain
 import UIKit
 
@@ -19,8 +20,8 @@ final class HashTagListView: UIView {
   // MARK: Properties
   private let headerView: UIView = .init()
   private let nicknameLabel: UILabel = .init()
-  private let exclameButton: UIButton = .init()
-  private let likeButton: UIButton = .init()
+  private let exclameButton: ExtendedTouchAreaButton = .init()
+  private let likeButton: ExtendedTouchAreaButton = .init()
   private let flowLayout: LeftAlignedCollectionViewFlowLayout = .init()
   lazy var collectionView: UICollectionView = .init(
     frame: .zero,

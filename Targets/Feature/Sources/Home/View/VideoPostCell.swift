@@ -1,5 +1,5 @@
 //
-//  VideoFeedCell.swift
+//  VideoPostCell.swift
 //  Feature
 //
 //  Created by Ian on 2023/01/23.
@@ -23,8 +23,8 @@ final class VideoPostCell: BaseCollectionViewCell {
   // MARK: Properties
   private let containerView: UIView = .init()
   private let nicknameLabel: UILabel = .init()
-  private let exclameButton: UIButton = .init()
-  private let likeButton: UIButton = .init()
+  private let exclameButton: ExtendedTouchAreaButton = .init()
+  private let likeButton: ExtendedTouchAreaButton = .init()
   private let videoPlayerView: VideoPlayerView = .init()
 
   private var videoPost: VideoPost?
