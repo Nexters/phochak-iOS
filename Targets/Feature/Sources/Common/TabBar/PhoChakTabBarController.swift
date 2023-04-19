@@ -6,9 +6,10 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import DesignKit
 import UIKit
 
-final class PhoChakTabBarController: UITabBarController {
+final class PhoChakTabBarController: UITabBarController, Alertable {
 
   // MARK: Properties
   private weak var coordinator: AppCoordinatorType?
@@ -27,11 +28,12 @@ final class PhoChakTabBarController: UITabBarController {
   override func viewDidLoad() {
     super.viewDidLoad()
 
+    addTokenObserver()
     delegate = self
   }
 }
 
-// MARK: - Private
+// MARK: - Extension
 extension PhoChakTabBarController: UITabBarControllerDelegate {
 
   // MARK: Methods
@@ -45,5 +47,26 @@ extension PhoChakTabBarController: UITabBarControllerDelegate {
 
     coordinator?.transition(to: .uploadVideoPost, style: .modal, animated: true, completion: nil)
     return false
+  }
+}
+
+// MARK: - Private
+private extension PhoChakTabBarController {
+  func addTokenObserver() {
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(transitionToSignIn),
+      name: .reSignIn,
+      object: nil
+    )
+  }
+
+  @objc private func transitionToSignIn() {
+    presentAlert(
+      type: .tokenExpired,
+      okAction: { [weak self] in
+        self?.coordinator?.start(from: .signIn)
+      }
+    )
   }
 }

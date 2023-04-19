@@ -22,7 +22,6 @@ final class ProfileSettingViewController: BaseViewController<ProfileSettingReact
   private let textField: PhoChakTextField = .init(fieldStyle: .text)
   private let checkDuplicationButton: DuplicationCheckButton = .init()
   private let completeButton: CompletionButton = .init()
-  private lazy var alertViewController: PhoChakAlertViewController = .init(alertType: .nickNameDuplicated)
 
   // MARK: Initializer
   init(reactor: ProfileSettingReactor) {
@@ -132,14 +131,6 @@ private extension ProfileSettingViewController {
       .map { Action.tapCompleteButton(nickName: $0) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
-
-    alertViewController.acceptButtonAction
-      .asSignal()
-      .emit(with: self, onNext: { owner, _ in
-        owner.alertViewController.dismiss(animated: true)
-        reactor.action.onNext(.tapAlertAcceptButton)
-      })
-      .disposed(by: disposeBag)
   }
 
   func bindState(reactor: ProfileSettingReactor) {
@@ -161,7 +152,12 @@ private extension ProfileSettingViewController {
       .filter { $0 }
       .asSignal(onErrorSignalWith: .empty())
       .emit(with: self, onNext: { owner, _ in
-        owner.present(owner.alertViewController, animated: true)
+        owner.presentAlert(
+          type: .nicknameDuplicated,
+          okAction: { [weak self] in
+            self?.reactor?.action.onNext(.tapAlertAcceptButton)
+          }
+        )
       })
       .disposed(by: disposeBag)
   }

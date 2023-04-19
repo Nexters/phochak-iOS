@@ -25,9 +25,6 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     frame: .zero,
     collectionViewLayout: flowLayout
   )
-  private lazy var exclameAlertViewController: PhoChakAlertViewController = .init(alertType: .exclame)
-  private lazy var exclameErrorAlertViewController: PhoChakAlertViewController = .init(alertType: .alreadyExclamed)
-  private let exclameVideoPostSubject: PublishSubject<Int> = .init()
   private let likeVideoPostSubject: PublishSubject<Int> = .init()
   private let updatedDataSourceSubject: PublishSubject<[VideoPost]> = .init()
   private var isFirstEnter: Bool = true
@@ -105,16 +102,6 @@ private extension HomeViewController {
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
-    exclameAlertViewController.acceptButtonAction.asObservable()
-      .withLatestFrom(exclameVideoPostSubject)
-      .map { HomeReactor.Action.exclameVideoPost(postID: $0) }
-      .asSignal(onErrorSignalWith: .empty())
-      .emit(with: self, onNext: { owner, action in
-        reactor.action.onNext(action)
-        owner.exclameAlertViewController.dismiss(animated: true)
-      })
-      .disposed(by: disposeBag)
-
     likeVideoPostSubject
       .map { HomeReactor.Action.likeVideoPost(postID: $0) }
       .bind(to: reactor.action)
@@ -157,7 +144,7 @@ private extension HomeViewController {
     reactor.alreadyExclamedSubject
       .asSignal(onErrorJustReturn: ())
       .emit(with: self, onNext: { owner, _ in
-        owner.present(owner.exclameErrorAlertViewController, animated: true)
+        owner.presentAlert(type: .alreadyExclamed, okAction: {})
       })
       .disposed(by: disposeBag)
   }
@@ -193,13 +180,6 @@ private extension HomeViewController {
       .asDriver(onErrorDriveWith: .empty())
       .drive(with: self, onNext: { owner, _ in
         owner.collectionView.reloadData()
-      })
-      .disposed(by: disposeBag)
-
-    exclameErrorAlertViewController.acceptButtonAction
-      .asSignal()
-      .emit(with: self, onNext: { owner, _ in
-        owner.exclameErrorAlertViewController.dismiss(animated: true)
       })
       .disposed(by: disposeBag)
   }
@@ -268,9 +248,15 @@ extension HomeViewController: VideoPostCellDelegate {
   func didTapLikeButton(postID: Int) {
     reactor?.action.onNext(.likeVideoPost(postID: postID))
   }
+
   func didTapExclameButton(postID: Int) {
-    exclameVideoPostSubject.onNext(postID)
-    present(exclameAlertViewController, animated: true)
+    presentAlert(
+      type: .exclamePost,
+      okAction: { [weak self] in
+        self?.reactor?.action.onNext(.exclameVideoPost(postID: postID))
+      },
+      isNeededCancel: true
+    )
   }
 }
 

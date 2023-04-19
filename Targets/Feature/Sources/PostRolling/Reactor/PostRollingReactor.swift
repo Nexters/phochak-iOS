@@ -18,7 +18,7 @@ final class PostRollingReactor: Reactor {
   private(set) var currentIndex: Int
   private var existVideoPostRequest: FetchVideoPostRequest?
   private var isLastPage: Bool = false
-  private (set) var exclameDuplicatedSubject: PublishSubject<Void> = .init()
+  private (set) var alreadyExclamedSubject: PublishSubject<Void> = .init()
 
   struct Dependency {
     let coordinator: AppCoordinatorType
@@ -72,7 +72,7 @@ final class PostRollingReactor: Reactor {
     case .exclameVideoPost(let postID):
       return dependency.useCase.exclameVideoPost(postID: postID)
         .flatMap { [weak self] isError -> Observable<Mutation> in
-          if isError { self?.exclameDuplicatedSubject.onNext(()) }
+          if isError { self?.alreadyExclamedSubject.onNext(()) }
           return .empty()
         }
 

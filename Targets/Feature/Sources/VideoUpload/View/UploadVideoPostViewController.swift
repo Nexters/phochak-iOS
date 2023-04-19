@@ -35,7 +35,6 @@ final class UploadVideoPostViewController: BaseViewController<UploadVideoPostRea
   )
   private let completionButton: CompletionButton = .init()
   private lazy var loadingAnimationView: PhoChakLoadingViewController = .init()
-  private lazy var alertViewController: PhoChakAlertViewController = .init(alertType: .networkError)
   private let fileManager: PhoChakFileManagerType
   private var videoFile: VideoFile?
 
@@ -241,14 +240,6 @@ private extension UploadVideoPostViewController {
       }
       .emit(to: reactor.action)
       .disposed(by: disposeBag)
-
-    alertViewController.acceptButtonAction
-      .asSignal()
-      .emit(with: self, onNext: { owner, _ in
-        owner.alertViewController.dismiss(animated: true)
-        reactor.action.onNext(.tapAlertAcceptButton)
-      })
-      .disposed(by: disposeBag)
   }
 
   func bindState(reactor: UploadVideoPostReactor) {
@@ -282,7 +273,11 @@ private extension UploadVideoPostViewController {
       .filter { $0 }
       .asSignal(onErrorSignalWith: .empty())
       .emit(with: self, onNext: { owner, _ in
-        owner.present(owner.alertViewController, animated: true)
+        owner.presentAlert(
+          type: .networkError,
+          okAction: { [weak self] in
+            self?.reactor?.action.onNext(.tapAlertAcceptButton)
+          })
       })
       .disposed(by: disposeBag)
   }
