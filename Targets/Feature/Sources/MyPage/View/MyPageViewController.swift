@@ -116,7 +116,7 @@ extension MyPageViewController: UICollectionViewDelegateFlowLayout {
 
     case .posts:
       return .init(
-        width: (collectionView.frame.width - 54) / 3,
+        width: (collectionView.frame.width - 60) / 3,
         height: view.frame.height * 0.23
       )
     }
