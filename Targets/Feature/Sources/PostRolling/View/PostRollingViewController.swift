@@ -129,6 +129,9 @@ private extension PostRollingViewController {
 
     collectionView.rx.willEndDragging
       .withUnretained(self)
+      .filter { owner, _ in
+        return owner.tabBarController?.selectedIndex != PhoChakTab.myPage.rawValue
+      }
       .map({ (owner, event) -> Int in
         let index = Int(event.targetContentOffset.pointee.x / owner.collectionView.frame.width)
         return index

@@ -245,10 +245,10 @@ extension MyPageViewController: UICollectionViewDataSource {
 // MARK: - MyPagePostCellDelegate
 extension MyPageViewController: MyPagePostCellDelegate {
   func tapPost(videoPost: VideoPost) {
-    if !videoPost.isBlind {
-      reactor?.action.onNext(.videoPostCellTap(videoPost: videoPost))
-    } else {
+    if videoPost.isBlind {
       presentBlindAlertView()
+    } else {
+      reactor?.action.onNext(.videoPostCellTap(postID: videoPost.id))
     }
   }
 

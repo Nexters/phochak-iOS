@@ -9,6 +9,12 @@
 import DesignKit
 import UIKit
 
+enum PhoChakTab: Int {
+  case home
+  case upload
+  case myPage
+}
+
 final class PhoChakTabBarController: UITabBarController, Alertable {
 
   // MARK: Properties
@@ -43,7 +49,7 @@ extension PhoChakTabBarController: UITabBarControllerDelegate {
   ) -> Bool {
     let nextTabIndex = tabBarController.viewControllers?.firstIndex(of: viewController)
 
-    guard nextTabIndex == 1 else { return true }
+    guard nextTabIndex == PhoChakTab.upload.rawValue else { return true }
 
     coordinator?.transition(to: .uploadVideoPost, style: .modal, animated: true, completion: nil)
     return false
