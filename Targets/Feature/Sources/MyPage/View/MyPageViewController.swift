@@ -116,7 +116,7 @@ extension MyPageViewController: UICollectionViewDelegateFlowLayout {
 
     case .posts:
       return .init(
-        width: (collectionView.frame.width - 54) / 3,
+        width: (collectionView.frame.width - 60) / 3,
         height: view.frame.height * 0.23
       )
     }
@@ -245,10 +245,10 @@ extension MyPageViewController: UICollectionViewDataSource {
 // MARK: - MyPagePostCellDelegate
 extension MyPageViewController: MyPagePostCellDelegate {
   func tapPost(videoPost: VideoPost) {
-    if !videoPost.isBlind {
-      reactor?.action.onNext(.videoPostCellTap(videoPost: videoPost))
-    } else {
+    if videoPost.isBlind {
       presentBlindAlertView()
+    } else {
+      reactor?.action.onNext(.videoPostCellTap(postID: videoPost.id))
     }
   }
 

@@ -41,7 +41,7 @@ final class MyPageReactor: Reactor {
     case fetchItems(size: Int)
     case updatePostsListFilter(postFilter: PostsFilterOption)
     case editProfileButtonTap
-    case videoPostCellTap(videoPost: VideoPost)
+    case videoPostCellTap(postID: Int)
     case tapSignOutButton
     case tapLogoutButton
     case tapClearCacheButton
@@ -102,12 +102,15 @@ final class MyPageReactor: Reactor {
       )
       return .empty()
 
-    case .videoPostCellTap(let videoPost):
-      var videoPosts: [VideoPost] = currentState.uploadedPosts
+    case .videoPostCellTap(let postID):
+      var videoPosts: [VideoPost]
       if currentState.postFilter == .liked {
-        videoPosts = currentState.likedPosts
+        videoPosts = currentState.likedPosts.filter { !($0.isBlind) }
+      } else {
+        videoPosts = currentState.uploadedPosts.filter { !($0.isBlind) }
       }
-      guard let currentIndex = videoPosts.firstIndex(of: videoPost) else {
+
+      guard let currentIndex = videoPosts.firstIndex(where:  { $0.id == postID }) else {
         return .empty()
       }
 
