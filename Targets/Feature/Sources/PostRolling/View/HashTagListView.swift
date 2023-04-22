@@ -52,7 +52,9 @@ final class HashTagListView: UIView {
     self.nicknameLabel.text = videoPost.user.nickname
     self.likeButton.setImage(videoPost.isLiked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
 
-    videoPostRelay.accept(videoPost)
+    if videoPostRelay.value != videoPost {
+      videoPostRelay.accept(videoPost)
+    }
   }
 }
 
