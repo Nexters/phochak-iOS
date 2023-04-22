@@ -70,6 +70,11 @@ extension HashTagListView {
       .map { [weak self] _ in self?.videoPostRelay.value?.id ?? 0 }
       .do(onNext: { [weak self] _ in
         let isLiked = !(self?.videoPostRelay.value?.isLiked ?? false)
+
+        if isLiked {
+          FeedbackGenerator.shared.generate(.success)
+        }
+
         self?.likeButton.setImage(isLiked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
       })
   }
