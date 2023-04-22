@@ -93,14 +93,7 @@ final class DetailPostCell: BaseCollectionViewCell, View {
   func bind(reactor: DetailPostCellReactor) {
     bindAction(reactor: reactor)
     bindState(reactor: reactor)
-
-    hashTagListView.exclameButtonTapObservable
-      .subscribe(exclameButtonTapSubject)
-      .disposed(by: disposeBag)
-
-    hashTagListView.likeButtonTapObservable
-      .subscribe(likeButtonTapSubject)
-      .disposed(by: disposeBag)
+    bindExtra()
   }
 
   func updateMuteState(isMuted: Bool) {
@@ -125,6 +118,27 @@ private extension DetailPostCell {
 
         owner.hashTagListView.configure(videoPost: videoPost)
       })
+      .disposed(by: disposeBag)
+  }
+
+  func bindExtra() {
+    videoPlayerView.addDoubleTapGesture()
+      .rx.event
+      .filter { $0.state == .recognized }
+      .map { [weak self] _ in self?.reactor?.videoPost.id ?? 0 }
+      .filter { [weak self] _ in
+        FeedbackGenerator.shared.generate(.success)
+        return !(self?.reactor?.videoPost.isLiked ?? false)
+      }
+      .bind(to: likeButtonTapSubject)
+      .disposed(by: disposeBag)
+
+    hashTagListView.exclameButtonTapObservable
+      .subscribe(exclameButtonTapSubject)
+      .disposed(by: disposeBag)
+
+    hashTagListView.likeButtonTapObservable
+      .subscribe(likeButtonTapSubject)
       .disposed(by: disposeBag)
   }
 }

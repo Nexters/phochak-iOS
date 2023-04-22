@@ -60,4 +60,11 @@ public extension UIView {
 
     return tapGestureRecognizer
   }
+
+  func addDoubleTapGesture() -> UITapGestureRecognizer {
+    let tapGesture = addTapGesture()
+    tapGesture.numberOfTapsRequired = 2
+
+    return tapGesture
+  }
 }
