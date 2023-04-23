@@ -10,10 +10,14 @@ import UIKit
 
 final class FeedbackGenerator {
 
+  // MARK: Properties
   static let shared: FeedbackGenerator = .init()
-
   private let generator: UINotificationFeedbackGenerator = .init()
 
+  // MARK: Initializer
+  private init() { }
+
+  // MARK: Methods
   func generate(_ type: UINotificationFeedbackGenerator.FeedbackType) {
     generator.prepare()
 
