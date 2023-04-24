@@ -95,7 +95,7 @@ final class MyPageReactor: Reactor {
 
     case .editProfileButtonTap:
       dependency.coordinator.transition(
-        to: .profileSetting,
+        to: .profileSetting(originNickName: currentState.user?.nickname ?? ""),
         style: .push,
         animated: true,
         completion: nil

@@ -51,6 +51,7 @@ final class ProfileSettingViewController: BaseViewController<ProfileSettingReact
     view.addSubview(checkDuplicationButton)
 
     textField.do {
+      $0.text = reactor?.currentNickName ?? ""
       $0.becomeFirstResponder()
     }
 
