@@ -63,6 +63,7 @@ extension HashTagListView {
 
   var likeButtonTapObservable: Observable<Int> {
     likeButton.rx.tap
+      .debounce(.milliseconds(350), scheduler: MainScheduler.instance)
       .observe(on: MainScheduler.instance)
       .map { [weak self] _ in self?.videoPostRelay.value?.id ?? 0 }
       .do(onNext: { [weak self] _ in
