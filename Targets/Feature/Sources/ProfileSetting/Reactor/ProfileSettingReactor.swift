@@ -17,7 +17,7 @@ final class ProfileSettingReactor: Reactor {
   var initialState: State = .init(isEnableComplete: false, isError: false)
   let isDuplicatedSubject: PublishSubject<Bool> = .init()
   private let dependency: Dependency
-  private (set) var currentNickName: String
+  private(set) var currentNickName: String
 
   struct Dependency {
     let coordinator: AppCoordinatorType
