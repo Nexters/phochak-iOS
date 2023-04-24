@@ -103,6 +103,10 @@ private extension ProfileSettingViewController {
   // MARK: Properties
   var isDuplicatedBinder: Binder<Bool> {
     .init(self, binding: { owner, isDuplicated in
+      if !isDuplicated {
+        owner.view.endEditing(true)
+      }
+
       owner.subTitleLabel.textColor = .createColor(isDuplicated ? .red : .green, .w400)
 
       let titleText = isDuplicated ? "이미 존재하는 닉네임입니다" : "사용할 수 있는 닉네임입니다"
