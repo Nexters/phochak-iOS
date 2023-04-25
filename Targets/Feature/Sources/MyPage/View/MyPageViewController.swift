@@ -390,9 +390,10 @@ private extension MyPageViewController {
   }
 
   func presentBlindAlertView() {
-    presentAlert(
-      type: .blind,
-      okAction: {}
-    )
+    guard let postFilter = reactor?.currentState.postFilter else {
+      return
+    }
+
+    presentAlert(type: .blind(currentFilter: postFilter))
   }
 }
