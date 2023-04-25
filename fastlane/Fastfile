@@ -41,8 +41,7 @@ platform :ios do
     slack(
       message: "TestFlight 배포 완료",
       success: true,
-      slack_url: "https://hooks.slack.com/services/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",
-      payload:
+      slack_url: "https://hooks.slack.com/services/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"
     )
   end
 
