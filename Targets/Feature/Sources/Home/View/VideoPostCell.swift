@@ -18,14 +18,14 @@ protocol VideoPostCellDelegate: AnyObject {
   func didTapExclameButton(postID: Int)
 }
 
-final class VideoPostCell: BaseCollectionViewCell {
+final class VideoPostCell: BaseCollectionViewCell, VideoPlayable {
 
   // MARK: Properties
   private let containerView: UIView = .init()
   private let nicknameLabel: UILabel = .init()
   private let exclameButton: ExtendedTouchAreaButton = .init()
   private let likeButton: ExtendedTouchAreaButton = .init()
-  private let videoPlayerView: VideoPlayerView = .init()
+  let videoPlayerView: VideoPlayerView = .init()
 
   private var videoPost: VideoPost?
 

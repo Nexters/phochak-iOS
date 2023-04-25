@@ -224,16 +224,19 @@ private extension HomeViewController {
       let index = round((offsetX + owner.collectionView.contentInset.left) / cellWidthIncludeSpacing)
       let indexPath = IndexPath(item: Int(index), section: 0)
 
-      if let cell = owner.collectionView.cellForItem(at: indexPath) {
+      if let cell = owner.collectionView.cellForItem(at: indexPath) as? VideoPostCell {
         UIView.animate(withDuration: 0.25) {
           cell.transform = .init(scaleX: 1.1, y: 1.1).translatedBy(x: 0, y: -20)
+          cell.playVideo()
         }
       }
 
       if Int(index) != owner.previousIndex,
-         let cell = owner.collectionView.cellForItem(at: .init(item: Int(owner.previousIndex), section: 0)) {
+         let cell = owner.collectionView
+        .cellForItem(at: .init(item: Int(owner.previousIndex), section: 0)) as? VideoPostCell {
         UIView.animate(withDuration: 0.25) {
           cell.transform = .identity
+          cell.stopVideo()
         }
       }
     }

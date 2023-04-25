@@ -10,6 +10,10 @@ import Domain
 
 import ReactorKit
 
+enum SwipeDirection {
+  case left, right
+}
+
 final class PostRollingReactor: Reactor {
 
   // MARK: Properties
@@ -38,11 +42,13 @@ final class PostRollingReactor: Reactor {
     case exclameVideoPost(postID: Int)
     case likeVideoPost(postID: Int)
     case fetchItems(size: Int, currentIndex: Int)
+    case didSwipe(direction: SwipeDirection)
   }
 
   enum Mutation {
     case setVideoPosts([VideoPost])
     case setVideoPostLikeStatus(index: Int, isLiked: Bool)
+    case setCurrentIndex(value: Int)
   }
 
   struct State {
@@ -78,6 +84,16 @@ final class PostRollingReactor: Reactor {
 
     case .likeVideoPost(let postID):
       return updateVideoPostLikeStatus(postID: postID)
+
+    case .didSwipe(let direction):
+      var currentIndex = currentIndex
+      if direction == .left {
+        currentIndex -= 1
+      } else {
+        currentIndex += 1
+      }
+
+      return .just(.setCurrentIndex(value: currentIndex))
     }
   }
 
@@ -94,6 +110,9 @@ final class PostRollingReactor: Reactor {
       var updatedPosts = state.videoPosts
       updatedPosts[index].isLiked = isLiked
       newState.videoPosts = updatedPosts
+
+    case .setCurrentIndex(let value):
+      currentIndex = value
     }
 
     return newState

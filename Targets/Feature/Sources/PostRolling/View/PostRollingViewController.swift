@@ -94,6 +94,7 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
       $0.isPagingEnabled = true
       $0.showsVerticalScrollIndicator = false
       $0.showsHorizontalScrollIndicator = false
+      $0.delegate = self
       view.addSubview($0)
     }
 
@@ -116,6 +117,41 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
     bindAction(reactor: reactor)
     bindState(reactor: reactor)
     bindExtra(reactor: reactor)
+  }
+}
+
+extension PostRollingViewController: UICollectionViewDelegate {
+  func scrollViewWillEndDragging(
+    _ scrollView: UIScrollView,
+    withVelocity velocity: CGPoint,
+    targetContentOffset: UnsafeMutablePointer<CGPoint>
+  ) {
+    let visibleItems = collectionView.indexPathsForVisibleItems.sorted(by: { $0[1] > $1[1] })
+
+    let cell: DetailPostCell?
+    if velocity.x > 0 {
+      // 우측 롤링
+      cell = collectionView.cellForItem(at: .init(item: visibleItems[0].item, section: 0)) as? DetailPostCell
+      reactor?.action.onNext(.didSwipe(direction: .right))
+    } else {
+      // 좌측 롤링
+      cell = collectionView.cellForItem(at: .init(item: visibleItems[1].item, section: 0)) as? DetailPostCell
+      reactor?.action.onNext(.didSwipe(direction: .left))
+    }
+
+    cell?.playVideo()
+  }
+
+  func collectionView(
+    _ collectionView: UICollectionView,
+    didEndDisplaying cell: UICollectionViewCell,
+    forItemAt indexPath: IndexPath
+  ) {
+    guard let cell = cell as? DetailPostCell else {
+      return
+    }
+
+    cell.stopVideo()
   }
 }
 
@@ -207,10 +243,7 @@ private extension PostRollingViewController {
     reactor.alreadyExclamedSubject
       .asSignal(onErrorJustReturn: ())
       .emit(with: self, onNext: { owner, _ in
-        owner.presentAlert(
-          type: .alreadyExclamed,
-          okAction: {}
-        )
+        owner.presentAlert(type: .alreadyExclamed)
       })
       .disposed(by: disposeBag)
   }

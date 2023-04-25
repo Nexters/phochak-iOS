@@ -49,12 +49,6 @@ public final class VideoPlayerView: UIView {
       $0.edges.equalToSuperview()
     }
 
-    NotificationCenter.default.rx.notification(.AVPlayerItemDidPlayToEndTime)
-      .subscribe(with: self, onNext: { owner, notification in
-        owner.playerDidReachEnd(notification: notification)
-      })
-      .disposed(by: disposeBag)
-
     NotificationCenter.default.rx.notification(.muteAllPlayers)
       .subscribe(with: self, onNext: { owner, _ in
         owner.player?.isMuted = true
@@ -84,7 +78,6 @@ public final class VideoPlayerView: UIView {
       .asDriver(onErrorDriveWith: .empty())
       .drive(with: self, onNext: { owner, _ in
         owner.thumbnailImageView.image = nil
-        owner.player?.play()
       })
       .disposed(by: disposeBag)
   }
