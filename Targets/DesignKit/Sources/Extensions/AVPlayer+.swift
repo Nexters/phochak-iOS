@@ -14,4 +14,10 @@ extension AVPlayer {
       self?.pause()
     }
   }
+
+  func startAtBeginning() {
+    seek(to: .zero, completionHandler: { [weak self] _ in
+      self?.play()
+    })
+  }
 }

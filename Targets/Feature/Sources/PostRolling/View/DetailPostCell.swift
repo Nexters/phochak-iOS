@@ -16,10 +16,10 @@ import RxCocoa
 import RxDataSources
 import RxSwift
 
-final class DetailPostCell: BaseCollectionViewCell, View {
+final class DetailPostCell: BaseCollectionViewCell, View, VideoPlayable {
 
   // MARK: Properties
-  private let videoPlayerView: VideoPlayerView = .init()
+  let videoPlayerView: VideoPlayerView = .init()
   private let hashTagListView: HashTagListView = .init()
   private let firstGradientView: UIView = .init()
   private let secondGradeintView: UIView = .init()
@@ -115,7 +115,6 @@ private extension DetailPostCell {
       .map { $0.videoPost }
       .subscribe(with: self, onNext: { owner, videoPost in
         guard let videoPost = videoPost else { return }
-
         owner.hashTagListView.configure(videoPost: videoPost)
       })
       .disposed(by: disposeBag)
@@ -139,6 +138,13 @@ private extension DetailPostCell {
 
     hashTagListView.likeButtonTapObservable
       .subscribe(likeButtonTapSubject)
+      .disposed(by: disposeBag)
+
+    NotificationCenter.default.rx.notification(.AVPlayerItemDidPlayToEndTime)
+      .asSignal(onErrorSignalWith: .empty())
+      .emit(with: self, onNext: { owner, notification in
+        owner.playerDidReachEnd(notification: notification)
+      })
       .disposed(by: disposeBag)
   }
 }

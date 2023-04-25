@@ -22,9 +22,12 @@ extension VideoPlayable {
     videoPlayerView.player?.stopAtBeginning()
   }
 
-  func playVideoFromBeginning(notification: Notification) {
-    if let playerItem = notification.object as? AVPlayerItem, videoPlayerView.player?.currentItem == playerItem {
-      playerItem.seek(to: .zero) { _ in playVideo() }
+  func playerDidReachEnd(notification: Notification) {
+    if let playerItem = notification.object as? AVPlayerItem,
+       playerItem == videoPlayerView.player?.currentItem {
+      playerItem.seek(to: .zero) { _ in
+        playVideo()
+      }
     }
   }
 }
