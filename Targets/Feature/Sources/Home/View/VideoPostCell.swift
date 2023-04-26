@@ -120,7 +120,7 @@ final class VideoPostCell: BaseCollectionViewCell {
       .disposed(by: disposeBag)
 
     likeButton.rx.tap
-      .subscribe(on: MainScheduler.instance)
+      .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
       .subscribe(with: self, onNext: { owner, _ in
         owner.delegate?.didTapLikeButton(postID: videoPost.id)
       })

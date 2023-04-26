@@ -51,6 +51,7 @@ final class ProfileSettingViewController: BaseViewController<ProfileSettingReact
     view.addSubview(checkDuplicationButton)
 
     textField.do {
+      $0.text = reactor?.currentNickName ?? ""
       $0.becomeFirstResponder()
     }
 
@@ -103,6 +104,10 @@ private extension ProfileSettingViewController {
   // MARK: Properties
   var isDuplicatedBinder: Binder<Bool> {
     .init(self, binding: { owner, isDuplicated in
+      if !isDuplicated {
+        owner.view.endEditing(true)
+      }
+
       owner.subTitleLabel.textColor = .createColor(isDuplicated ? .red : .green, .w400)
 
       let titleText = isDuplicated ? "이미 존재하는 닉네임입니다" : "사용할 수 있는 닉네임입니다"
@@ -115,20 +120,20 @@ private extension ProfileSettingViewController {
     typealias Action = ProfileSettingReactor.Action
 
     checkDuplicationButton.rx.tap
-      .withLatestFrom(textField.rx.text.orEmpty)
-      .map { Action.tapCheckButton(nickName: String($0)) }
+      .map { Action.tapCheckButton }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
     textField.rx.text.orEmpty
       .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-      .map { _ in Action.inputNickName }
+      .filter { $0.count < 11 }
+      .distinctUntilChanged()
+      .map { Action.inputNickName($0) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
     completeButton.rx.tap
-      .withLatestFrom(textField.rx.text.orEmpty)
-      .map { Action.tapCompleteButton(nickName: $0) }
+      .map { Action.tapCompleteButton }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
   }

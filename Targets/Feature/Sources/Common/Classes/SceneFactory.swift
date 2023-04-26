@@ -17,7 +17,7 @@ public enum Scene {
   case search
   case postRolling(videoPosts: [VideoPost], currentIndex: Int)
   case uploadVideoPost
-  case profileSetting
+  case profileSetting(originNickName: String)
 }
 
 public protocol SceneFactoryType {
@@ -60,11 +60,12 @@ final class SceneFactory: SceneFactoryType {
       let viewController: SplashViewController = .init(reactor: reactor)
       return viewController
 
-    case .profileSetting:
+    case .profileSetting(let originNickName):
       let useCase = injector.resolve(ProfileSettingUseCaseType.self)
       let reactorDependency: ProfileSettingReactor.Dependency = .init(
         coordinator: coordinator,
-        useCase: useCase
+        useCase: useCase,
+        originNickName: originNickName
       )
       let reactor: ProfileSettingReactor = .init(dependency: reactorDependency)
       let profileSettingViewController: ProfileSettingViewController = .init(reactor: reactor)
