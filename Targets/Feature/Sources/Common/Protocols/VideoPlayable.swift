@@ -15,7 +15,7 @@ protocol VideoPlayable {
 
 extension VideoPlayable {
   func playVideo() {
-    videoPlayerView.player?.play()
+    videoPlayerView.player?.startAtBeginning()
   }
 
   func stopVideo() {

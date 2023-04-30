@@ -10,11 +10,11 @@ import Domain
 
 import ReactorKit
 
-enum SwipeDirection {
-  case left, right
-}
-
 final class PostRollingReactor: Reactor {
+
+  enum SwipeDirection {
+    case left, right
+  }
 
   // MARK: Properties
   private let dependency: Dependency
