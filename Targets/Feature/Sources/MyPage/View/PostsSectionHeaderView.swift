@@ -52,14 +52,14 @@ final class PostsSectionHeaderView: UICollectionReusableView {
 private extension PostsSectionHeaderView {
   func setupViews() {
     uploadedPostButton.do {
-      $0.setTitle("내 포스팅", for: .normal)
+      $0.setTitle("내 게시물", for: .normal)
       $0.setupColor(isSelected: true)
       $0.cornerRadius(radius: 20)
       addSubview(uploadedPostButton)
     }
 
     likedPostButton.do {
-      $0.setTitle("포착한 포스팅", for: .normal)
+      $0.setTitle("포착한 게시물", for: .normal)
       $0.setupColor(isSelected: false)
       $0.cornerRadius(radius: 20)
       addSubview(likedPostButton)

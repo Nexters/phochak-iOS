@@ -18,14 +18,14 @@ protocol VideoPostCellDelegate: AnyObject {
   func didTapExclameButton(postID: Int)
 }
 
-final class VideoPostCell: BaseCollectionViewCell {
+final class VideoPostCell: BaseCollectionViewCell, VideoPlayable {
 
   // MARK: Properties
   private let containerView: UIView = .init()
   private let nicknameLabel: UILabel = .init()
   private let exclameButton: ExtendedTouchAreaButton = .init()
   private let likeButton: ExtendedTouchAreaButton = .init()
-  private let videoPlayerView: VideoPlayerView = .init()
+  let videoPlayerView: VideoPlayerView = .init()
 
   private var videoPost: VideoPost?
 
@@ -123,6 +123,13 @@ final class VideoPostCell: BaseCollectionViewCell {
       .debounce(.milliseconds(500), scheduler: MainScheduler.instance)
       .subscribe(with: self, onNext: { owner, _ in
         owner.delegate?.didTapLikeButton(postID: videoPost.id)
+      })
+      .disposed(by: disposeBag)
+
+    NotificationCenter.default.rx.notification(.AVPlayerItemDidPlayToEndTime)
+      .asSignal(onErrorSignalWith: .empty())
+      .emit(with: self, onNext: { owner, notification in
+        owner.playerDidReachEnd(notification: notification)
       })
       .disposed(by: disposeBag)
   }

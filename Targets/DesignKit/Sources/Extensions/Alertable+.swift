@@ -6,6 +6,7 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import Domain
 import UIKit
 
 public protocol Alertable {}
@@ -20,7 +21,7 @@ public enum AlertType {
   case nicknameDuplicated
   case exclamePost
   case alreadyExclamed
-  case blind
+  case blind(currentFilter: PostsFilterOption)
 
   var title: String {
     switch self {
@@ -31,9 +32,9 @@ public enum AlertType {
     case .networkError: return "네트워크 불안정"
     case .tokenExpired: return "세션이 만료되었습니다"
     case .nicknameDuplicated: return "닉네임이 중복되었습니다"
-    case .exclamePost: return "포스팅 신고"
+    case .exclamePost: return "게시물 신고"
     case .alreadyExclamed: return "신고된 게시물"
-    case .blind: return "포스팅 신고누적"
+    case .blind: return "게시물 신고누적"
     }
   }
 
@@ -48,7 +49,13 @@ public enum AlertType {
     case .nicknameDuplicated: return "수정 후 다시 시도해 주세요"
     case .exclamePost: return "신고가 누적된 영상은 볼 수 없게 됩니다"
     case .alreadyExclamed: return "이미 신고가 완료된 영상입니다"
-    case .blind: return "이 영상은 다른 사용자에게 보이지 않습니다"
+    case .blind(let currentFilter):
+      if currentFilter == .uploaded {
+        return "이 영상은 다른 사용자에게 보이지 않습니다"
+      } else {
+        return "더이상 볼 수 없는 게시글입니다"
+      }
+
     }
   }
 }
@@ -56,7 +63,7 @@ public enum AlertType {
 public extension Alertable where Self: UIViewController {
   func presentAlert(
     type: AlertType,
-    okAction: @escaping (() -> Void?),
+    okAction: (() -> Void?)? = nil,
     isNeededCancel: Bool = false
   ) {
     let alertController: UIAlertController = .init(title: type.title, message: type.message, preferredStyle: .alert)
@@ -64,7 +71,7 @@ public extension Alertable where Self: UIViewController {
     alertController.modalTransitionStyle = .crossDissolve
     alertController.view.backgroundColor = .createColor(.monoGray, .w800)
     alertController.view.cornerRadius(radius: 16)
-    alertController.addAction(.init(title: "확인", style: .default, handler: { _ in okAction() }))
+    alertController.addAction(.init(title: "확인", style: .default, handler: { _ in okAction?() }))
 
     if isNeededCancel {
       alertController.addAction(.init(title: "취소", style: .cancel, handler: { _ in }))

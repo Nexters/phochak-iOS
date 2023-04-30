@@ -94,6 +94,7 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
       $0.isPagingEnabled = true
       $0.showsVerticalScrollIndicator = false
       $0.showsHorizontalScrollIndicator = false
+      $0.delegate = self
       view.addSubview($0)
     }
 
@@ -116,6 +117,31 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
     bindAction(reactor: reactor)
     bindState(reactor: reactor)
     bindExtra(reactor: reactor)
+  }
+}
+
+extension PostRollingViewController: UICollectionViewDelegate {
+  func scrollViewWillEndDragging(
+    _ scrollView: UIScrollView,
+    withVelocity velocity: CGPoint,
+    targetContentOffset: UnsafeMutablePointer<CGPoint>
+  ) {
+    let visibleItems = collectionView.indexPathsForVisibleItems.sorted(by: { $0[1] > $1[1] })
+
+    let cell: DetailPostCell?
+    if velocity.x > 0 {
+      cell = collectionView.cellForItem(
+        at: .init(item: visibleItems[safe: 0]?.item ?? 0, section: 0)
+      ) as? DetailPostCell
+      reactor?.action.onNext(.didSwipe(direction: .right))
+    } else {
+      cell = collectionView.cellForItem(
+        at: .init(item: visibleItems[safe: 1]?.item ?? 0, section: 0)
+      ) as? DetailPostCell
+      reactor?.action.onNext(.didSwipe(direction: .left))
+    }
+
+    cell?.playVideo()
   }
 }
 
@@ -166,8 +192,12 @@ private extension PostRollingViewController {
       .bind(to: collectionView.rx.items(
         cellIdentifier: "\(DetailPostCell.self)",
         cellType: DetailPostCell.self)
-      ) { [weak self] _, post, cell in
+      ) { [weak self] index, post, cell in
         cell.configure(reactor: .init(videoPost: post))
+
+        if index == self?.reactor?.currentIndex {
+          cell.playVideo()
+        }
 
         if let exclameButtonTapSubject = self?.exclameButtonTapSubject {
           cell.exclameButtonTapSubject
@@ -207,10 +237,7 @@ private extension PostRollingViewController {
     reactor.alreadyExclamedSubject
       .asSignal(onErrorJustReturn: ())
       .emit(with: self, onNext: { owner, _ in
-        owner.presentAlert(
-          type: .alreadyExclamed,
-          okAction: {}
-        )
+        owner.presentAlert(type: .alreadyExclamed)
       })
       .disposed(by: disposeBag)
   }
