@@ -1,5 +1,5 @@
 //
-//  VideoPlayable.swift
+//  VideoControllable.swift
 //  Feature
 //
 //  Created by 여정수 on 2023/04/26.
@@ -9,11 +9,17 @@
 import AVFoundation
 import DesignKit
 
-protocol VideoPlayable {
+protocol VideoControllable {
   var videoPlayerView: VideoPlayerView { get }
+
+  var isMute: Bool { get }
 }
 
-extension VideoPlayable {
+extension VideoControllable {
+  var isMute: Bool {
+    videoPlayerView.player?.isMuted ?? false
+  }
+
   func playVideo() {
     videoPlayerView.player?.startAtBeginning()
   }

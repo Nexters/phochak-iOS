@@ -28,6 +28,7 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
   private let exclameButtonTapSubject: PublishSubject<Int> = .init()
   private let likeButtonTapSubject: PublishSubject<Int> = .init()
   private let topGradientView: UIView = .init()
+  private let muteSoundBarButton: UIBarButtonItem = .init(image: .init(systemName: "speaker"))
   weak var delegate: PostRollingDelegate?
 
   // MARK: Initializer
@@ -77,6 +78,8 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
   override func setupViews() {
     super.setupViews()
 
+    navigationItem.rightBarButtonItem = muteSoundBarButton
+
     flowLayout.do {
       $0.minimumLineSpacing = 0
       $0.sectionInset = .zero
@@ -94,7 +97,7 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
       $0.isPagingEnabled = true
       $0.showsVerticalScrollIndicator = false
       $0.showsHorizontalScrollIndicator = false
-      $0.delegate = self
+      $0.rx.setDelegate(self).disposed(by: disposeBag)
       view.addSubview($0)
     }
 
@@ -225,12 +228,14 @@ private extension PostRollingViewController {
       .disposed(by: disposeBag)
 
     collectionView.rx.willDisplayCell
-      .subscribe(onNext: { cell, index in
+      .asSignal()
+      .emit(onNext: { [weak self] cell, index in
         guard let cell = cell as? DetailPostCell else {
           return
         }
 
         cell.updateMuteState(isMuted: false)
+        self?.muteSoundBarButton.image = .init(systemName: "speaker")
       })
       .disposed(by: disposeBag)
 
@@ -238,6 +243,18 @@ private extension PostRollingViewController {
       .asSignal(onErrorJustReturn: ())
       .emit(with: self, onNext: { owner, _ in
         owner.presentAlert(type: .alreadyExclamed)
+      })
+      .disposed(by: disposeBag)
+
+    muteSoundBarButton.rx.tap
+      .asSignal()
+      .emit(with: self, onNext: { owner, _ in
+        guard let cell = owner.collectionView.cellForItem(at: .init(item: reactor.currentIndex, section: 0)) as? DetailPostCell else {
+          return
+        }
+        let isMute = !(cell.isMute)
+        cell.updateMuteState(isMuted: isMute)
+        owner.muteSoundBarButton.image = isMute ? .init(systemName: "speaker.slash") : .init(systemName: "speaker")
       })
       .disposed(by: disposeBag)
   }

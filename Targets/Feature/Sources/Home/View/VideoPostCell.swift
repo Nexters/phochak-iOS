@@ -18,7 +18,7 @@ protocol VideoPostCellDelegate: AnyObject {
   func didTapExclameButton(postID: Int)
 }
 
-final class VideoPostCell: BaseCollectionViewCell, VideoPlayable {
+final class VideoPostCell: BaseCollectionViewCell, VideoControllable {
 
   // MARK: Properties
   private let containerView: UIView = .init()
