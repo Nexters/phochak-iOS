@@ -16,7 +16,7 @@ import RxCocoa
 import RxDataSources
 import RxSwift
 
-final class DetailPostCell: BaseCollectionViewCell, View, VideoPlayable {
+final class DetailPostCell: BaseCollectionViewCell, View, VideoControllable {
 
   // MARK: Properties
   let videoPlayerView: VideoPlayerView = .init()
