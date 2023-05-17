@@ -1,5 +1,5 @@
 //
-//  TokenManager.swift
+//  AuthManager.swift
 //  Core
 //
 //  Created by 한상진 on 2023/01/31.
@@ -9,20 +9,21 @@
 import Foundation
 import Security
 
-public enum TokenManager {
+public enum AuthManager {
 
   // MARK: Properties
-  public enum TokenType: String, CaseIterable {
+  public enum AuthInfoType: String {
     case accessToken = "accessToken"
     case refreshToken = "refreshToken"
+    case isFirstSignIn = "isFirstSignIn"
   }
 
   // MARK: Methods
-  public static func save(tokenType: TokenType, data: Data) {
+  public static func save(authInfoType: AuthInfoType, data: Data) {
     let query: NSDictionary = .init(
       dictionary: [
         kSecClass: kSecClassGenericPassword,
-        kSecAttrAccount: tokenType.rawValue,
+        kSecAttrAccount: authInfoType.rawValue,
         kSecValueData: data
       ]
     )
@@ -31,11 +32,11 @@ public enum TokenManager {
     SecItemAdd(query, nil)
   }
 
-  public static func load(tokenType: TokenType) -> Data? {
+  public static func load(authInfoType: AuthInfoType) -> Data? {
     let query: NSDictionary = .init(
       dictionary: [
         kSecClass: kSecClassGenericPassword,
-        kSecAttrAccount: tokenType.rawValue,
+        kSecAttrAccount: authInfoType.rawValue,
         kSecReturnData: true,
         kSecMatchLimit: kSecMatchLimitOne
       ]
@@ -53,8 +54,8 @@ public enum TokenManager {
     return data
   }
 
-  public static func deleteAll() {
-    TokenType.allCases.forEach {
+  public static func deleteTokens() {
+    [AuthInfoType.accessToken, AuthInfoType.refreshToken].forEach {
       let query: NSDictionary = .init(dictionary: [
         kSecClass: kSecClassGenericPassword,
         kSecAttrAccount: $0.rawValue

@@ -20,13 +20,13 @@ public enum AppProperties {
   }
 
   public static var accessToken: String {
-    guard let accessTokenData = TokenManager.load(tokenType: .accessToken) else { return .init() }
+    guard let accessTokenData = AuthManager.load(authInfoType: .accessToken) else { return .init() }
 
     return String(decoding: accessTokenData, as: UTF8.self)
   }
 
   public static var refreshToken: String {
-    guard let refreshTokenData = TokenManager.load(tokenType: .refreshToken) else { return .init() }
+    guard let refreshTokenData = AuthManager.load(authInfoType: .refreshToken) else { return .init() }
 
     return String(decoding: refreshTokenData, as: UTF8.self)
   }

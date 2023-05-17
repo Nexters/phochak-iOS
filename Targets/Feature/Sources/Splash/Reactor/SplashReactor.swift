@@ -36,7 +36,7 @@ final class SplashReactor: Reactor {
   func mutate(action: Action) -> Observable<Action> {
     switch action {
     case .showNextScene:
-      let firstScene: Scene = TokenManager.load(tokenType: .accessToken) == nil ? .signIn : .tab
+      let firstScene: Scene = AuthManager.load(authInfoType: .accessToken) == nil ? .signIn : .tab
       dependency.coordinator.start(from: firstScene)
     }
     return .empty()

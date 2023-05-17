@@ -205,7 +205,7 @@ final class MyPageReactor: Reactor {
       isLastPage = false
 
     case .reSignIn:
-      TokenManager.deleteAll()
+      AuthManager.deleteTokens()
       NotificationCenter.default.post(name: .logout, object: nil)
 
     case .deletePost(let indexNumber):
