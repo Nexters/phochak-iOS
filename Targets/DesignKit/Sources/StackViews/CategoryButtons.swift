@@ -46,6 +46,10 @@ public final class CategoryButtons: UIStackView {
   public var cafeButtonTapSignal: Signal<Void> {
     cafeButton.rx.tap.asSignal()
   }
+  public var isTappedSignal: Signal<Bool> {
+    Signal.merge(tourButtonTapSignal, restaurantButtonTapSignal, cafeButtonTapSignal)
+      .map { true }
+  }
 
   // MARK: Initializer
   public init() {

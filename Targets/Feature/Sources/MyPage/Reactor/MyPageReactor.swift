@@ -24,6 +24,7 @@ final class MyPageReactor: Reactor {
   var initialState: State = .init(likedPosts: [], uploadedPosts: [])
   private let dependency: Dependency
   private var isLastPage: Bool = false
+  private var willAppear: Bool = true
   private var existVideoPostRequest: FetchVideoPostRequest?
 
   // MARK: Initializer
@@ -52,6 +53,7 @@ final class MyPageReactor: Reactor {
     case setUser(user: User)
     case setLikedPosts(videoPosts: [VideoPost])
     case setUploadedPosts(videoPosts: [VideoPost])
+    case clearPost
     case setPostFilter(postFilter: PostsFilterOption)
     case reSignIn
     case deletePost(indexNumber: Int)
@@ -65,16 +67,22 @@ final class MyPageReactor: Reactor {
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
-    let fetchUserProfile = dependency.useCase.fetchUserProfile(userID: "")
-      .asObservable()
-      .map { Mutation.setUser(user: $0) }
-
-    let fetchUploadedPosts = fetchVideoPosts(request: .init(sortOption: .latest, pageSize: 12, filterOption: .uploaded))
-    let fetchLikedPosts = fetchVideoPosts(request: .init(sortOption: .latest, pageSize: 12, filterOption: .liked))
-
     switch action {
     case .viewWillAppear:
-      return Observable.merge(fetchUserProfile, fetchUploadedPosts, fetchLikedPosts)
+      willAppear = true
+      let fetchUserProfile = dependency.useCase.fetchUserProfile(userID: "")
+        .asObservable()
+        .map { Mutation.setUser(user: $0) }
+
+      let fetchUploadedPosts = fetchVideoPosts(request: .init(sortOption: .latest, pageSize: 12, filterOption: .uploaded))
+      let fetchLikedPosts = fetchVideoPosts(request: .init(sortOption: .latest, pageSize: 12, filterOption: .liked))
+
+      return .concat([
+        .just(.clearPost),
+        fetchUserProfile,
+        fetchUploadedPosts,
+        fetchLikedPosts
+      ])
 
     case let .fetchItems(size):
       let postFilter = currentState.postFilter
@@ -151,43 +159,53 @@ final class MyPageReactor: Reactor {
       newState.user = user
 
     case .setUploadedPosts(let videoPosts):
-      if !videoPosts.isEmpty {
-        var uploadedPosts = state.uploadedPosts
-
-        videoPosts.forEach { videoPost in
-          if let index = uploadedPosts.firstIndex(where: { $0.id == videoPost.id }) {
-            if uploadedPosts[index] != videoPost {
-              uploadedPosts[index] = videoPost
-            }
-          } else {
-            uploadedPosts.append(videoPost)
-          }
-        }
-        newState.uploadedPosts = uploadedPosts
+      guard !videoPosts.isEmpty else {
+        return newState
       }
+
+      var uploadedPosts = willAppear ? [] : state.uploadedPosts
+      willAppear = false
+
+      videoPosts.forEach { videoPost in
+        if let index = uploadedPosts.firstIndex(where: { $0.id == videoPost.id }) {
+          if uploadedPosts[index] != videoPost {
+            uploadedPosts[index] = videoPost
+          }
+        } else {
+          uploadedPosts.append(videoPost)
+        }
+      }
+      newState.uploadedPosts = uploadedPosts
 
     case .setLikedPosts(let videoPosts):
-      if !videoPosts.isEmpty {
-        var likedPosts = state.likedPosts
-
-        videoPosts.forEach { videoPost in
-          if let index = likedPosts.firstIndex(where: { $0.id == videoPost.id }) {
-            if likedPosts[index] != videoPost {
-              likedPosts[index] = videoPost
-            }
-          } else {
-            likedPosts.append(videoPost)
-          }
-        }
-        newState.likedPosts = likedPosts
+      guard !videoPosts.isEmpty else {
+        return newState
       }
+
+      var likedPosts = willAppear ? [] : state.likedPosts
+      willAppear = false
+
+      videoPosts.forEach { videoPost in
+        if let index = likedPosts.firstIndex(where: { $0.id == videoPost.id }) {
+          if likedPosts[index] != videoPost {
+            likedPosts[index] = videoPost
+          }
+        } else {
+          likedPosts.append(videoPost)
+        }
+      }
+      newState.likedPosts = likedPosts
+
+    case .clearPost:
+      newState.uploadedPosts = []
+      newState.likedPosts = []
 
     case .setPostFilter(let postFilter):
       newState.postFilter = postFilter
       isLastPage = false
 
     case .reSignIn:
-      TokenManager.deleteAll()
+      AuthManager.deleteTokens()
       NotificationCenter.default.post(name: .logout, object: nil)
 
     case .deletePost(let indexNumber):
@@ -201,6 +219,10 @@ final class MyPageReactor: Reactor {
 // MARK: - Private
 private extension MyPageReactor {
   func fetchVideoPosts(request: FetchVideoPostRequest) -> Observable<Mutation> {
+    if willAppear {
+      isLastPage = false
+    }
+
     guard !isLastPage else {
       if request.filterOption == .liked {
         return .just(.setLikedPosts(videoPosts: []))

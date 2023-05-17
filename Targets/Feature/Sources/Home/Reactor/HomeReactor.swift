@@ -6,7 +6,9 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import Core
 import Domain
+import Foundation
 
 import RxSwift
 import ReactorKit
@@ -15,7 +17,7 @@ final class HomeReactor: Reactor {
   
   // MARK: Properties
   private let depepdency: Dependency
-  var initialState: State = .init(videoPosts: [], isLoading: false)
+  var initialState: State = .init(videoPosts: [], isLoading: false, isNeededProfileGuide: false)
   private var isLastPage: Bool = false
   private var existVideoPostRequest: FetchVideoPostRequest?
   private (set) var alreadyExclamedSubject: PublishSubject<Void> = .init()
@@ -23,6 +25,7 @@ final class HomeReactor: Reactor {
   struct Dependency {
     let coordinator: AppCoordinatorType
     let useCase: VideoPostUseCaseType
+    let fetchProfileUseCase: FetchProfileUseCaseType
   }
   
   // MARK: Initializer
@@ -31,6 +34,8 @@ final class HomeReactor: Reactor {
   }
   
   enum Action {
+    case fetchUserProfile
+    case pushProfileSettingScene
     case tapSearchButton
     case tapVideoCell(index: Int)
     case fetchInitialItems
@@ -46,16 +51,24 @@ final class HomeReactor: Reactor {
     case setVideoPosts([VideoPost])
     case updateVideoPosts([VideoPost])
     case updateVideoPostLikeStatus(index: Int, isLiked: Bool)
+    case setProfileGuide(String)
   }
   
   struct State {
     var videoPosts: [VideoPost]
     var isLoading: Bool
+    var isNeededProfileGuide: Bool
   }
   
   // MARK: Methods
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
+    case .fetchUserProfile:
+      return fetchUserProfile()
+
+    case .pushProfileSettingScene:
+      return pushProfileSettingScene()
+
     case .tapSearchButton:
       return pushSearchScene()
       
@@ -102,6 +115,9 @@ final class HomeReactor: Reactor {
     var newState = state
     
     switch mutation {
+    case .setProfileGuide(let nickName):
+      newState.isNeededProfileGuide = nickName.contains("#")
+
     case .setInitialVideoPosts(let videoPosts):
       newState.videoPosts = videoPosts
 
@@ -115,7 +131,7 @@ final class HomeReactor: Reactor {
 
     case let .updateVideoPostLikeStatus(index, isLiked):
       guard var post = currentState.videoPosts[safe: index] else {
-        return .init(videoPosts: [], isLoading: false)
+        return .init(videoPosts: [], isLoading: false, isNeededProfileGuide: false)
       }
       post.isLiked = isLiked
       newState.videoPosts[index] = post
@@ -130,6 +146,27 @@ final class HomeReactor: Reactor {
 
 // MARK: Private
 private extension HomeReactor {
+  func fetchUserProfile() -> Observable<Mutation> {
+    guard AuthManager.load(authInfoType: .isFirstSignIn) == nil else {
+      return .empty()
+    }
+
+    AuthManager.save(authInfoType: .isFirstSignIn, data: Data([1]))
+    return depepdency.fetchProfileUseCase.fetchUserProfile(userID: "")
+      .map { .setProfileGuide($0.nickname) }
+  }
+
+  func pushProfileSettingScene() -> Observable<Mutation> {
+    depepdency.coordinator.transition(
+      to: .profileSetting(originNickName: ""),
+      style: .push,
+      animated: true,
+      completion: nil
+    )
+
+    return .empty()
+  }
+
   func fetchVideoPosts(request: FetchVideoPostRequest) -> Observable<Mutation> {
     if isLastPage {
       return .just(.setLoading(false))

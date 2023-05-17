@@ -25,6 +25,7 @@ final class UploadVideoPostViewController: BaseViewController<UploadVideoPostRea
   private let reselectionButton: UIButton = .init()
   private let categoryLabel: UILabel = .init()
   private let categoryButtons: CategoryButtons = .init()
+  private let categoryErrorLabel: UILabel = .init()
   private let hashTagLabel: UILabel = .init()
   private let hashTagTextField: PhoChakTextField = .init(fieldStyle: .text)
   private let hashTagErrorLabel: UILabel = .init()
@@ -90,6 +91,13 @@ final class UploadVideoPostViewController: BaseViewController<UploadVideoPostRea
       view.addSubview($0)
     }
 
+    categoryErrorLabel.do {
+      $0.text = "카테고리를 선택해주세요"
+      $0.font = .createFont(.Body, .w400)
+      $0.textColor = .createColor(.red, .w400)
+      view.addSubview($0)
+    }
+
     hashTagLabel.do {
       $0.text = "해쉬태그"
       $0.font = .createFont(.Title3, .w800)
@@ -137,6 +145,11 @@ final class UploadVideoPostViewController: BaseViewController<UploadVideoPostRea
       $0.top.equalTo(categoryLabel.snp.bottom).offset(20)
       $0.leading.equalToSuperview().offset(20)
       $0.trailing.equalToSuperview().inset(155)
+    }
+
+    categoryErrorLabel.snp.makeConstraints {
+      $0.centerY.equalTo(categoryLabel)
+      $0.trailing.equalToSuperview().inset(20)
     }
 
     hashTagLabel.snp.makeConstraints {
@@ -309,6 +322,10 @@ private extension UploadVideoPostViewController {
       .emit(with: self, onNext: { owner, _ in
         owner.view.endEditing(true)
       })
+      .disposed(by: disposeBag)
+
+    categoryButtons.isTappedSignal
+      .emit(to: categoryErrorLabel.rx.isHidden)
       .disposed(by: disposeBag)
 
     hashTagTextField.rx.text.orEmpty

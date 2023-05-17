@@ -56,8 +56,8 @@ final class SignInReactor: Reactor {
             let refreshTokenData = userToken.refreshToken.data(using: .utf8)
       else { fatalError() }
 
-      TokenManager.save(tokenType: .accessToken, data: accessTokenData)
-      TokenManager.save(tokenType: .refreshToken, data: refreshTokenData)
+      AuthManager.save(authInfoType: .accessToken, data: accessTokenData)
+      AuthManager.save(authInfoType: .refreshToken, data: refreshTokenData)
       depepdency.coordinator.start(from: .tab)
     }
 
