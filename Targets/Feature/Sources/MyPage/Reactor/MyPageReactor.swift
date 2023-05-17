@@ -24,7 +24,7 @@ final class MyPageReactor: Reactor {
   var initialState: State = .init(likedPosts: [], uploadedPosts: [])
   private let dependency: Dependency
   private var isLastPage: Bool = false
-  private var isFirstAppeared: Bool = true
+  private var willAppear: Bool = true
   private var existVideoPostRequest: FetchVideoPostRequest?
 
   // MARK: Initializer
@@ -69,7 +69,7 @@ final class MyPageReactor: Reactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case .viewWillAppear:
-      isFirstAppeared = true
+      willAppear = true
       let fetchUserProfile = dependency.useCase.fetchUserProfile(userID: "")
         .asObservable()
         .map { Mutation.setUser(user: $0) }
@@ -163,8 +163,8 @@ final class MyPageReactor: Reactor {
         return newState
       }
 
-      var uploadedPosts = isFirstAppeared ? [] : state.uploadedPosts
-      isFirstAppeared = false
+      var uploadedPosts = willAppear ? [] : state.uploadedPosts
+      willAppear = false
 
       videoPosts.forEach { videoPost in
         if let index = uploadedPosts.firstIndex(where: { $0.id == videoPost.id }) {
@@ -182,8 +182,8 @@ final class MyPageReactor: Reactor {
         return newState
       }
 
-      var likedPosts = isFirstAppeared ? [] : state.likedPosts
-      isFirstAppeared = false
+      var likedPosts = willAppear ? [] : state.likedPosts
+      willAppear = false
 
       videoPosts.forEach { videoPost in
         if let index = likedPosts.firstIndex(where: { $0.id == videoPost.id }) {
@@ -219,7 +219,7 @@ final class MyPageReactor: Reactor {
 // MARK: - Private
 private extension MyPageReactor {
   func fetchVideoPosts(request: FetchVideoPostRequest) -> Observable<Mutation> {
-    if isFirstAppeared {
+    if willAppear {
       isLastPage = false
     }
 
