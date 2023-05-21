@@ -60,7 +60,7 @@ final class HomeReactor: Reactor {
     var videoPosts: [VideoPost] = []
     var isLoading: Bool = false
     var didRefresh: Bool = false
-    var isNeededProfileGuide: Bool
+    var isNeededProfileGuide: Bool = false
   }
   
   // MARK: Methods

@@ -72,6 +72,13 @@ final class MyPageReactor: Reactor {
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
+    let fetchUserProfile = dependency.useCase.fetchUserProfile(userID: "")
+      .asObservable()
+      .map { Mutation.setUser(user: $0) }
+
+    let fetchUploadedPosts = fetchVideoPosts(request: .init(sortOption: .latest, pageSize: 12, filterOption: .uploaded))
+    let fetchLikedPosts = fetchVideoPosts(request: .init(sortOption: .latest, pageSize: 12, filterOption: .liked))
+
     switch action {
     case .viewWillAppear:
       return Observable<Mutation>.concat(
