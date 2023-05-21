@@ -15,7 +15,7 @@ final class HomeReactor: Reactor {
   
   // MARK: Properties
   private let depepdency: Dependency
-  var initialState: State = .init(videoPosts: [], isLoading: false)
+  var initialState: State = .init()
   private var isLastPage: Bool = false
   private var existVideoPostRequest: FetchVideoPostRequest?
   private (set) var alreadyExclamedSubject: PublishSubject<Void> = .init()
@@ -38,6 +38,7 @@ final class HomeReactor: Reactor {
     case exclameVideoPost(postID: Int)
     case likeVideoPost(postID: Int)
     case updateDataSource(videoPosts: [VideoPost])
+    case refresh
   }
   
   enum Mutation {
@@ -46,11 +47,13 @@ final class HomeReactor: Reactor {
     case setVideoPosts([VideoPost])
     case updateVideoPosts([VideoPost])
     case updateVideoPostLikeStatus(index: Int, isLiked: Bool)
+    case setRefreshStatus(Bool)
   }
   
   struct State {
-    var videoPosts: [VideoPost]
-    var isLoading: Bool
+    var videoPosts: [VideoPost] = []
+    var isLoading: Bool = false
+    var didRefresh: Bool = false
   }
   
   // MARK: Methods
@@ -95,6 +98,14 @@ final class HomeReactor: Reactor {
 
     case .likeVideoPost(let postID):
       return updateVideoPostLikeStatus(postID: postID)
+
+    case .refresh:
+      return .concat([
+        .just(.setLoading(true)),
+        fetchVideoPosts(request: .init(sortOption: .latest, pageSize: 10)),
+        .just(.setLoading(false)),
+        .just(.setRefreshStatus(true))
+      ])
     }
   }
   
@@ -122,6 +133,9 @@ final class HomeReactor: Reactor {
       
     case .setLoading(let isLoading):
       newState.isLoading = isLoading
+
+    case .setRefreshStatus(let didRefresh):
+      newState.didRefresh = didRefresh
     }
     
     return newState

@@ -94,6 +94,10 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
     bindState(reactor: reactor)
     bindExtra()
   }
+
+  func refresh() {
+    reactor?.action.onNext(.refresh)
+  }
 }
 
 // MARK: - Extension
@@ -356,6 +360,28 @@ private extension MyPageViewController {
     reactor.state
       .map { $0.likedPosts }
       .subscribe()
+      .disposed(by: disposeBag)
+
+    reactor.state
+      .map { $0.isLoading }
+      .asSignal(onErrorSignalWith: .empty())
+      .emit(onNext: { isLoading in
+        if isLoading {
+          ActivityIndicatorView.show()
+        } else {
+          ActivityIndicatorView.hide()
+        }
+      })
+      .disposed(by: disposeBag)
+
+    reactor.state
+      .map { $0.didRefresh }
+      .asSignal(onErrorSignalWith: .empty())
+      .emit(with: self, onNext: { owner, didRefresh in
+        if didRefresh {
+          owner.collectionView.scrollToItem(at: .init(item: 0, section: 0), at: .top, animated: true)
+        }
+      })
       .disposed(by: disposeBag)
   }
 

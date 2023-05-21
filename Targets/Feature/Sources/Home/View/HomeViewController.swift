@@ -84,6 +84,10 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     bindState(reactor: reactor)
     bindExtra(reactor: reactor)
   }
+
+  func refresh() {
+    reactor?.action.onNext(.refresh)
+  }
 }
 
 // MARK: - Private
@@ -139,13 +143,30 @@ private extension HomeViewController {
     reactor.state
       .map { $0.isLoading }
       .distinctUntilChanged()
-      .subscribe()
+      .asSignal(onErrorSignalWith: .empty())
+      .emit(onNext: { isLoading in
+        if isLoading {
+          ActivityIndicatorView.show()
+        } else {
+          ActivityIndicatorView.hide()
+        }
+      })
       .disposed(by: disposeBag)
 
     reactor.alreadyExclamedSubject
       .asSignal(onErrorJustReturn: ())
       .emit(with: self, onNext: { owner, _ in
         owner.presentAlert(type: .alreadyExclamed, okAction: {})
+      })
+      .disposed(by: disposeBag)
+
+    reactor.state
+      .map { $0.didRefresh }
+      .asSignal(onErrorSignalWith: .empty())
+      .emit(with: self, onNext: { owner, didRefresh in
+        if didRefresh && !owner.collectionView.indexPathsForVisibleItems.contains(where: { $0.item == 0 }) {
+          owner.collectionView.scrollToItem(at: .init(item: 0, section: 0), at: .left, animated: true)
+        }
       })
       .disposed(by: disposeBag)
   }

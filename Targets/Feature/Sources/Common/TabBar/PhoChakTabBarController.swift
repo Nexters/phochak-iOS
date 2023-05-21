@@ -9,7 +9,7 @@
 import DesignKit
 import UIKit
 
-enum PhoChakTab: Int {
+@frozen enum PhoChakTab: Int {
   case home
   case upload
   case myPage
@@ -47,12 +47,28 @@ extension PhoChakTabBarController: UITabBarControllerDelegate {
     _ tabBarController: UITabBarController,
     shouldSelect viewController: UIViewController
   ) -> Bool {
-    let nextTabIndex = tabBarController.viewControllers?.firstIndex(of: viewController)
+    guard let index = tabBarController.viewControllers?.firstIndex(of: viewController),
+          let nextTab = PhoChakTab(rawValue: index) else {
+      return false
+    }
 
-    guard nextTabIndex == PhoChakTab.upload.rawValue else { return true }
-
-    coordinator?.transition(to: .uploadVideoPost, style: .modal, animated: true, completion: nil)
-    return false
+    switch nextTab {
+    case .home:
+      let homeVC = (viewController as? UINavigationController)?.topViewController as? HomeViewController
+      if self.selectedIndex == nextTab.rawValue {
+        homeVC?.refresh()
+      }
+      return true
+    case .myPage:
+      let mypageVC = (viewController as? UINavigationController)?.topViewController as? MyPageViewController
+      if self.selectedIndex == nextTab.rawValue {
+        mypageVC?.refresh()
+      }
+      return true
+    case .upload:
+      coordinator?.transition(to: .uploadVideoPost, style: .modal, animated: true, completion: nil)
+      return false
+    }
   }
 }
 
