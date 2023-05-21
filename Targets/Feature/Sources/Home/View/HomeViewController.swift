@@ -153,6 +153,9 @@ private extension HomeViewController {
   func bindExtra(reactor: HomeReactor) {
     collectionView.rx.didScroll
       .asSignal()
+      .map(currentIndexByOffset)
+      .distinctUntilChanged()
+      .map { _ in }
       .emit(to: transformBinder)
       .disposed(by: disposeBag)
 
@@ -232,12 +235,13 @@ private extension HomeViewController {
         }
       }
 
-      if Int(index) != owner.previousIndex,
-         let cell = owner.collectionView
-        .cellForItem(at: .init(item: Int(owner.previousIndex), section: 0)) as? VideoPostCell {
-        UIView.animate(withDuration: 0.25) {
-          cell.transform = .identity
-          cell.stopVideo()
+      for visibleIndex in owner.collectionView.indexPathsForVisibleItems.map({ $0.item }) {
+        if visibleIndex != Int(index) {
+          let cell = owner.collectionView.cellForItem(at: .init(item: Int(visibleIndex), section: 0)) as? VideoPostCell
+          if cell?.transform != .identity {
+            cell?.transform = .identity
+            cell?.stopVideo()
+          }
         }
       }
     }
@@ -246,6 +250,18 @@ private extension HomeViewController {
   func applyTransform(cell: VideoPostCell) {
     cell.transform = .init(scaleX: 1.1, y: 1.1).translatedBy(x: 0, y: -20)
   }
+
+  func currentIndexByOffset() -> Int {
+      guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else {
+        return .zero
+      }
+
+      let cellWidthIncludeSpacing = layout.itemSize.width + layout.minimumLineSpacing
+      let offsetX = collectionView.contentOffset.x
+      let index = round((offsetX + collectionView.contentInset.left) / cellWidthIncludeSpacing)
+
+      return Int(index)
+    }
 }
 
 extension HomeViewController: VideoPostCellDelegate {
