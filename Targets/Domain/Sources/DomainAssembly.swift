@@ -16,12 +16,12 @@ public struct DomainAssembly: Assembly {
   public func assemble(container: Container) {
     container.register(FetchVideoPostUseCaseType.self) { resolver in
       let service = resolver.resolve(VideoPostServiceType.self)!
-      return FetchVideoPostUseCase(service: service)
+      return FetchVideoPostUseCase(videoPostService: service)
     }
 
     container.register(ExclameVideoPostUseCaseType.self) { resolver in
       let service = resolver.resolve(VideoPostServiceType.self)!
-      return ExclameVideoPostUseCase(service: service)
+      return ExclameVideoPostUseCase(videoPostService: service)
     }
 
     container.register(LikeVideoPostUseCase.self) { resolver in
@@ -31,7 +31,7 @@ public struct DomainAssembly: Assembly {
 
     container.register(VideoPostUseCaseType.self) { resolver in
       let service = resolver.resolve(VideoPostServiceType.self)!
-      return VideoPostUseCase(service: service)
+      return VideoPostUseCase(videoPostService: service)
     }
 
     container.register(SignInUseCaseType.self) { resolver in
@@ -46,14 +46,14 @@ public struct DomainAssembly: Assembly {
 
     container.register(FetchProfileUseCaseType.self) { resolver in
       let service = resolver.resolve(ProfileServiceType.self)!
-      return FetchProfileUseCase(service: service)
+      return FetchProfileUseCase(profileSerivce: service)
     }
 
     container.register(MyPageUseCaseType.self) { resolver in
       let postsService = resolver.resolve(VideoPostServiceType.self)!
       let profileService = resolver.resolve(ProfileServiceType.self)!
       let settingService = resolver.resolve(SettingServiceType.self)!
-      return MyPageUseCase(postsService: postsService, profileService: profileService, settingService: settingService)
+      return MyPageUseCase(videoPostService: postsService, profileService: profileService, settingService: settingService)
     }
 
     container.register(ProfileSettingUseCaseType.self) { resolver in

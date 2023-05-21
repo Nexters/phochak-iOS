@@ -9,30 +9,31 @@
 import RxSwift
 
 public protocol LikeVideoPostUseCaseType {
-
-  // MARK: Methods
+  var videoPostService: VideoPostServiceType { get }
+  
   func likeVideoPost(postID: Int) -> Observable<Bool>
   func unLikeVideoPost(postID: Int) -> Observable<Bool>
+}
+
+extension LikeVideoPostUseCaseType {
+  func likeVideoPost(postID: Int) -> Observable<Bool> {
+    videoPostService.likeVideoPost(postID: postID)
+      .asObservable()
+  }
+
+  func unLikeVideoPost(postID: Int) -> Observable<Bool> {
+    videoPostService.unlikeVideoPost(postID: postID)
+      .asObservable()
+  }
 }
 
 final class LikeVideoPostUseCase: LikeVideoPostUseCaseType {
 
   // MARK: Properties
-  private let service: VideoPostServiceType
+  let videoPostService: VideoPostServiceType
 
   // MARK: Initializer
   init(service: VideoPostServiceType) {
-    self.service = service
-  }
-
-  // MARK: Methods
-  func likeVideoPost(postID: Int) -> Observable<Bool> {
-    service.likeVideoPost(postID: postID)
-      .asObservable()
-  }
-
-  func unLikeVideoPost(postID: Int) -> Observable<Bool> {
-    service.unlikeVideoPost(postID: postID)
-      .asObservable()
+    self.videoPostService = service
   }
 }
