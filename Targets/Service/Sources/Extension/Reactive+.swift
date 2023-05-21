@@ -51,7 +51,7 @@ public extension Reactive where Base: MoyaProviderType {
           .filter { response in
             do {
               if !isValidationToken(try response.map(TokenErrorResponse.self)) {
-                TokenManager.deleteAll()
+                AuthManager.deleteTokens()
                 NotificationCenter.default.post(name: .reSignIn, object: nil)
                 return false
               }
@@ -94,8 +94,8 @@ public extension Reactive where Base: MoyaProviderType {
           let refreshTokenData = userToken.refreshToken.data(using: .utf8)
     else { return }
 
-    TokenManager.save(tokenType: .accessToken, data: accessTokenData)
-    TokenManager.save(tokenType: .refreshToken, data: refreshTokenData)
+    AuthManager.save(authInfoType: .accessToken, data: accessTokenData)
+    AuthManager.save(authInfoType: .refreshToken, data: refreshTokenData)
   }
 
   private func isValidationToken(_ response: TokenErrorResponse) -> Bool {

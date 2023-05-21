@@ -94,6 +94,11 @@ final class HomeViewController: BaseViewController<HomeReactor> {
 private extension HomeViewController {
   // MARK: Methods
   func bindAction(reactor: HomeReactor) {
+    rx.viewDidLoad
+      .map { HomeReactor.Action.fetchUserProfile }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
+
     collectionView.rx.didEndDragging.map { _ in }
       .asObservable()
       .withUnretained(self)
@@ -123,6 +128,20 @@ private extension HomeViewController {
   }
 
   func bindState(reactor: HomeReactor) {
+    reactor.state
+      .map { $0.isNeededProfileGuide }
+      .distinctUntilChanged()
+      .asSignal(onErrorJustReturn: false)
+      .filter { $0 }
+      .emit { [weak self] _ in
+        self?.presentAlert(
+          type: .profileSetting,
+          okAction: { reactor.action.onNext(.pushProfileSettingScene) },
+          isNeededCancel: true
+        )
+      }
+      .disposed(by: disposeBag)
+
     reactor.state
       .map { $0.videoPosts }
       .distinctUntilChanged()

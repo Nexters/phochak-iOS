@@ -111,11 +111,13 @@ final class SceneFactory: SceneFactoryType {
       let tabBarController: PhoChakTabBarController = .init(coordinator: coordinator)
 
       let videoPostUseCase = injector.resolve(VideoPostUseCaseType.self)
+      let fetchProfileUseCase = injector.resolve(FetchProfileUseCaseType.self)
       let homeViewController: HomeViewController = .init(
         reactor: .init(
           dependency: .init(
             coordinator: coordinator,
-            useCase: videoPostUseCase
+            useCase: videoPostUseCase,
+            fetchProfileUseCase: fetchProfileUseCase
           )
         )
       )

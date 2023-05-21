@@ -310,6 +310,7 @@ extension MyPageViewController
     presentAlert(
       type: .clearCache,
       okAction: { [weak self] in
+        self?.settingButtons.removeFromSuperview()
         self?.reactor?.action.onNext(.tapClearCacheButton)
       },
       isNeededCancel: true
@@ -388,6 +389,12 @@ private extension MyPageViewController {
   func bindExtra() {
     settingBarButton.rx.tap
       .asSignal()
+      .withUnretained(self)
+      .filter { owner, _ in
+        let isDescendant = owner.settingButtons.isDescendant(of: owner.view)
+        owner.settingButtons.removeFromSuperview()
+        return !isDescendant
+      }
       .emit(with: self, onNext: { owner, _ in
         guard let screen = owner.view.window?.windowScene?.screen.bounds else { return }
         owner.view.addSubview(owner.settingButtons)
