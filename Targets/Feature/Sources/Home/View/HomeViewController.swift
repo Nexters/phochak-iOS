@@ -185,6 +185,7 @@ private extension HomeViewController {
       .emit(with: self, onNext: { owner, didRefresh in
         if didRefresh && !owner.collectionView.indexPathsForVisibleItems.contains(where: { $0.item == 0 }) {
           owner.collectionView.scrollToItem(at: .init(item: 0, section: 0), at: .left, animated: true)
+          owner.currentIndex = 0
         }
       })
       .disposed(by: disposeBag)

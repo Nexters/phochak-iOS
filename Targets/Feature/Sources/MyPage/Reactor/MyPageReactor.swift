@@ -158,7 +158,8 @@ final class MyPageReactor: Reactor {
         .just(.setLoading(true)),
         .merge(fetchUserProfile, fetchUploadedPosts, fetchLikedPosts),
         .just(.setLoading(false)),
-        .just(.setRefreshStatus(true))
+        .just(.setRefreshStatus(true)),
+        .just(.setRefreshStatus(false))
       ])
     }
   }
