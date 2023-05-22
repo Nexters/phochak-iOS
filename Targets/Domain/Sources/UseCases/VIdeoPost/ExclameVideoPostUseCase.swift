@@ -9,24 +9,25 @@
 import RxSwift
 
 public protocol ExclameVideoPostUseCaseType {
+  var videoPostService: VideoPostServiceType { get }
 
-  // MARK: Methods
   func exclameVideoPost(postID: Int) -> Observable<Bool>
+}
+
+extension ExclameVideoPostUseCaseType {
+  func exclameVideoPost(postID: Int) -> Observable<Bool> {
+    videoPostService.exclameVideoPost(postID: postID)
+      .asObservable()
+  }
 }
 
 final class ExclameVideoPostUseCase: ExclameVideoPostUseCaseType {
 
   // MARK: Properties
-  private let service: VideoPostServiceType
+  let videoPostService: VideoPostServiceType
 
   // MARK: Initializer
-  init(service: VideoPostServiceType) {
-    self.service = service
-  }
-
-  // MARK: Methods
-  func exclameVideoPost(postID: Int) -> Observable<Bool> {
-    service.exclameVideoPost(postID: postID)
-      .asObservable()
+  init(videoPostService: VideoPostServiceType) {
+    self.videoPostService = videoPostService
   }
 }

@@ -84,6 +84,10 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     bindState(reactor: reactor)
     bindExtra(reactor: reactor)
   }
+
+  func refresh() {
+    reactor?.action.onNext(.refresh)
+  }
 }
 
 // MARK: - Private
@@ -158,7 +162,14 @@ private extension HomeViewController {
     reactor.state
       .map { $0.isLoading }
       .distinctUntilChanged()
-      .subscribe()
+      .asSignal(onErrorSignalWith: .empty())
+      .emit(onNext: { isLoading in
+        if isLoading {
+          ActivityIndicatorView.show()
+        } else {
+          ActivityIndicatorView.hide()
+        }
+      })
       .disposed(by: disposeBag)
 
     reactor.alreadyExclamedSubject
@@ -167,11 +178,25 @@ private extension HomeViewController {
         owner.presentAlert(type: .alreadyExclamed, okAction: {})
       })
       .disposed(by: disposeBag)
+
+    reactor.state
+      .map { $0.didRefresh }
+      .asSignal(onErrorSignalWith: .empty())
+      .emit(with: self, onNext: { owner, didRefresh in
+        if didRefresh && !owner.collectionView.indexPathsForVisibleItems.contains(where: { $0.item == 0 }) {
+          owner.collectionView.scrollToItem(at: .init(item: 0, section: 0), at: .left, animated: true)
+          owner.currentIndex = 0
+        }
+      })
+      .disposed(by: disposeBag)
   }
 
   func bindExtra(reactor: HomeReactor) {
     collectionView.rx.didScroll
       .asSignal()
+      .map(currentIndexByOffset)
+      .distinctUntilChanged()
+      .map { _ in }
       .emit(to: transformBinder)
       .disposed(by: disposeBag)
 
@@ -251,12 +276,13 @@ private extension HomeViewController {
         }
       }
 
-      if Int(index) != owner.previousIndex,
-         let cell = owner.collectionView
-        .cellForItem(at: .init(item: Int(owner.previousIndex), section: 0)) as? VideoPostCell {
-        UIView.animate(withDuration: 0.25) {
-          cell.transform = .identity
-          cell.stopVideo()
+      for visibleIndex in owner.collectionView.indexPathsForVisibleItems.map({ $0.item }) {
+        if visibleIndex != Int(index) {
+          let cell = owner.collectionView.cellForItem(at: .init(item: Int(visibleIndex), section: 0)) as? VideoPostCell
+          if cell?.transform != .identity {
+            cell?.transform = .identity
+            cell?.stopVideo()
+          }
         }
       }
     }
@@ -265,6 +291,18 @@ private extension HomeViewController {
   func applyTransform(cell: VideoPostCell) {
     cell.transform = .init(scaleX: 1.1, y: 1.1).translatedBy(x: 0, y: -20)
   }
+
+  func currentIndexByOffset() -> Int {
+      guard let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout else {
+        return .zero
+      }
+
+      let cellWidthIncludeSpacing = layout.itemSize.width + layout.minimumLineSpacing
+      let offsetX = collectionView.contentOffset.x
+      let index = round((offsetX + collectionView.contentInset.left) / cellWidthIncludeSpacing)
+
+      return Int(index)
+    }
 }
 
 extension HomeViewController: VideoPostCellDelegate {
