@@ -10,9 +10,6 @@ import UIKit
 
 public final class ActivityIndicatorView {
 
-  // MARK: Properties
-  private static var indicatorView: UIActivityIndicatorView?
-
   // MARK: Methods
   public static func show() {
     DispatchQueue.main.async {

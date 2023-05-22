@@ -117,7 +117,8 @@ final class HomeReactor: Reactor {
         .just(.setLoading(true)),
         fetchVideoPosts(request: .init(sortOption: .latest, pageSize: 10)),
         .just(.setLoading(false)),
-        .just(.setRefreshStatus(true))
+        .just(.setRefreshStatus(true)),
+        .just(.setRefreshStatus(false))
       ])
     }
   }
