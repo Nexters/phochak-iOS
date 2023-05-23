@@ -62,7 +62,7 @@ final class VideoPostCell: BaseCollectionViewCell, VideoControllable {
     contentView.addSubview(containerView)
 
     nicknameLabel.do {
-      $0.font = UIFont(size: .HeadLine, weight: .w800)
+      $0.font = UIFont(size: .Body, weight: .w700)
       $0.textColor = .createColor(.monoGray, .w200)
       containerView.addSubview($0)
     }
@@ -108,7 +108,9 @@ final class VideoPostCell: BaseCollectionViewCell, VideoControllable {
   // MARK: Methods
   func configure(_ videoPost: VideoPost) {
     self.videoPost = videoPost
-    nicknameLabel.text = videoPost.user.nickname
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.lineHeightMultiple = 1.6
+    nicknameLabel.attributedText = .init(string: videoPost.user.nickname, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
     videoPlayerView.configure(videoPost: videoPost)
     likeButton.setImage(videoPost.isLiked ? UIImage(literal: .heartOn) : UIImage(literal: .heartOff), for: .normal)
 
