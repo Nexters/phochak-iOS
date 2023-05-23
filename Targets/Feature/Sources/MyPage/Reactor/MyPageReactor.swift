@@ -72,20 +72,25 @@ final class MyPageReactor: Reactor {
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
-    let fetchUserProfile = dependency.useCase.fetchUserProfile(userID: "")
-      .asObservable()
-      .map { Mutation.setUser(user: $0) }
-
-    let fetchUploadedPosts = fetchVideoPosts(request: .init(sortOption: .latest, pageSize: 12, filterOption: .uploaded))
-    let fetchLikedPosts = fetchVideoPosts(request: .init(sortOption: .latest, pageSize: 12, filterOption: .liked))
-
     switch action {
-    case .viewWillAppear:
-      return Observable<Mutation>.concat(
+    case .viewWillAppear, .refresh:
+      willAppear = true
+
+      let fetchUserProfile = dependency.useCase.fetchUserProfile(userID: "")
+        .asObservable()
+        .map { Mutation.setUser(user: $0) }
+
+      let fetchUploadedPosts = fetchVideoPosts(request: .init(sortOption: .latest, pageSize: 12, filterOption: .uploaded))
+      let fetchLikedPosts = fetchVideoPosts(request: .init(sortOption: .latest, pageSize: 12, filterOption: .liked))
+
+      return .concat([
+        .just(.clearPost),
         .just(.setLoading(true)),
         .merge(fetchUserProfile, fetchUploadedPosts, fetchLikedPosts),
-        .just(.setLoading(false))
-      )
+        .just(.setLoading(false)),
+        .just(.setRefreshStatus(true)),
+        .just(.setRefreshStatus(false))
+      ])
 
     case let .fetchItems(size):
       let postFilter = currentState.postFilter
@@ -152,15 +157,6 @@ final class MyPageReactor: Reactor {
       let postID = currentState.uploadedPosts[indexNumber].id
       return dependency.useCase.deleteVideoPost(postID: postID)
         .map { .deletePost(indexNumber: indexNumber) }
-
-    case .refresh:
-      return .concat([
-        .just(.setLoading(true)),
-        .merge(fetchUserProfile, fetchUploadedPosts, fetchLikedPosts),
-        .just(.setLoading(false)),
-        .just(.setRefreshStatus(true)),
-        .just(.setRefreshStatus(false))
-      ])
     }
   }
 
