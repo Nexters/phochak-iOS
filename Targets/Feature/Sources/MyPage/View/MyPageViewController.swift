@@ -279,6 +279,7 @@ extension MyPageViewController: MyPageProfileCellDelegate {
 // MARK: - PostsSectionHeaderDelegate
 extension MyPageViewController: PostsSectionHeaderDelegate {
   func updateFilter(postFilter: PostsFilterOption) {
+    deleteVideoPostButton.removeFromSuperview()
     reactor?.action.onNext(.updatePostsListFilter(postFilter: postFilter))
   }
 }
