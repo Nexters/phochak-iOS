@@ -35,6 +35,12 @@ final class ProfileSettingViewController: BaseViewController<ProfileSettingReact
   }
 
   // MARK: Override
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+
+    textField.becomeFirstResponder()
+  }
+
   override func bind(reactor: ProfileSettingReactor) {
     bindAction(reactor: reactor)
     bindState(reactor: reactor)
@@ -52,7 +58,6 @@ final class ProfileSettingViewController: BaseViewController<ProfileSettingReact
 
     textField.do {
       $0.text = reactor?.currentNickName ?? ""
-      $0.becomeFirstResponder()
     }
 
     titleLabel.do {
