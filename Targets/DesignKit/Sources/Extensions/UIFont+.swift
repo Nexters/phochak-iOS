@@ -31,22 +31,21 @@ public extension UIFont {
     case w600
     case w700
     case w800
-  }
 
-  // MARK: Methods
-  static func createFont(_ size: FontSizeLiteral, _ weight: FontWeight) -> UIFont {
-    var fontName: String {
-      switch weight {
-      case .w800: return "Pretendard-ExtraBold"
-      case .w700: return "Pretendard-Bold"
-      case .w600: return "Pretendard-SemiBold"
-      case .w500: return "Pretendard-Medium"
-      case .w400: return "Pretendard-Regular"
+    fileprivate var fontName: String {
+      switch self {
       case .w300: return "Pretendard-Light"
+      case .w400: return "Pretendard-Regular"
+      case .w500: return "Pretendard-Medium"
+      case .w600: return "Pretendard-SemiBold"
+      case .w700: return "Pretendard-Bold"
+      case .w800: return "Pretendard-ExtraBold"
       }
     }
-    guard let font: UIFont = .init(name: fontName, size: size.rawValue) else { return .init() }
+  }
 
-    return font
+  // MARK: Initializer
+  convenience init?(size: FontSizeLiteral, weight: FontWeight) {
+    self.init(name: weight.fontName, size: size.rawValue)
   }
 }

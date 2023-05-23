@@ -79,34 +79,34 @@ final class UploadVideoPostViewController: BaseViewController<UploadVideoPostRea
 
     reselectionButton.do {
       $0.setTitle("재선택", for: .normal)
-      $0.titleLabel?.font = .createFont(.Caption, .w600)
+      $0.titleLabel?.font = UIFont(size: .Caption, weight: .w600)
       $0.setTitleColor(.createColor(.blue, .w400), for: .normal)
       view.addSubview($0)
     }
 
     categoryLabel.do {
       $0.text = "카테고리"
-      $0.font = .createFont(.Title3, .w800)
+      $0.font = UIFont(size: .Title3, weight: .w800)
       $0.textColor = .createColor(.monoGray, .w50)
       view.addSubview($0)
     }
 
     categoryErrorLabel.do {
       $0.text = "카테고리를 선택해주세요"
-      $0.font = .createFont(.Body, .w400)
+      $0.font = UIFont(size: .Body, weight: .w400)
       $0.textColor = .createColor(.red, .w400)
       view.addSubview($0)
     }
 
     hashTagLabel.do {
       $0.text = "해쉬태그"
-      $0.font = .createFont(.Title3, .w800)
+      $0.font = UIFont(size: .Title3, weight: .w800)
       $0.textColor = .createColor(.monoGray, .w50)
       view.addSubview($0)
     }
 
     hashTagErrorLabel.do {
-      $0.font = .createFont(.Body, .w400)
+      $0.font = UIFont(size: .Body, weight: .w400)
       $0.textColor = .createColor(.red, .w400)
       view.addSubview($0)
     }

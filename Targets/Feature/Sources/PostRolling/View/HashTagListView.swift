@@ -97,7 +97,7 @@ private extension HashTagListView {
     }
 
     nicknameLabel.do {
-      $0.font = .createFont(.HeadLine, .w800)
+      $0.font = UIFont(size: .HeadLine, weight: .w800)
       $0.textColor = .createColor(.monoGray, .w200)
       headerView.addSubview($0)
     }
@@ -172,7 +172,7 @@ extension HashTagListView: UICollectionViewDelegateFlowLayout {
     }
 
     let hashTagSize = ("#" + hashTag).size(withAttributes: [
-      .font: UIFont.createFont(.Caption, .w400)
+      .font: UIFont(size: .Caption, weight: .w400)!
     ])
 
     return hashTagSize

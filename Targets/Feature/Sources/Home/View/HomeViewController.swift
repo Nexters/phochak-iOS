@@ -236,8 +236,8 @@ private extension HomeViewController {
     titleImageView.addTapGesture().rx.event
       .filter { $0.state == .recognized }
       .asSignal(onErrorSignalWith: .empty())
-      .emit(with: reactor, onNext: { reactor, _ in
-        reactor.action.onNext(.refresh)
+      .emit(with: self, onNext: { owner, _ in
+        owner.refresh()
       })
       .disposed(by: disposeBag)
   }

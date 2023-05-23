@@ -34,7 +34,7 @@ public final class CompletionButton: UIButton {
 private extension CompletionButton {
   func setupUI() {
     setTitle("완료", for: .normal)
-    titleLabel?.font = .createFont(.CallOut, .w800)
+    titleLabel?.font = UIFont(size: .CallOut, weight: .w800)
     setTitleColor(.createColor(.monoGray, .w600), for: .normal)
     layer.cornerRadius = 10
     layer.borderColor = UIColor.createColor(.monoGray, .w800).cgColor

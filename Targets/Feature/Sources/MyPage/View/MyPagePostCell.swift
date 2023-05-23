@@ -57,7 +57,7 @@ final class MyPagePostCell: BaseCollectionViewCell {
     }
 
     likeCountLabel.do {
-      $0.font = .createFont(.Caption, .w300)
+      $0.font = UIFont(size: .Caption, weight: .w300)
       $0.textColor = .createColor(.monoGray, .w50)
       contentView.addSubview($0)
     }
