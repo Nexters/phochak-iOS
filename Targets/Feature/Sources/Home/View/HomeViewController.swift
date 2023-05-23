@@ -51,7 +51,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     super.setupViews()
 
     titleImageView.do {
-      $0.image = .createImage(.logo)
+      $0.image = UIImage(literal: .logo)
       navigationItem.leftBarButtonItem = .init(customView: $0)
     }
 

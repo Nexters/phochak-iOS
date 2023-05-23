@@ -18,9 +18,9 @@ import Then
 final class SignInViewController: BaseViewController<SignInReactor> {
 
   // MARK: Properties
-  private let iconImageView: UIImageView = .init(image: .createImage(.loginIcon))
-  private let logoImageView: UIImageView = .init(image: .createImage(.loginLogo))
-  private let titleImageView: UIImageView = .init(image: .createImage(.loginTitle))
+  private let iconImageView: UIImageView = .init(image: UIImage(literal: .loginIcon))
+  private let logoImageView: UIImageView = .init(image: UIImage(literal: .loginLogo))
+  private let titleImageView: UIImageView = .init(image: UIImage(literal: .loginTitle))
   private let kakaoLoginButton: UIButton = .init()
   private let appleLoginButton: UIButton = .init()
 
@@ -56,7 +56,7 @@ final class SignInViewController: BaseViewController<SignInReactor> {
 
     appleLoginButton.do {
       $0.backgroundColor = .createColor(.monoGray, .w50)
-      $0.setImage(.createImage(.apple), for: .normal)
+      $0.setImage(UIImage(literal: .apple), for: .normal)
       $0.setTitle("애플로 로그인", for: .normal)
       $0.titleLabel?.font = .createFont(.CallOut, .w800)
       $0.setTitleColor(.createColor(.monoGray, .w900), for: .normal)
@@ -67,7 +67,7 @@ final class SignInViewController: BaseViewController<SignInReactor> {
 
     kakaoLoginButton.do {
       $0.backgroundColor = .createColor(.yellow, .w400)
-      $0.setImage(.createImage(.kakao), for: .normal)
+      $0.setImage(UIImage(literal: .kakao), for: .normal)
       $0.setTitle("카카오 로그인", for: .normal)
       $0.titleLabel?.font = .createFont(.CallOut, .w800)
       $0.setTitleColor(.createColor(.monoGray, .w900), for: .normal)

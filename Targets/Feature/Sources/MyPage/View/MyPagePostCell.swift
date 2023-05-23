@@ -52,7 +52,7 @@ final class MyPagePostCell: BaseCollectionViewCell {
     }
 
     likeImageView.do {
-      $0.image = .createImage(.heartOn)
+      $0.image = UIImage(literal: .heartOn)
       contentView.addSubview($0)
     }
 
@@ -63,7 +63,7 @@ final class MyPagePostCell: BaseCollectionViewCell {
     }
 
     optionButton.do {
-      $0.setImage(.createImage(.option), for: .normal)
+      $0.setImage(UIImage(literal: .option), for: .normal)
       contentView.addSubview($0)
     }
 
@@ -72,7 +72,7 @@ final class MyPagePostCell: BaseCollectionViewCell {
     }
 
     exclamedImageView.do {
-      $0.image = .createImage(.exclamed)
+      $0.image = UIImage(literal: .exclamed)
     }
   }
 

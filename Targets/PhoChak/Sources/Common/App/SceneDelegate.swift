@@ -68,7 +68,7 @@ private extension SceneDelegate {
     navAppearance.shadowColor = .clear
     navAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
     navAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-    navAppearance.setBackIndicatorImage(.createImage(.back), transitionMaskImage: .createImage(.back))
+    navAppearance.setBackIndicatorImage(UIImage(literal: .back), transitionMaskImage: UIImage(literal: .back))
 
     UINavigationBar.appearance().standardAppearance = navAppearance
     UINavigationBar.appearance().scrollEdgeAppearance = navAppearance

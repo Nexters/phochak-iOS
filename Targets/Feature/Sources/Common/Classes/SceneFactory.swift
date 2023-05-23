@@ -116,23 +116,23 @@ final class SceneFactory: SceneFactoryType {
         reactor: .init(
           dependency: .init(
             coordinator: coordinator,
-            useCase: videoPostUseCase,
+            videoPostCase: videoPostUseCase,
             fetchProfileUseCase: fetchProfileUseCase
           )
         )
       )
       homeViewController.tabBarItem = .init(
         title: nil,
-        image: .createImage(.tab_home),
-        selectedImage: .createImage(.tab_home_selected)
+        image: UIImage(literal: .tab_home),
+        selectedImage: UIImage(literal: .tab_home_selected)
       )
       self.homeViewController = homeViewController
 
       let dummyViewController: UIViewController = .init(nibName: nil, bundle: nil)
       dummyViewController.tabBarItem = .init(
         title: nil,
-        image: .createImage(.tab_videoUpload),
-        selectedImage: .createImage(.tab_videoUpload)
+        image: UIImage(literal: .tab_videoUpload),
+        selectedImage: UIImage(literal: .tab_videoUpload)
       )
 
       let reactorDependency: MyPageReactor.Dependency = .init(
@@ -142,8 +142,8 @@ final class SceneFactory: SceneFactoryType {
       let myPageViewController: MyPageViewController = .init(reactor: .init(dependency: reactorDependency))
       myPageViewController.tabBarItem = .init(
         title: nil,
-        image: .createImage(.tab_profile),
-        selectedImage: .createImage(.tab_profile_selected)
+        image: UIImage(literal: .tab_profile),
+        selectedImage: UIImage(literal: .tab_profile_selected)
       )
 
       tabBarController.setViewControllers(

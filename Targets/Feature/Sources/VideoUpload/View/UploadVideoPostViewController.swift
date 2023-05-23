@@ -73,7 +73,7 @@ final class UploadVideoPostViewController: BaseViewController<UploadVideoPostRea
     view.addSubview(completionButton)
 
     closeButton.do {
-      $0.setImage(.createImage(.close), for: .normal)
+      $0.setImage(UIImage(literal: .close), for: .normal)
       view.addSubview($0)
     }
 

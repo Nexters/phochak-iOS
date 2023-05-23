@@ -39,7 +39,7 @@ final class UploadVideoPostCell: BaseCollectionViewCell {
     }
 
     deletionButton.do {
-      $0.setImage(.createImage(.iconX), for: .normal)
+      $0.setImage(UIImage(literal: .iconX), for: .normal)
       contentView.addSubview($0)
     }
   }
