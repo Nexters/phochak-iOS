@@ -50,7 +50,7 @@ final class HashTagListView: UIView {
   // MARK: Methods
   func configure(videoPost: VideoPost) {
     self.nicknameLabel.text = videoPost.user.nickname
-    self.likeButton.setImage(videoPost.isLiked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
+    self.likeButton.setImage(videoPost.isLiked ? UIImage(literal: .heartOn) : UIImage(literal: .heartOff), for: .normal)
 
     if videoPostRelay.value != videoPost {
       videoPostRelay.accept(videoPost)
@@ -75,7 +75,7 @@ extension HashTagListView {
           FeedbackGenerator.shared.generate(.success)
         }
 
-        self?.likeButton.setImage(isLiked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
+        self?.likeButton.setImage(isLiked ? UIImage(literal: .heartOn) : UIImage(literal: .heartOff), for: .normal)
       })
   }
 }
@@ -97,18 +97,18 @@ private extension HashTagListView {
     }
 
     nicknameLabel.do {
-      $0.font = .createFont(.HeadLine, .w800)
+      $0.font = UIFont(size: .HeadLine, weight: .w800)
       $0.textColor = .createColor(.monoGray, .w200)
       headerView.addSubview($0)
     }
 
     exclameButton.do {
-      $0.setImage(.createImage(.exclameOff), for: .normal)
+      $0.setImage(UIImage(literal: .exclameOff), for: .normal)
       headerView.addSubview($0)
     }
 
     likeButton.do {
-      $0.setImage(.createImage(.heartOff), for: .normal)
+      $0.setImage(UIImage(literal: .heartOff), for: .normal)
       headerView.addSubview($0)
     }
 
@@ -172,7 +172,7 @@ extension HashTagListView: UICollectionViewDelegateFlowLayout {
     }
 
     let hashTagSize = ("#" + hashTag).size(withAttributes: [
-      .font: UIFont.createFont(.Caption, .w400)
+      .font: UIFont(size: .Caption, weight: .w400)!
     ])
 
     return hashTagSize

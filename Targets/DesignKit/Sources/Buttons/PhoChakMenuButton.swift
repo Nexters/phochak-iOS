@@ -37,7 +37,7 @@ private extension PhoChakMenuButton {
 
   // MARK: Methods
   func setupView() {
-    titleLabel?.font = .createFont(.Body, .w500)
+    titleLabel?.font = UIFont(size: .Body, weight: .w500)
     layer.borderWidth = 0.5
   }
 }

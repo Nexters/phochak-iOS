@@ -52,18 +52,18 @@ final class MyPagePostCell: BaseCollectionViewCell {
     }
 
     likeImageView.do {
-      $0.image = .createImage(.heartOn)
+      $0.image = UIImage(literal: .heartOn)
       contentView.addSubview($0)
     }
 
     likeCountLabel.do {
-      $0.font = .createFont(.Caption, .w300)
+      $0.font = UIFont(size: .Caption, weight: .w300)
       $0.textColor = .createColor(.monoGray, .w50)
       contentView.addSubview($0)
     }
 
     optionButton.do {
-      $0.setImage(.createImage(.option), for: .normal)
+      $0.setImage(UIImage(literal: .option), for: .normal)
       contentView.addSubview($0)
     }
 
@@ -72,7 +72,7 @@ final class MyPagePostCell: BaseCollectionViewCell {
     }
 
     exclamedImageView.do {
-      $0.image = .createImage(.exclamed)
+      $0.image = UIImage(literal: .exclamed)
     }
   }
 

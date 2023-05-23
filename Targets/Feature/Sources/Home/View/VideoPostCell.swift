@@ -44,7 +44,7 @@ final class VideoPostCell: BaseCollectionViewCell, VideoControllable {
     super.prepareForReuse()
 
     nicknameLabel.text = nil
-    likeButton.imageView?.image = videoPost?.isLiked ?? false ? .createImage(.heartOn) : .createImage(.heartOff)
+    likeButton.imageView?.image = videoPost?.isLiked ?? false ? UIImage(literal: .heartOn) : UIImage(literal: .heartOff)
   }
 
   override func layoutSubviews() {
@@ -62,18 +62,18 @@ final class VideoPostCell: BaseCollectionViewCell, VideoControllable {
     contentView.addSubview(containerView)
 
     nicknameLabel.do {
-      $0.font = .createFont(.HeadLine, .w800)
+      $0.font = UIFont(size: .HeadLine, weight: .w800)
       $0.textColor = .createColor(.monoGray, .w200)
       containerView.addSubview($0)
     }
 
     exclameButton.do {
-      $0.setImage(.createImage(.exclameOff), for: .normal)
+      $0.setImage(UIImage(literal: .exclameOff), for: .normal)
       containerView.addSubview($0)
     }
 
     likeButton.do {
-      $0.setImage(.createImage(.heartOff), for: .normal)
+      $0.setImage(UIImage(literal: .heartOff), for: .normal)
       containerView.addSubview($0)
     }
   }
@@ -110,7 +110,7 @@ final class VideoPostCell: BaseCollectionViewCell, VideoControllable {
     self.videoPost = videoPost
     nicknameLabel.text = videoPost.user.nickname
     videoPlayerView.configure(videoPost: videoPost)
-    likeButton.setImage(videoPost.isLiked ? .createImage(.heartOn) : .createImage(.heartOff), for: .normal)
+    likeButton.setImage(videoPost.isLiked ? UIImage(literal: .heartOn) : UIImage(literal: .heartOff), for: .normal)
 
     exclameButton.rx.tap
       .subscribe(on: MainScheduler.instance)

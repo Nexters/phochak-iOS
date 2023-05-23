@@ -67,7 +67,7 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
     }
 
     settingBarButton.do {
-      $0.image = .createImage(.setting)
+      $0.image = UIImage(literal: .setting)
       navigationItem.rightBarButtonItem = $0
     }
 
@@ -78,7 +78,7 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
     }
 
     deleteVideoPostButton.do {
-      $0.setImage(.createImage(.deleteVideoPost), for: .normal)
+      $0.setImage(UIImage(literal: .deleteVideoPost), for: .normal)
     }
   }
 

@@ -57,13 +57,13 @@ final class ProfileSettingViewController: BaseViewController<ProfileSettingReact
 
     titleLabel.do {
       $0.text = "프로필 설정"
-      $0.font = .createFont(.LargeTitle, .w800)
+      $0.font = UIFont(size: .LargeTitle, weight: .w800)
       $0.textColor = .createColor(.monoGray, .w50)
     }
 
     subTitleLabel.do {
       $0.text = "10자 이하의 닉네임을 입력해 주세요"
-      $0.font = .createFont(.Body, .w400)
+      $0.font = UIFont(size: .Body, weight: .w400)
       $0.textColor = .createColor(.monoGray, .w500)
     }
   }

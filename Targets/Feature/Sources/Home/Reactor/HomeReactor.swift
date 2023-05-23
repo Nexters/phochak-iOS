@@ -19,12 +19,11 @@ final class HomeReactor: Reactor {
   private let depepdency: Dependency
   var initialState: State = .init()
   private var isLastPage: Bool = false
-  private var existVideoPostRequest: FetchVideoPostRequest?
   private (set) var alreadyExclamedSubject: PublishSubject<Void> = .init()
   
   struct Dependency {
     let coordinator: AppCoordinatorType
-    let useCase: VideoPostUseCaseType
+    let videoPostCase: VideoPostUseCaseType
     let fetchProfileUseCase: FetchProfileUseCaseType
   }
   
@@ -49,7 +48,7 @@ final class HomeReactor: Reactor {
   enum Mutation {
     case setLoading(Bool)
     case setInitialVideoPosts([VideoPost])
-    case setVideoPosts([VideoPost])
+    case setMoreFetchedVideoPosts([VideoPost])
     case updateVideoPosts([VideoPost])
     case updateVideoPostLikeStatus(index: Int, isLiked: Bool)
     case setRefreshStatus(Bool)
@@ -103,7 +102,7 @@ final class HomeReactor: Reactor {
       return .just(.updateVideoPosts(videoPosts))
 
     case .exclameVideoPost(let postID):
-      return depepdency.useCase.exclameVideoPost(postID: postID)
+      return depepdency.videoPostCase.exclameVideoPost(postID: postID)
         .flatMapLatest { [weak self] isError -> Observable<Mutation> in
           if isError { self?.alreadyExclamedSubject.onNext(()) }
           return .empty()
@@ -133,7 +132,7 @@ final class HomeReactor: Reactor {
     case .setInitialVideoPosts(let videoPosts):
       newState.videoPosts = videoPosts
 
-    case .setVideoPosts(let videoPosts):
+    case .setMoreFetchedVideoPosts(let videoPosts):
       var updatedPosts = state.videoPosts
       updatedPosts.append(contentsOf: videoPosts)
       newState.videoPosts = updatedPosts
@@ -187,10 +186,9 @@ private extension HomeReactor {
       return .just(.setLoading(false))
     }
 
-    return depepdency.useCase.fetchVideoPosts(request: request)
+    return depepdency.videoPostCase.fetchVideoPosts(request: request)
       .flatMap { [weak self] (videoPosts, isLastPage) in
         self?.isLastPage = isLastPage
-        self?.existVideoPostRequest = request
 
         if request.lastID == nil {
           // 첫 데이터 요청시
@@ -201,7 +199,7 @@ private extension HomeReactor {
         } else {
           // 추가 데이터 요청시
           return Observable<Mutation>.concat([
-            .just(.setVideoPosts(videoPosts)),
+            .just(.setMoreFetchedVideoPosts(videoPosts)),
             .just(.setLoading(false))
           ])
         }
@@ -236,12 +234,12 @@ private extension HomeReactor {
     }
 
     if currentState.videoPosts[safe: index]?.isLiked ?? false {
-      return depepdency.useCase.unLikeVideoPost(postID: postID)
+      return depepdency.videoPostCase.unLikeVideoPost(postID: postID)
         .flatMap { isSuccess -> Observable<Mutation> in
           return .just(.updateVideoPostLikeStatus(index: index, isLiked: isSuccess ? false : true))
         }
     } else {
-      return depepdency.useCase.likeVideoPost(postID: postID)
+      return depepdency.videoPostCase.likeVideoPost(postID: postID)
         .flatMap { isSuccess -> Observable<Mutation> in
           return .just(.updateVideoPostLikeStatus(index: index, isLiked: isSuccess ? true : false))
         }

@@ -35,7 +35,7 @@ public final class DuplicationCheckButton: UIButton {
 private extension DuplicationCheckButton {
   func setupUI() {
     setTitle("중복확인", for: .normal)
-    titleLabel?.font = .createFont(.FootNote, .w600)
+    titleLabel?.font = UIFont(size: .FootNote, weight: .w600)
     setTitleColor(.createColor(.monoGray, .w50), for: .normal)
     layer.cornerRadius = 10
     layer.borderColor = UIColor.createColor(.monoGray, .w800).cgColor

@@ -39,10 +39,8 @@ public extension UIImage {
     case loginTitle = "loginTitle"
   }
 
-  // MARK: Methods
-  static func createImage(_ image: ImageLiteral) -> UIImage {
-    guard let image: UIImage = .init(named: image.rawValue) else { return .init() }
-
-    return image
+  // MARK: Initializer
+  convenience init?(literal imageLiteral: ImageLiteral) {
+    self.init(named: imageLiteral.rawValue)
   }
 }

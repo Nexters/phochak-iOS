@@ -36,7 +36,7 @@ final class MyPageProfileCell: BaseCollectionViewCell {
   // MARK: Override
   override func setupViews() {
     nicknameLabel.do {
-      $0.font = .createFont(.Title3, .w700)
+      $0.font = UIFont(size: .Title3, weight: .w700)
       $0.textColor = .white
       contentView.addSubview($0)
     }
@@ -44,7 +44,7 @@ final class MyPageProfileCell: BaseCollectionViewCell {
     editProfileButton.do {
       $0.setTitle("프로필 편집", for: .normal)
       $0.setTitleColor(.createColor(.blue, .w400), for: .normal)
-      $0.titleLabel?.font = .createFont(.Caption, .w500)
+      $0.titleLabel?.font = UIFont(size: .Caption, weight: .w500)
       contentView.addSubview($0)
     }
   }

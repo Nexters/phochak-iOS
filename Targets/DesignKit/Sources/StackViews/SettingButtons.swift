@@ -85,7 +85,7 @@ private extension SettingButtons {
       button.do {
         $0.contentHorizontalAlignment = .leading
         $0.titleEdgeInsets = .init(top: 0, left: 16, bottom: 0, right: 0)
-        $0.titleLabel?.font = .createFont(.Body, .w400)
+        $0.titleLabel?.font = UIFont(size: .Body, weight: .w400)
         $0.titleLabel?.textColor = .createColor(.monoGray, .w50)
         $0.backgroundColor = .clear
 

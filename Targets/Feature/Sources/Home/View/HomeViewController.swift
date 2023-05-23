@@ -51,7 +51,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     super.setupViews()
 
     titleImageView.do {
-      $0.image = .createImage(.logo)
+      $0.image = UIImage(literal: .logo)
       navigationItem.leftBarButtonItem = .init(customView: $0)
     }
 
@@ -153,8 +153,9 @@ private extension HomeViewController {
         cell.delegate = self
 
         if index == self?.currentIndex {
-          self?.applyTransform(cell: cell)
-          cell.playVideo()
+          cell.applyLagreScaleTransform {
+            cell.playVideo()
+          }
         }
       }
       .disposed(by: disposeBag)
@@ -183,8 +184,12 @@ private extension HomeViewController {
       .map { $0.didRefresh }
       .asSignal(onErrorSignalWith: .empty())
       .emit(with: self, onNext: { owner, didRefresh in
-        if didRefresh && !owner.collectionView.indexPathsForVisibleItems.contains(where: { $0.item == 0 }) {
-          owner.collectionView.scrollToItem(at: .init(item: 0, section: 0), at: .left, animated: true)
+        if didRefresh {
+          guard let rect = owner.collectionView.layoutAttributesForItem(at: .init(item: 0, section: 0)) else {
+            return
+          }
+
+          owner.collectionView.scrollRectToVisible(rect.frame, animated: true)
           owner.currentIndex = 0
         }
       })
@@ -214,7 +219,7 @@ private extension HomeViewController {
       .asSignal(onErrorSignalWith: .empty())
       .emit(with: self, onNext: { owner, _ in
         if owner.isFirstEnter, let cell = owner.collectionView.cellForItem(at: .init(item: 0, section: 0)) {
-          cell.transform = .init(scaleX: 1.1, y: 1.1).translatedBy(x: 0, y: -20)
+          cell.applyLagreScaleTransform()
           owner.isFirstEnter.toggle()
         }
       })
@@ -225,6 +230,14 @@ private extension HomeViewController {
       .asDriver(onErrorDriveWith: .empty())
       .drive(with: self, onNext: { owner, _ in
         owner.collectionView.reloadData()
+      })
+      .disposed(by: disposeBag)
+
+    titleImageView.addTapGesture().rx.event
+      .filter { $0.state == .recognized }
+      .asSignal(onErrorSignalWith: .empty())
+      .emit(with: self, onNext: { owner, _ in
+        owner.refresh()
       })
       .disposed(by: disposeBag)
   }
@@ -271,25 +284,21 @@ private extension HomeViewController {
 
       if let cell = owner.collectionView.cellForItem(at: indexPath) as? VideoPostCell {
         UIView.animate(withDuration: 0.25) {
-          owner.applyTransform(cell: cell)
-          cell.playVideo()
+          cell.applyLagreScaleTransform {
+            cell.playVideo()
+          }
         }
       }
 
       for visibleIndex in owner.collectionView.indexPathsForVisibleItems.map({ $0.item }) {
         if visibleIndex != Int(index) {
           let cell = owner.collectionView.cellForItem(at: .init(item: Int(visibleIndex), section: 0)) as? VideoPostCell
-          if cell?.transform != .identity {
-            cell?.transform = .identity
+          cell?.applyIdentityTransform({
             cell?.stopVideo()
-          }
+          })
         }
       }
     }
-  }
-
-  func applyTransform(cell: VideoPostCell) {
-    cell.transform = .init(scaleX: 1.1, y: 1.1).translatedBy(x: 0, y: -20)
   }
 
   func currentIndexByOffset() -> Int {

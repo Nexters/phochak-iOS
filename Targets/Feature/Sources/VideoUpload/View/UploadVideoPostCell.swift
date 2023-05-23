@@ -34,12 +34,12 @@ final class UploadVideoPostCell: BaseCollectionViewCell {
 
     tagLabel.do {
       $0.textColor = .createColor(.monoGray, .w50)
-      $0.font = .createFont(.CallOut, .w500)
+      $0.font = UIFont(size: .CallOut, weight: .w500)
       contentView.addSubview($0)
     }
 
     deletionButton.do {
-      $0.setImage(.createImage(.iconX), for: .normal)
+      $0.setImage(UIImage(literal: .iconX), for: .normal)
       contentView.addSubview($0)
     }
   }
