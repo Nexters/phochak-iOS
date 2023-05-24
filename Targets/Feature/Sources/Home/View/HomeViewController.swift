@@ -293,9 +293,11 @@ private extension HomeViewController {
       for visibleIndex in owner.collectionView.indexPathsForVisibleItems.map({ $0.item }) {
         if visibleIndex != Int(index) {
           let cell = owner.collectionView.cellForItem(at: .init(item: Int(visibleIndex), section: 0)) as? VideoPostCell
-          cell?.applyIdentityTransform({
-            cell?.stopVideo()
+          UIView.animate(withDuration: 0.25) {
+            cell?.applyIdentityTransform({
+              cell?.stopVideo()
           })
+          }
         }
       }
     }
