@@ -12,16 +12,11 @@ import RxSwift
 import SnapKit
 import Then
 
-public protocol SignOutButtonDelegate: AnyObject {
-  func tapSignOutButton()
-}
-
-public protocol LogoutButtonDelegate: AnyObject {
-  func tapLogoutButton()
-}
-
-public protocol ClearCacheButtonDelegate: AnyObject {
+public protocol SettingButtonDelegate: AnyObject {
   func tapClearCacheButton()
+  func tapLogoutButton()
+  func tapSignOutButton()
+  func tapCheckWithButton()
 }
 
 public final class SettingButtons: UIStackView {
@@ -31,13 +26,12 @@ public final class SettingButtons: UIStackView {
   private let signOutButton: UIButton = .init()
   private let logoutButton: UIButton = .init()
   private let clearCacheButton: UIButton = .init()
+  private let checkWithButton: UIButton = .init()
   private var allButtons: [UIButton] {
-    return [signOutButton, logoutButton, clearCacheButton]
+    return [signOutButton, logoutButton, clearCacheButton, checkWithButton]
   }
 
-  public weak var signOutButtonDelegate: SignOutButtonDelegate?
-  public weak var logoutButtonDelegate: LogoutButtonDelegate?
-  public weak var clearCacheButtonDelegate: ClearCacheButtonDelegate?
+  public weak var delegate: SettingButtonDelegate?
 
   // MARK: Initializer
   public init() {
@@ -79,6 +73,10 @@ private extension SettingButtons {
 
     clearCacheButton.do {
       $0.setTitle("캐시삭제", for: .normal)
+    }
+
+    checkWithButton.do {
+      $0.setTitle("문의하기", for: .normal)
     }
 
     allButtons.forEach { button in
@@ -134,21 +132,28 @@ private extension SettingButtons {
     signOutButton.rx.tap
       .asSignal()
       .emit(with: self, onNext: { owner, _ in
-        owner.signOutButtonDelegate?.tapSignOutButton()
+        owner.delegate?.tapSignOutButton()
       })
       .disposed(by: disposeBag)
 
     logoutButton.rx.tap
       .asSignal()
       .emit(with: self, onNext: { owner, _ in
-        owner.logoutButtonDelegate?.tapLogoutButton()
+        owner.delegate?.tapLogoutButton()
       })
       .disposed(by: disposeBag)
 
     clearCacheButton.rx.tap
       .asSignal()
       .emit(with: self, onNext: { owner, _ in
-        owner.clearCacheButtonDelegate?.tapClearCacheButton()
+        owner.delegate?.tapClearCacheButton()
+      })
+      .disposed(by: disposeBag)
+
+    checkWithButton.rx.tap
+      .asSignal()
+      .emit(with: self, onNext: { owner, _ in
+        owner.delegate?.tapCheckWithButton()
       })
       .disposed(by: disposeBag)
   }

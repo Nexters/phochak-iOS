@@ -72,9 +72,7 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
     }
 
     settingButtons.do {
-      $0.signOutButtonDelegate = self
-      $0.logoutButtonDelegate = self
-      $0.clearCacheButtonDelegate = self
+      $0.delegate = self
     }
 
     deleteVideoPostButton.do {
@@ -285,8 +283,7 @@ extension MyPageViewController: PostsSectionHeaderDelegate {
 }
 
 // MARK: - SettingButtonsDelegate
-extension MyPageViewController
-: SignOutButtonDelegate, LogoutButtonDelegate, ClearCacheButtonDelegate {
+extension MyPageViewController: SettingButtonDelegate {
   func tapSignOutButton() {
     presentAlert(
       type: .signOut,
@@ -316,6 +313,10 @@ extension MyPageViewController
       },
       isNeededCancel: true
     )
+  }
+
+  func tapCheckWithButton() {
+    presentAlert(type: .checkWith)
   }
 }
 

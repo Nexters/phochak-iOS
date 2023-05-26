@@ -65,7 +65,6 @@ final class HomeViewController: BaseViewController<HomeReactor> {
       $0.backgroundColor = .clear
       $0.showsVerticalScrollIndicator = false
       $0.showsHorizontalScrollIndicator = false
-      $0.decelerationRate = .fast
       $0.contentInset = .init(top: 0, left: 50, bottom: 0, right: 50)
       $0.registerCell(cellType: VideoPostCell.self)
       view.addSubview($0)

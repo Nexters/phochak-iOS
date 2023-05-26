@@ -29,6 +29,7 @@ final class UploadVideoPostViewController: BaseViewController<UploadVideoPostRea
   private let hashTagLabel: UILabel = .init()
   private let hashTagTextField: PhoChakTextField = .init(fieldStyle: .text)
   private let hashTagErrorLabel: UILabel = .init()
+  private let warningLabel: UILabel = .init()
   private let flowLayout: LeftAlignedCollectionViewFlowLayout = .init()
   private lazy var hashTagCollectionView: UICollectionView = .init(
     frame: .zero,
@@ -70,6 +71,7 @@ final class UploadVideoPostViewController: BaseViewController<UploadVideoPostRea
 
     view.addSubview(categoryButtons)
     view.addSubview(hashTagTextField)
+    view.addSubview(warningLabel)
     view.addSubview(completionButton)
 
     closeButton.do {
@@ -123,6 +125,13 @@ final class UploadVideoPostViewController: BaseViewController<UploadVideoPostRea
       $0.registerCell(cellType: UploadVideoPostCell.self)
       view.addSubview($0)
     }
+
+    warningLabel.do {
+      $0.textColor = .red
+      $0.font = .systemFont(ofSize: 12)
+      $0.text = "부적절하거나 불쾌감을 줄 수 있는 컨텐츠는 제재를 받을 수 있습니다."
+      view.addSubview($0)
+    }
   }
 
   override func setupLayoutConstraints() {
@@ -172,6 +181,12 @@ final class UploadVideoPostViewController: BaseViewController<UploadVideoPostRea
       $0.leading.trailing.equalToSuperview().inset(20)
       $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-60)
       $0.height.equalTo(hashTagTextField)
+    }
+
+    warningLabel.snp.makeConstraints {
+      $0.leading.equalTo(completionButton).offset(2)
+      $0.trailing.equalTo(completionButton).inset(2)
+      $0.bottom.equalTo(completionButton.snp.top).offset(-5)
     }
 
     hashTagCollectionView.snp.makeConstraints {

@@ -53,6 +53,7 @@ final class HomeReactor: Reactor {
     case updateVideoPostLikeStatus(index: Int, isLiked: Bool)
     case setRefreshStatus(Bool)
     case setProfileGuide(String)
+    case removeExclamedPosts(postID: Int)
   }
   
   struct State {
@@ -102,10 +103,15 @@ final class HomeReactor: Reactor {
       return .just(.updateVideoPosts(videoPosts))
 
     case .exclameVideoPost(let postID):
+
       return depepdency.videoPostCase.exclameVideoPost(postID: postID)
         .flatMapLatest { [weak self] isError -> Observable<Mutation> in
-          if isError { self?.alreadyExclamedSubject.onNext(()) }
-          return .empty()
+          if isError {
+            self?.alreadyExclamedSubject.onNext(())
+            return .empty()
+          } else {
+            return .just(.removeExclamedPosts(postID: postID))
+          }
         }
 
     case .likeVideoPost(let postID):
@@ -152,6 +158,12 @@ final class HomeReactor: Reactor {
 
     case .setRefreshStatus(let didRefresh):
       newState.didRefresh = didRefresh
+
+    case .removeExclamedPosts(let postID):
+      // 신고된 게시글 유저에게 보여지지 않게 하기.
+      if let index = newState.videoPosts.firstIndex(where: { $0.id == postID}) {
+        newState.videoPosts.remove(at: index)
+      }
     }
     
     return newState

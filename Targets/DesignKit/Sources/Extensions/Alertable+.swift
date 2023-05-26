@@ -22,6 +22,7 @@ public enum AlertType {
   case exclamePost
   case alreadyExclamed
   case blind(currentFilter: PostsFilterOption)
+  case checkWith
 
   var title: String {
     switch self {
@@ -35,6 +36,7 @@ public enum AlertType {
     case .exclamePost: return "게시물 신고"
     case .alreadyExclamed: return "신고된 게시물"
     case .blind: return "게시물 신고누적"
+    case .checkWith: return "아래 이메일로 문의해주세요."
     }
   }
 
@@ -49,6 +51,7 @@ public enum AlertType {
     case .nicknameDuplicated: return "수정 후 다시 시도해 주세요"
     case .exclamePost: return "신고가 누적된 영상은 볼 수 없게 됩니다"
     case .alreadyExclamed: return "이미 신고가 완료된 영상입니다"
+    case .checkWith: return "team.phochack@gmail.com"
     case .blind(let currentFilter):
       if currentFilter == .uploaded {
         return "이 영상은 다른 사용자에게 보이지 않습니다"
