@@ -28,7 +28,8 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
   private let exclameButtonTapSubject: PublishSubject<Int> = .init()
   private let likeButtonTapSubject: PublishSubject<Int> = .init()
   private let topGradientView: UIView = .init()
-  private let muteSoundBarButton: UIBarButtonItem = .init(image: .init(systemName: "speaker"))
+  private let navBackBarButton: UIBarButtonItem = .init(image: UIImage(literal: .back))
+  private let navMuteSoundBarButton: UIBarButtonItem = .init(image: .init(systemName: "speaker"))
   weak var delegate: PostRollingDelegate?
 
   // MARK: Initializer
@@ -47,6 +48,7 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
     super.viewDidLoad()
 
     navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+    navigationItem.hidesBackButton = true
   }
 
   override func viewDidLayoutSubviews() {
@@ -78,7 +80,8 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
   override func setupViews() {
     super.setupViews()
 
-    navigationItem.rightBarButtonItem = muteSoundBarButton
+    navigationItem.leftBarButtonItem = navBackBarButton
+    navigationItem.rightBarButtonItem = navMuteSoundBarButton
 
     flowLayout.do {
       $0.minimumLineSpacing = 0
@@ -186,6 +189,11 @@ private extension PostRollingViewController {
       .map { PostRollingReactor.Action.likeVideoPost(postID: $0) }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
+
+    navBackBarButton.rx.tap
+      .map { PostRollingReactor.Action.tapBackButton }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
   }
 
   func bindState(reactor: PostRollingReactor) {
@@ -235,7 +243,7 @@ private extension PostRollingViewController {
         }
 
         cell.updateMuteState(isMuted: false)
-        self?.muteSoundBarButton.image = .init(systemName: "speaker")
+        self?.navMuteSoundBarButton.image = .init(systemName: "speaker")
       })
       .disposed(by: disposeBag)
 
@@ -246,7 +254,7 @@ private extension PostRollingViewController {
       })
       .disposed(by: disposeBag)
 
-    muteSoundBarButton.rx.tap
+    navMuteSoundBarButton.rx.tap
       .asSignal()
       .emit(with: self, onNext: { owner, _ in
         guard let cell = owner.collectionView.cellForItem(at: .init(item: reactor.currentIndex, section: 0)) as? DetailPostCell else {
@@ -254,7 +262,7 @@ private extension PostRollingViewController {
         }
         let isMute = !(cell.isMute)
         cell.updateMuteState(isMuted: isMute)
-        owner.muteSoundBarButton.image = isMute ? .init(systemName: "speaker.slash") : .init(systemName: "speaker")
+        owner.navMuteSoundBarButton.image = isMute ? .init(systemName: "speaker.slash") : .init(systemName: "speaker")
       })
       .disposed(by: disposeBag)
   }

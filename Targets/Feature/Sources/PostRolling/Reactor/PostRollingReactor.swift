@@ -43,6 +43,7 @@ final class PostRollingReactor: Reactor {
     case likeVideoPost(postID: Int)
     case fetchItems(size: Int, currentIndex: Int)
     case didSwipe(direction: SwipeDirection)
+    case tapBackButton
   }
 
   enum Mutation {
@@ -94,6 +95,10 @@ final class PostRollingReactor: Reactor {
       }
 
       return .just(.setCurrentIndex(value: currentIndex))
+
+    case .tapBackButton:
+      dependency.coordinator.close(style: .pop, animated: false, completion: nil)
+      return .empty()
     }
   }
 

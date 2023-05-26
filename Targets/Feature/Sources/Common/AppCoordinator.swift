@@ -75,7 +75,11 @@ public final class AppCoordinator: AppCoordinatorType {
 
     switch style {
     case .push:
-      navController.pushViewController(createdViewController, animated: animated)
+      if case .postRolling = scene {
+        navController.pushWithAnimation(createdViewController)
+      } else {
+        navController.pushViewController(createdViewController, animated: true)
+      }
 
     case .modal:
       navController.present(createdViewController, animated: animated, completion: completion)
@@ -100,7 +104,7 @@ public final class AppCoordinator: AppCoordinatorType {
       completion?()
 
     case .pop:
-      self.currentNavController?.popViewController(animated: true)
+      self.currentNavController?.popWithAnimation()
 
     case .dismiss:
       self.currentNavController?.dismiss(animated: animated, completion: completion)
