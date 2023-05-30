@@ -73,6 +73,7 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
 
     settingButtons.do {
       $0.delegate = self
+      view.addSubview($0)
     }
 
     deleteVideoPostButton.do {
@@ -84,6 +85,12 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
     collectionView.snp.makeConstraints {
       $0.top.bottom.equalTo(view.safeAreaLayoutGuide)
       $0.leading.trailing.equalToSuperview()
+    }
+
+    settingButtons.snp.makeConstraints {
+      $0.top.equalTo(view.safeAreaLayoutGuide)
+      $0.trailing.equalToSuperview().inset(20)
+      $0.width.equalTo(view.frame.width * 0.641)
     }
   }
 
@@ -308,11 +315,17 @@ extension MyPageViewController: SettingButtonDelegate {
     presentAlert(
       type: .clearCache,
       okAction: { [weak self] in
-        self?.settingButtons.removeFromSuperview()
+        self?.removeSettingButtons()
         self?.reactor?.action.onNext(.tapClearCacheButton)
       },
       isNeededCancel: true
     )
+  }
+
+  //TODO: - 차단 리스트 뷰 작업 후 구현 예정
+  func tapBlockListButton() {
+    removeSettingButtons()
+    // reactor?.action.onNext(.~)
   }
 
   func tapCheckWithButton() {
@@ -392,20 +405,17 @@ private extension MyPageViewController {
     settingBarButton.rx.tap
       .asSignal()
       .withUnretained(self)
-      .filter { owner, _ in
-        let isDescendant = owner.settingButtons.isDescendant(of: owner.view)
-        owner.settingButtons.removeFromSuperview()
-        return !isDescendant
-      }
-      .emit(with: self, onNext: { owner, _ in
-        guard let screen = owner.view.window?.windowScene?.screen.bounds else { return }
-        owner.view.addSubview(owner.settingButtons)
-
-        owner.settingButtons.snp.makeConstraints {
-          $0.top.equalTo(owner.view.safeAreaLayoutGuide)
-          $0.trailing.equalToSuperview().inset(20)
-          $0.width.equalTo(screen.width * 0.641)
+      .map { owner, _ -> Bool in
+        if owner.settingButtons.isHidden {
+          return true
+        } else {
+          owner.removeSettingButtons()
+          return false
         }
+      }
+      .filter { $0 }
+      .emit(with: self, onNext: { owner, _ in
+        owner.presentSettingButtons()
       })
       .disposed(by: disposeBag)
 
@@ -418,7 +428,7 @@ private extension MyPageViewController {
 
     Signal.merge(viewTapGestureSignal, collectionViewDidScrollSignal)
       .emit(with: self, onNext: { owner, _ in
-        owner.settingButtons.removeFromSuperview()
+        owner.removeSettingButtons()
         owner.deleteVideoPostButton.removeFromSuperview()
       })
       .disposed(by: disposeBag)
@@ -430,5 +440,27 @@ private extension MyPageViewController {
     }
 
     presentAlert(type: .blind(currentFilter: postFilter))
+  }
+
+  func presentSettingButtons() {
+    settingButtons.isHidden = false
+    UIView.animate(
+      withDuration: 0.25,
+      animations: {
+        self.settingButtons.alpha = 1
+      }
+    )
+  }
+
+  func removeSettingButtons() {
+    UIView.animate(
+      withDuration: 0.25,
+      animations: {
+        self.settingButtons.alpha = 0
+      },
+      completion: { _ in
+        self.settingButtons.isHidden = true
+      }
+    )
   }
 }
