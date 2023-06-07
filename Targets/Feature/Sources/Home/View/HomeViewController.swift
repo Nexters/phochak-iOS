@@ -325,6 +325,7 @@ extension HomeViewController: VideoPostCellDelegate {
       type: .exclamePost,
       okAction: { [weak self] in
         self?.reactor?.action.onNext(.exclameVideoPost(postID: postID))
+        self?.presentAlert(type: .didExclame)
       },
       isNeededCancel: true
     )

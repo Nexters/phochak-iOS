@@ -128,8 +128,9 @@ final class UploadVideoPostViewController: BaseViewController<UploadVideoPostRea
 
     warningLabel.do {
       $0.textColor = .red
-      $0.font = .systemFont(ofSize: 12)
-      $0.text = "부적절하거나 불쾌감을 줄 수 있는 컨텐츠는 제재를 받을 수 있습니다."
+      $0.numberOfLines = 0
+      $0.font = .systemFont(ofSize: 14)
+      $0.text = "부적절하거나 불쾌감을 줄 수 있는 컨텐츠는 제재를 받을 수 있습니다.\n5회 이상 신고 누적시 더이상 포스트를 작성할 수 없습니다."
       view.addSubview($0)
     }
   }
