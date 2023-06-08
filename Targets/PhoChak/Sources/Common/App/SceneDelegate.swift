@@ -5,6 +5,7 @@
 //  Created by Ian on 2023/01/14.
 //
 
+import AVFAudio
 import Core
 import Domain
 import Feature
@@ -37,6 +38,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     injector.assemble([ServiceAssembly(), DomainAssembly()])
     appCoordinator = AppCoordinator(dependency: .init(injector: injector))
     coordinatorAssembly(coordinator: appCoordinator!)
+
+    let audioSession = AVAudioSession.sharedInstance()
+    try? audioSession.setCategory(.ambient, options: [.allowBluetooth])
+    try? audioSession.setActive(true)
+
     appCoordinator?.start(from: .splash)
   }
 
@@ -54,9 +60,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
   func sceneWillResignActive(_ scene: UIScene) {}
 
-  func sceneWillEnterForeground(_ scene: UIScene) {}
+  func sceneWillEnterForeground(_ scene: UIScene) {
+    let audioSession = AVAudioSession.sharedInstance()
+    if audioSession.category != .ambient {
+      try? audioSession.setCategory(.ambient, options: [.allowBluetooth])
+      try? audioSession.setActive(true)
+    }
+  }
 
-  func sceneDidEnterBackground(_ scene: UIScene) {}
+  func sceneDidEnterBackground(_ scene: UIScene) {
+    try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+  }
 }
 
 // MARK: - Extension

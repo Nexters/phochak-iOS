@@ -6,6 +6,7 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import AVFAudio
 import DesignKit
 import Domain
 import UIKit
@@ -49,6 +50,12 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
 
     navigationController?.interactivePopGestureRecognizer?.isEnabled = false
     navigationItem.hidesBackButton = true
+
+    let audioSession = AVAudioSession.sharedInstance()
+    if audioSession.category != .playback {
+      try? audioSession.setCategory(.playback, options: [.allowBluetooth])
+      try? audioSession.setActive(true)
+    }
   }
 
   override func viewDidLayoutSubviews() {
