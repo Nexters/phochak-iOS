@@ -52,9 +52,12 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
     navigationItem.hidesBackButton = true
 
     let audioSession = AVAudioSession.sharedInstance()
+    
     if audioSession.category != .playback {
-      try? audioSession.setCategory(.playback, options: [.allowBluetooth])
-      try? audioSession.setActive(true)
+      DispatchQueue.main.async {
+        try? audioSession.setCategory(.playback, options: [.allowBluetooth])
+        try? audioSession.setActive(true)
+      }
     }
   }
 
@@ -75,6 +78,10 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
 
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
+
+    DispatchQueue.main.async {
+      try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    }
 
     NotificationCenter.default.post(name: .muteAllPlayers, object: nibName)
     if tabBarController?.selectedIndex == 0 {
