@@ -153,7 +153,7 @@ private extension HomeViewController {
 
         if index == self?.currentIndex {
           cell.applyLagreScaleTransform {
-            cell.playVideo()
+            cell.playAmbientVideo()
           }
         }
       }

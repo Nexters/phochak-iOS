@@ -24,6 +24,10 @@ extension VideoControllable {
     videoPlayerView.player?.startAtBeginning()
   }
 
+  func playAmbientVideo() {
+    videoPlayerView.player?.startWithAmbient()
+  }
+
   func stopVideo() {
     videoPlayerView.player?.stopAtBeginning()
   }

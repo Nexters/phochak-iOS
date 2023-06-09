@@ -6,6 +6,7 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import AVFAudio
 import DesignKit
 import Domain
 import UIKit
@@ -49,6 +50,15 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
 
     navigationController?.interactivePopGestureRecognizer?.isEnabled = false
     navigationItem.hidesBackButton = true
+
+    let audioSession = AVAudioSession.sharedInstance()
+    
+    if audioSession.category != .playback {
+      DispatchQueue.main.async {
+        try? audioSession.setCategory(.playback, options: [.allowBluetooth])
+        try? audioSession.setActive(true)
+      }
+    }
   }
 
   override func viewDidLayoutSubviews() {
@@ -68,6 +78,10 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
 
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
+
+    DispatchQueue.main.async {
+      try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    }
 
     NotificationCenter.default.post(name: .muteAllPlayers, object: nibName)
     if tabBarController?.selectedIndex == 0 {
