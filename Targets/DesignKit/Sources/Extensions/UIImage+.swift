@@ -37,6 +37,7 @@ public extension UIImage {
     case loginLogo = "loginLogo"
     case loginIcon = "loginIcon"
     case loginTitle = "loginTitle"
+    case searchOn = "search_on"
   }
 
   // MARK: Initializer
