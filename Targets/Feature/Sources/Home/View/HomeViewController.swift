@@ -25,6 +25,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     frame: .zero,
     collectionViewLayout: flowLayout
   )
+  private let navSearchButton: UIBarButtonItem = .init(image: UIImage(literal: .searchOn))
   private let likeVideoPostSubject: PublishSubject<Int> = .init()
   private let updatedDataSourceSubject: PublishSubject<[VideoPost]> = .init()
   private var isFirstEnter: Bool = true
@@ -49,6 +50,8 @@ final class HomeViewController: BaseViewController<HomeReactor> {
 
   override func setupViews() {
     super.setupViews()
+
+    navigationItem.rightBarButtonItem = navSearchButton
 
     titleImageView.do {
       $0.image = UIImage(literal: .logo)
@@ -122,6 +125,11 @@ private extension HomeViewController {
 
     rx.viewWillAppear
       .map { HomeReactor.Action.fetchInitialItems }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
+
+    navSearchButton.rx.tap
+      .map { HomeReactor.Action.tapSearchButton }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
   }

@@ -87,7 +87,14 @@ final class SceneFactory: SceneFactoryType {
       return uploadVideoPostViewController
 
     case .search:
-      let searchViewController: UIViewController = .init(nibName: nil, bundle: nil)
+      let dependency: SearchReactor.Dependency = .init(
+        coordinator: coordinator,
+        searchVideoPostUseCase: injector.resolve(SearchVideoPostUseCaseType.self),
+        fetchSearchAutocompletionListUsecase: injector.resolve(FetchSearchAutoCompletionListUseCaseType.self)
+      )
+      let reactor: SearchReactor = .init(dependency: dependency)
+      let searchViewController: SearchViewController = .init(reactor: reactor)
+      searchViewController.hidesBottomBarWhenPushed = true
       return searchViewController
 
     case let .postRolling(videoPosts, currentIndex):
