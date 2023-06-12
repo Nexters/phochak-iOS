@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct User: Decodable {
+public struct User: Decodable, Equatable {
 
   // MARK: Properties
   public let id: Int
@@ -36,5 +36,10 @@ public struct User: Decodable {
     self.nickname = nickname
     self.profileImageURLString = profileImageURLString
     self.isMe = isMe
+  }
+
+  // MARK: Methods
+  public static func == (lhs: User, rhs: User) -> Bool {
+    return lhs.id == rhs.id
   }
 }

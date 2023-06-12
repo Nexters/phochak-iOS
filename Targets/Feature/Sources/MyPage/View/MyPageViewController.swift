@@ -322,10 +322,9 @@ extension MyPageViewController: SettingButtonDelegate {
     )
   }
 
-  //TODO: - 차단 리스트 뷰 작업 후 구현 예정
   func tapBlockListButton() {
     removeSettingButtons()
-    // reactor?.action.onNext(.~)
+    reactor?.action.onNext(.tapBlockListButton)
   }
 
   func tapCheckWithButton() {

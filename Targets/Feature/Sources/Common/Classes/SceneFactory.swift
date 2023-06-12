@@ -18,6 +18,7 @@ public enum Scene {
   case postRolling(videoPosts: [VideoPost], currentIndex: Int)
   case uploadVideoPost
   case profileSetting(originNickName: String)
+  case blockedList
 }
 
 public protocol SceneFactoryType {
@@ -106,6 +107,16 @@ final class SceneFactory: SceneFactoryType {
       postRollingViewController.delegate = homeViewController
       self.postRollingViewController = postRollingViewController
       return postRollingViewController
+
+    case .blockedList:
+      let useCase = injector.resolve(BlockUseCaseType.self)
+      let reactorDependency: BlockedListReactor.Dependency = .init(
+        coordinator: coordinator,
+        useCase: useCase
+      )
+      let reactor: BlockedListReactor = .init(dependency: reactorDependency)
+      let blockedListViewContrller: BlockedListViewController = .init(reactor: reactor)
+      return blockedListViewContrller
 
     case .tab:
       let tabBarController: PhoChakTabBarController = .init(coordinator: coordinator)

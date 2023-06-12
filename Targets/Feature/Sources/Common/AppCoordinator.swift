@@ -130,6 +130,8 @@ public final class AppCoordinator: AppCoordinatorType {
           return $0 is UploadVideoPostViewController
         case .profileSetting:
           return $0 is ProfileSettingViewController
+        case .blockedList:
+          return $0 is BlockedListViewController
         }
       }) else { return }
 
