@@ -16,7 +16,7 @@ import ReactorKit
 final class HomeReactor: Reactor {
   
   // MARK: Properties
-  private let depepdency: Dependency
+  private let dependency: Dependency
   var initialState: State = .init()
   private var isLastPage: Bool = false
   private (set) var alreadyExclamedSubject: PublishSubject<Void> = .init()
@@ -29,7 +29,7 @@ final class HomeReactor: Reactor {
   
   // MARK: Initializer
   init(dependency: Dependency) {
-    self.depepdency = dependency
+    self.dependency = dependency
   }
   
   enum Action {
@@ -103,8 +103,7 @@ final class HomeReactor: Reactor {
       return .just(.updateVideoPosts(videoPosts))
 
     case .exclameVideoPost(let postID):
-
-      return depepdency.videoPostCase.exclameVideoPost(postID: postID)
+      return dependency.videoPostCase.exclameVideoPost(postID: postID)
         .flatMapLatest { [weak self] isError -> Observable<Mutation> in
           if isError {
             self?.alreadyExclamedSubject.onNext(())
@@ -178,12 +177,12 @@ private extension HomeReactor {
     }
 
     AuthManager.save(authInfoType: .isFirstSignIn, data: Data([1]))
-    return depepdency.fetchProfileUseCase.fetchUserProfile(userID: "")
+    return dependency.fetchProfileUseCase.fetchUserProfile(userID: "")
       .map { .setProfileGuide($0.nickname) }
   }
 
   func pushProfileSettingScene() -> Observable<Mutation> {
-    depepdency.coordinator.transition(
+    dependency.coordinator.transition(
       to: .profileSetting(originNickName: ""),
       style: .push,
       animated: true,
@@ -198,7 +197,7 @@ private extension HomeReactor {
       return .just(.setLoading(false))
     }
 
-    return depepdency.videoPostCase.fetchVideoPosts(request: request)
+    return dependency.videoPostCase.fetchVideoPosts(request: request)
       .flatMap { [weak self] (videoPosts, isLastPage) in
         self?.isLastPage = isLastPage
 
@@ -219,7 +218,7 @@ private extension HomeReactor {
   }
   
   func pushSearchScene() -> Observable<Mutation> {
-    depepdency.coordinator.transition(
+    dependency.coordinator.transition(
       to: .search,
       style: .push,
       animated: true,
@@ -230,7 +229,7 @@ private extension HomeReactor {
   }
   
   func pushPostRollingScene(index: Int) -> Observable<Mutation> {
-    depepdency.coordinator.transition(
+    dependency.coordinator.transition(
       to: .postRolling(videoPosts: currentState.videoPosts, currentIndex: index),
       style: .push,
       animated: false,
@@ -246,12 +245,12 @@ private extension HomeReactor {
     }
 
     if currentState.videoPosts[safe: index]?.isLiked ?? false {
-      return depepdency.videoPostCase.unLikeVideoPost(postID: postID)
+      return dependency.videoPostCase.unLikeVideoPost(postID: postID)
         .flatMap { isSuccess -> Observable<Mutation> in
           return .just(.updateVideoPostLikeStatus(index: index, isLiked: isSuccess ? false : true))
         }
     } else {
-      return depepdency.videoPostCase.likeVideoPost(postID: postID)
+      return dependency.videoPostCase.likeVideoPost(postID: postID)
         .flatMap { isSuccess -> Observable<Mutation> in
           return .just(.updateVideoPostLikeStatus(index: index, isLiked: isSuccess ? true : false))
         }

@@ -70,12 +70,12 @@ extension SearchAPI: TargetType {
         "pageSize": "\(request.pageSize)"
       ]
       if let lastID = request.lastID {
-        params["lastID"] = "\(lastID)"
+        params["lastId"] = "\(lastID)"
       }
       if let category = request.category {
         params["category"] = category.uppercasedString
       }
-      if let query = request.query {
+      if let query = request.query, !query.isEmpty {
         params["hashtag"] = query
       }
 
