@@ -61,7 +61,7 @@ public final class VideoPlayerView: UIView {
   }
 
   // MARK: Methods
-  public func configure(videoPost: VideoPost) {
+  public func configure(videoPost: VideoPost, autoPlayWhenPlayerReady: Bool = true) {
     guard currentVideoPost?.id != videoPost.id else {
       return
     }
@@ -73,12 +73,14 @@ public final class VideoPlayerView: UIView {
       $0.isMuted = true
     }
 
-    player?.currentItem?.rx.observe(\.status)
-      .filter { $0 == .readyToPlay }
-      .asDriver(onErrorDriveWith: .empty())
-      .drive(with: self, onNext: { owner, _ in
-        owner.thumbnailImageView.image = nil
-      })
-      .disposed(by: disposeBag)
+    if autoPlayWhenPlayerReady {
+      player?.currentItem?.rx.observe(\.status)
+        .filter { $0 == .readyToPlay }
+        .asDriver(onErrorDriveWith: .empty())
+        .drive(with: self, onNext: { owner, _ in
+          owner.thumbnailImageView.image = nil
+        })
+        .disposed(by: disposeBag)
+    }
   }
 }
