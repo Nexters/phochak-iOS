@@ -29,6 +29,8 @@ public struct ServiceAssembly: Assembly {
     container.register(ProfileSettingServiceType.self) { _ in return ProfileSettingService() }
 
     container.register(SettingServiceType.self) { _ in return SettingService() }
+
+    container.register(BlockServiceType.self) { _ in return BlockService() }
   }
 
   // MARK: Initializer
