@@ -60,6 +60,11 @@ public struct DomainAssembly: Assembly {
       let service = resolver.resolve(ProfileSettingServiceType.self)!
       return ProfileSettingUseCase(service: service)
     }
+
+    container.register(BlockUseCaseType.self) { resolver in
+      let service = resolver.resolve(BlockServiceType.self)!
+      return BlockUseCase(service: service)
+    }
   }
 
   // MARK: Initializer
