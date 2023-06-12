@@ -60,6 +60,16 @@ public struct DomainAssembly: Assembly {
       let service = resolver.resolve(ProfileSettingServiceType.self)!
       return ProfileSettingUseCase(service: service)
     }
+
+    container.register(SearchVideoPostUseCaseType.self) { resolver in
+      let service = resolver.resolve(SearchServiceType.self)!
+      return SearchVideoPostUseCase(searchService: service)
+    }
+
+    container.register(FetchSearchAutoCompletionListUseCaseType.self) { resolver in
+      let service = resolver.resolve(SearchServiceType.self)!
+      return FetchSearchAutoCompletionListUseCase(searchService: service)
+    }
   }
 
   // MARK: Initializer
