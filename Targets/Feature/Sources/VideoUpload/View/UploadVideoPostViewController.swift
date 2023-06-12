@@ -24,7 +24,7 @@ final class UploadVideoPostViewController: BaseViewController<UploadVideoPostRea
   private let closeButton: UIButton = .init()
   private let reselectionButton: UIButton = .init()
   private let categoryLabel: UILabel = .init()
-  private let categoryButtons: CategoryButtons = .init()
+  private let categoryButtons: PostCategoryButtonStackView = .init()
   private let categoryErrorLabel: UILabel = .init()
   private let hashTagLabel: UILabel = .init()
   private let hashTagTextField: PhoChakTextField = .init(fieldStyle: .text)
@@ -153,6 +153,7 @@ final class UploadVideoPostViewController: BaseViewController<UploadVideoPostRea
 
     categoryButtons.snp.makeConstraints {
       $0.top.equalTo(categoryLabel.snp.bottom).offset(20)
+      $0.height.equalTo(35)
       $0.leading.equalToSuperview().offset(20)
       $0.trailing.equalToSuperview().inset(155)
     }
@@ -218,7 +219,7 @@ private extension UploadVideoPostViewController {
     present(imagePicker, animated: true)
   }
 
-  func selectCategory(_ category: CategoryButtons.CategoryLiteral) -> UploadVideoPostReactor.Action {
+  func selectCategory(_ category: PostCategory) -> UploadVideoPostReactor.Action {
     categoryButtons.selectCategory(category)
     return .tapCategoryButton(category: category.uppercasedString)
   }

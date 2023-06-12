@@ -1,11 +1,12 @@
 //
-//  CategoryButtons.swift
+//  PostCategoryButtonStackView.swift
 //  DesignKit
 //
 //  Created by 한상진 on 2023/02/04.
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
+import Domain
 import UIKit
 
 import RxCocoa
@@ -13,23 +14,9 @@ import RxSwift
 import SnapKit
 import Then
 
-public final class CategoryButtons: UIStackView {
+public final class PostCategoryButtonStackView: UIStackView {
 
   // MARK: Properties
-  public enum CategoryLiteral {
-    case tour
-    case restaurant
-    case cafe
-
-    public var uppercasedString: String {
-      switch self {
-      case .tour: return "TOUR"
-      case .restaurant: return "RESTAURANT"
-      case .cafe: return "CAFE"
-      }
-    }
-  }
-
   private let tourButton: PhoChakMenuButton = .init()
   private let restaurantButton: PhoChakMenuButton = .init()
   private let cafeButton: PhoChakMenuButton = .init()
@@ -56,7 +43,6 @@ public final class CategoryButtons: UIStackView {
     super.init(frame: .zero)
 
     setupViews()
-    setupConstraints()
   }
 
   required init(coder: NSCoder) {
@@ -71,7 +57,7 @@ public final class CategoryButtons: UIStackView {
   }
 
   // MARK: Methods
-  public func selectCategory(_ category: CategoryLiteral) {
+  public func selectCategory(_ category: PostCategory) {
     switch category {
     case .tour:
       tourButton.setupColor(isSelected: true)
@@ -90,7 +76,7 @@ public final class CategoryButtons: UIStackView {
 }
 
 // MARK: - Private
-private extension CategoryButtons {
+private extension PostCategoryButtonStackView {
 
   // MARK: Methods
   func setupViews() {
@@ -110,14 +96,6 @@ private extension CategoryButtons {
     cafeButton.do {
       $0.setTitle("카페", for: .normal)
       addArrangedSubview($0)
-    }
-  }
-
-  func setupConstraints() {
-    allButtons.forEach { button in
-      button.snp.makeConstraints {
-        $0.height.equalTo(button.snp.width).multipliedBy(0.615)
-      }
     }
   }
 
