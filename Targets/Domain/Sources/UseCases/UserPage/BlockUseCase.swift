@@ -9,6 +9,7 @@
 import RxSwift
 
 public protocol BlockUseCaseType {
+  var blockService: BlockServiceType { get }
 
   // MARK: Methods
   func blockUser(userID: Int) -> Observable<Void>
@@ -16,25 +17,27 @@ public protocol BlockUseCaseType {
   func fetchBlockedList() -> Observable<[User]>
 }
 
-final class BlockUseCase: BlockUseCaseType {
-
-  // MARK: Properties
-  let service: BlockServiceType
-
-  // MARK: Initializer
-  init(service: BlockServiceType) {
-    self.service = service
-  }
-
+extension BlockUseCaseType {
   func blockUser(userID: Int) -> Observable<Void> {
-    service.blockUser(userID: userID).asObservable()
+    blockService.blockUser(userID: userID).asObservable()
   }
 
   func unBlockUser(userID: Int) -> Observable<Void> {
-    service.unBlockUser(userID: userID).asObservable()
+    blockService.unBlockUser(userID: userID).asObservable()
   }
 
   func fetchBlockedList() -> Observable<[User]> {
-    service.fetchBlockedList().asObservable()
+    blockService.fetchBlockedList().asObservable()
+  }
+}
+
+final class BlockUseCase: BlockUseCaseType {
+
+  // MARK: Properties
+  let blockService: BlockServiceType
+
+  // MARK: Initializer
+  init(blockService: BlockServiceType) {
+    self.blockService = blockService
   }
 }

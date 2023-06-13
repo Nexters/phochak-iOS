@@ -95,6 +95,10 @@ extension VideoPostAPI: TargetType {
         params["filter"] = "\(filterOption.option)"
       }
 
+      if let targetUserID = request.targetUserID {
+        params["targetUserId"] = "\(targetUserID)"
+      }
+
       return params
 
     default: return [:]
