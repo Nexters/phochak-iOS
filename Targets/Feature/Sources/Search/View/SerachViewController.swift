@@ -41,7 +41,11 @@ final class SearchViewController: BaseViewController<SearchReactor> {
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
 
-    searchBar.becomeFirstResponder()
+    if let query = reactor?.dependency.query, !query.isEmpty {
+      searchBar.text = query
+    } else {
+      searchBar.becomeFirstResponder()
+    }
   }
 
   override func setupViews() {
@@ -93,6 +97,7 @@ private extension SearchViewController {
 
   func bindAction(reactor: SearchReactor) {
     rx.viewDidLoad
+//      .filter { [weak self] in !(self?.reactor?.dependency.query.isEmpty ?? true) }
       .map { Action.viewDidLoad }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)

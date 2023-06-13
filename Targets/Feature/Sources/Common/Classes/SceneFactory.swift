@@ -14,7 +14,7 @@ public enum Scene {
   case tab
   case splash
   case signIn
-  case search
+  case search(query: String = "")
   case postRolling(videoPosts: [VideoPost], currentIndex: Int)
   case uploadVideoPost
   case profileSetting(originNickName: String)
@@ -86,11 +86,12 @@ final class SceneFactory: SceneFactoryType {
       )
       return uploadVideoPostViewController
 
-    case .search:
+    case .search(let query):
       let dependency: SearchReactor.Dependency = .init(
         coordinator: coordinator,
         searchVideoPostUseCase: injector.resolve(SearchVideoPostUseCaseType.self),
-        fetchSearchAutocompletionListUsecase: injector.resolve(FetchSearchAutoCompletionListUseCaseType.self)
+        fetchSearchAutocompletionListUsecase: injector.resolve(FetchSearchAutoCompletionListUseCaseType.self),
+        query: query
       )
       let reactor: SearchReactor = .init(dependency: dependency)
       let searchViewController: SearchViewController = .init(reactor: reactor)

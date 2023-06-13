@@ -15,7 +15,7 @@ final class SearchReactor: Reactor {
 
   // MARK: Properties
   var initialState: State = .init()
-  private let dependency: Dependency
+  let dependency: Dependency
   private var isLastPage: Bool = false
   private var postCategory: PostCategory? = nil
   private(set) var isPaging: Bool = false
@@ -24,6 +24,7 @@ final class SearchReactor: Reactor {
     let coordinator: AppCoordinatorType
     let searchVideoPostUseCase: SearchVideoPostUseCaseType
     let fetchSearchAutocompletionListUsecase: FetchSearchAutoCompletionListUseCaseType
+    let query: String
   }
 
   // MARK: Initializer
@@ -59,7 +60,7 @@ final class SearchReactor: Reactor {
     case .viewDidLoad:
       return .concat([
         .just(.setLoading(true)),
-        search(category: nil, query: nil),
+        search(category: nil, query: dependency.query),
         .just(.setLoading(false))
       ])
 
