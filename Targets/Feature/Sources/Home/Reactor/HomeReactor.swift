@@ -219,7 +219,7 @@ private extension HomeReactor {
   
   func pushSearchScene() -> Observable<Mutation> {
     dependency.coordinator.transition(
-      to: .search,
+      to: .search(),
       style: .push,
       animated: true,
       completion: nil

@@ -44,6 +44,7 @@ final class PostRollingReactor: Reactor {
     case fetchItems(size: Int, currentIndex: Int)
     case didSwipe(direction: SwipeDirection)
     case tapBackButton
+    case tapHashtag(_ tag: String)
   }
 
   enum Mutation {
@@ -98,6 +99,10 @@ final class PostRollingReactor: Reactor {
 
     case .tapBackButton:
       dependency.coordinator.close(style: .pop, animated: false, completion: nil)
+      return .empty()
+
+    case .tapHashtag(let query):
+      dependency.coordinator.transition(to: .search(query: query), style: .push, animated: true, completion: nil)
       return .empty()
     }
   }

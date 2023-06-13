@@ -220,6 +220,7 @@ private extension PostRollingViewController {
         cellType: DetailPostCell.self)
       ) { [weak self] index, post, cell in
         cell.configure(reactor: .init(videoPost: post))
+        cell.delegate = self
 
         if index == self?.reactor?.currentIndex {
           cell.playVideo()
@@ -280,5 +281,12 @@ private extension PostRollingViewController {
         owner.navMuteSoundBarButton.image = isMute ? .init(systemName: "speaker.slash") : .init(systemName: "speaker")
       })
       .disposed(by: disposeBag)
+  }
+}
+
+// MARK: - DetailPostDelegate
+extension PostRollingViewController: DetailPostCellDelegate {
+  func tapHashtag(_ tag: String) {
+    reactor?.action.onNext(.tapHashtag(tag))
   }
 }
