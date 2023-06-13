@@ -71,6 +71,16 @@ public struct DomainAssembly: Assembly {
       let blockService = resolver.resolve(BlockServiceType.self)!
       return UserPageUseCase(videoPostService: postsService, blockService: blockService)
     }
+
+    container.register(SearchVideoPostUseCaseType.self) { resolver in
+      let service = resolver.resolve(SearchServiceType.self)!
+      return SearchVideoPostUseCase(searchService: service)
+    }
+
+    container.register(FetchSearchAutoCompletionListUseCaseType.self) { resolver in
+      let service = resolver.resolve(SearchServiceType.self)!
+      return FetchSearchAutoCompletionListUseCase(searchService: service)
+    }
   }
 
   // MARK: Initializer

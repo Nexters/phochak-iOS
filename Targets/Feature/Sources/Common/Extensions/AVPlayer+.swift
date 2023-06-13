@@ -17,6 +17,21 @@ extension AVPlayer {
 
   func startAtBeginning() {
     seek(to: .zero, completionHandler: { [weak self] _ in
+      self?.playImmediately(atRate: 1.0)
+    })
+  }
+
+  func startWithAmbient() {
+    let audioSession = AVAudioSession.sharedInstance()
+
+    if audioSession.category != .ambient {
+      DispatchQueue.main.async {
+        try? audioSession.setCategory(.ambient, options: [.allowBluetooth])
+        try? audioSession.setActive(true)
+      }
+    }
+
+    seek(to: .zero, completionHandler: { [weak self] _ in
       self?.play()
     })
   }

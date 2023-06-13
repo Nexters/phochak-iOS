@@ -81,7 +81,7 @@ public final class AppCoordinator: AppCoordinatorType {
         navController.pushViewController(createdViewController, animated: true)
       }
 
-    case .modal:
+     case .modal:
       navController.present(createdViewController, animated: animated, completion: completion)
     }
   }

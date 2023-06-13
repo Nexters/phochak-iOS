@@ -30,9 +30,11 @@ final class HashTagListView: UIView {
   lazy var dataSource: Section = .init(configureCell: { _, collectionView, indexPath, tagTitle in
     let cell = collectionView.dequeue(cellType: HashTagCell.self, indexPath: indexPath)
     cell.configure(tagTitle: tagTitle)
+    cell.delegate = self
     return cell
   })
   private var videoPostRelay: BehaviorRelay<VideoPost?> = .init(value: nil)
+  private let tapHashtagRelay: PublishRelay<String> = .init()
   private let disposeBag: DisposeBag = .init()
 
   override init(frame: CGRect) {
@@ -77,6 +79,11 @@ extension HashTagListView {
 
         self?.likeButton.setImage(isLiked ? UIImage(literal: .heartOn) : UIImage(literal: .heartOff), for: .normal)
       })
+  }
+
+  var hashtagTapObservable: Observable<String> {
+    tapHashtagRelay
+      .asObservable()
   }
 }
 
@@ -176,5 +183,12 @@ extension HashTagListView: UICollectionViewDelegateFlowLayout {
     ])
 
     return hashTagSize
+  }
+}
+
+// MARK: - HashTagCellDelegate
+extension HashTagListView: HashTagCellDelegate {
+  func tapHashTag(_ tag: String) {
+    tapHashtagRelay.accept(tag)
   }
 }

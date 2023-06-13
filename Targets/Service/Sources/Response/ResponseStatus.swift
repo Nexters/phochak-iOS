@@ -41,3 +41,15 @@ extension BaseResponse {
     status.code == PhoChakNetworkResult.P000.rawValue
   }
 }
+
+public struct StringArrayResponse: Decodable {
+
+  // MARK: Properties
+  let status: ResponseStatus
+  let data: [String]
+
+  enum CodingKeys: String, CodingKey {
+    case status
+    case data
+  }
+}

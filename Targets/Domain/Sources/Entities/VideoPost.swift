@@ -6,7 +6,7 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
-public struct VideoPost: Equatable, Decodable {
+public struct VideoPost: Hashable, Decodable {
 
   // MARK: Properties
   public let id: Int
@@ -33,6 +33,10 @@ public struct VideoPost: Equatable, Decodable {
 
   public static func == (lhs: VideoPost, rhs: VideoPost) -> Bool {
     lhs.id == rhs.id && lhs.isLiked == rhs.isLiked
+  }
+
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(id)
   }
 
   // MARK: Initializer

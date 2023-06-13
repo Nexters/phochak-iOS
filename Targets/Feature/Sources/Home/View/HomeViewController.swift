@@ -25,6 +25,7 @@ final class HomeViewController: BaseViewController<HomeReactor> {
     frame: .zero,
     collectionViewLayout: flowLayout
   )
+  private let navSearchButton: UIBarButtonItem = .init(image: UIImage(literal: .searchOn))
   private let likeVideoPostSubject: PublishSubject<Int> = .init()
   private let updatedDataSourceSubject: PublishSubject<[VideoPost]> = .init()
   private var isFirstEnter: Bool = true
@@ -43,12 +44,10 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   }
 
   // MARK: Override
-  override func viewDidLoad() {
-    super.viewDidLoad()
-  }
-
   override func setupViews() {
     super.setupViews()
+
+    navigationItem.rightBarButtonItem = navSearchButton
 
     titleImageView.do {
       $0.image = UIImage(literal: .logo)
@@ -124,6 +123,11 @@ private extension HomeViewController {
       .map { HomeReactor.Action.fetchInitialItems }
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
+
+    navSearchButton.rx.tap
+      .map { HomeReactor.Action.tapSearchButton }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
   }
 
   func bindState(reactor: HomeReactor) {
@@ -153,7 +157,7 @@ private extension HomeViewController {
 
         if index == self?.currentIndex {
           cell.applyLagreScaleTransform {
-            cell.playVideo()
+            cell.playAmbientVideo()
           }
         }
       }
@@ -325,6 +329,7 @@ extension HomeViewController: VideoPostCellDelegate {
       type: .exclamePost,
       okAction: { [weak self] in
         self?.reactor?.action.onNext(.exclameVideoPost(postID: postID))
+        self?.presentAlert(type: .didExclame)
       },
       isNeededCancel: true
     )
