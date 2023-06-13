@@ -67,7 +67,7 @@ final class BlockedListViewController: BaseViewController<BlockedListReactor> {
 private extension BlockedListViewController {
 
   // MARK: Properties
-  typealias Section = RxTableViewSectionedAnimatedDataSource<UserNameSection>
+  typealias Section = RxTableViewSectionedAnimatedDataSource<StringArraySection>
   typealias Action = BlockedListReactor.Action
 
   // MARK: Methods
@@ -96,7 +96,7 @@ private extension BlockedListViewController {
     })
 
     reactor.state
-      .map { [UserNameSection(header: "", items: $0.blockedUsers.map { $0.nickname } )] }
+      .map { [StringArraySection(header: "", items: $0.blockedUsers.map { $0.nickname } )] }
       .distinctUntilChanged()
       .bind(to: tableView.rx.items(dataSource: dataSource))
       .disposed(by: disposeBag)

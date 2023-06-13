@@ -15,7 +15,7 @@ import RxDataSources
 import RxSwift
 
 final class HashTagListView: UIView {
-  typealias Section = RxCollectionViewSectionedAnimatedDataSource<HashTagSection>
+  typealias Section = RxCollectionViewSectionedAnimatedDataSource<StringArraySection>
 
   // MARK: Properties
   private let headerView: UIView = .init()
@@ -85,7 +85,7 @@ private extension HashTagListView {
   func bind() {
     videoPostRelay
       .distinctUntilChanged()
-      .map { [HashTagSection(header: "", items: $0?.hashTags ?? [])] }
+      .map { [StringArraySection(header: "", items: $0?.hashTags ?? [])] }
       .bind(to: collectionView.rx.items(dataSource: dataSource))
       .disposed(by: disposeBag)
   }

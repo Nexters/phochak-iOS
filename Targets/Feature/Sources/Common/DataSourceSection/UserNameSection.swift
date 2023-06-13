@@ -1,5 +1,5 @@
 //
-//  UserNameSection.swift
+//  StringArraySection.swift
 //  Feature
 //
 //  Created by 한상진 on 2023/06/12.
@@ -8,14 +8,14 @@
 
 import RxDataSources
 
-struct UserNameSection: Equatable {
+struct StringArraySection: Equatable {
 
   // MARK: Properties
   var header: String
   var items: [String]
 }
 
-extension UserNameSection: AnimatableSectionModelType {
+extension StringArraySection: AnimatableSectionModelType {
 
   // MARK: Properties
   var identity: String {
@@ -23,7 +23,7 @@ extension UserNameSection: AnimatableSectionModelType {
   }
 
   // MARK: Initializer
-  init(original: UserNameSection, items: [String]) {
+  init(original: StringArraySection, items: [String]) {
     self = original
     self.items = items
   }
