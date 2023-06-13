@@ -88,7 +88,9 @@ final class SearchReactor: Reactor {
       dependency.coordinator.transition(
         to: .postRolling(
           videoPosts: currentState.videoPosts,
-          currentIndex: index),
+          currentIndex: index,
+          enablePaging: false
+        ),
         style: .push,
         animated: true,
         completion: nil

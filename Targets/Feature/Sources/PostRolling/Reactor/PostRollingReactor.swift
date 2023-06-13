@@ -19,22 +19,25 @@ final class PostRollingReactor: Reactor {
   // MARK: Properties
   private let dependency: Dependency
   var initialState: State = .init(videoPosts: [])
-  private(set) var currentIndex: Int
   private var existVideoPostRequest: FetchVideoPostRequest?
+  private(set) var alreadyExclamedSubject: PublishSubject<Void> = .init()
   private var isLastPage: Bool = false
-  private (set) var alreadyExclamedSubject: PublishSubject<Void> = .init()
+  private(set) var currentIndex: Int
+  private(set) var isEnablePaging: Bool
 
   struct Dependency {
     let coordinator: AppCoordinatorType
     let videoPosts: [VideoPost]
-    let currentIndex: Int
     let useCase: VideoPostUseCaseType
+    let currentIndex: Int
+    let enablePaging: Bool
   }
 
   // MARK: Initializer
   init(dependency: Dependency) {
     self.dependency = dependency
     self.currentIndex = dependency.currentIndex
+    self.isEnablePaging = dependency.enablePaging
   }
 
   enum Action {

@@ -15,7 +15,7 @@ public enum Scene {
   case splash
   case signIn
   case search(query: String = "")
-  case postRolling(videoPosts: [VideoPost], currentIndex: Int)
+  case postRolling(videoPosts: [VideoPost], currentIndex: Int, enablePaging: Bool = true)
   case uploadVideoPost
   case profileSetting(originNickName: String)
 }
@@ -98,15 +98,16 @@ final class SceneFactory: SceneFactoryType {
       searchViewController.hidesBottomBarWhenPushed = true
       return searchViewController
 
-    case let .postRolling(videoPosts, currentIndex):
+    case let .postRolling(videoPosts, currentIndex, enablePaging):
       let videoPostUseCase = injector.resolve(VideoPostUseCaseType.self)
       let postRollingViewController: PostRollingViewController = .init(
         reactor: .init(
           dependency: .init(
             coordinator: coordinator,
             videoPosts: videoPosts,
+            useCase: videoPostUseCase,
             currentIndex: currentIndex,
-            useCase: videoPostUseCase
+            enablePaging: enablePaging
           )
         )
       )
