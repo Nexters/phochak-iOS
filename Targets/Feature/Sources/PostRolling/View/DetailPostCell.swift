@@ -16,6 +16,10 @@ import RxCocoa
 import RxDataSources
 import RxSwift
 
+protocol DetailPostCellDelegate: AnyObject {
+  func tapHashtag(_ tag: String)
+}
+
 final class DetailPostCell: BaseCollectionViewCell, View, VideoControllable {
 
   // MARK: Properties
@@ -25,6 +29,7 @@ final class DetailPostCell: BaseCollectionViewCell, View, VideoControllable {
   private let secondGradeintView: UIView = .init()
   let exclameButtonTapSubject: PublishSubject<Int> = .init()
   let likeButtonTapSubject: PublishSubject<Int> = .init()
+  weak var delegate: DetailPostCellDelegate?
 
   // MARK: Override
   override init(frame: CGRect) {
@@ -138,6 +143,12 @@ private extension DetailPostCell {
 
     hashTagListView.likeButtonTapObservable
       .subscribe(likeButtonTapSubject)
+      .disposed(by: disposeBag)
+
+    hashTagListView.hashtagTapObservable
+      .subscribe(with: self, onNext: { owner, tag in
+        owner.delegate?.tapHashtag(tag)
+      })
       .disposed(by: disposeBag)
 
     NotificationCenter.default.rx.notification(.AVPlayerItemDidPlayToEndTime)

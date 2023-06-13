@@ -39,11 +39,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     appCoordinator = AppCoordinator(dependency: .init(injector: injector))
     coordinatorAssembly(coordinator: appCoordinator!)
 
+    appCoordinator?.start(from: .splash)
+
     let audioSession = AVAudioSession.sharedInstance()
     try? audioSession.setCategory(.ambient, options: [.allowBluetooth])
     try? audioSession.setActive(true)
-
-    appCoordinator?.start(from: .splash)
   }
 
   func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {

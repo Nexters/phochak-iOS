@@ -8,13 +8,19 @@
 
 import UIKit
 
+import RxSwift
 import SnapKit
 import Then
+
+protocol HashTagCellDelegate: AnyObject {
+  func tapHashTag(_ tag: String)
+}
 
 final class HashTagCell: BaseCollectionViewCell {
 
   // MARK: Properties
   private let tagButton: UIButton = .init()
+  weak var delegate: HashTagCellDelegate?
 
   // MARK: Override
   override init(frame: CGRect) {
@@ -53,11 +59,8 @@ final class HashTagCell: BaseCollectionViewCell {
     tagButton.setTitle("#" + tagTitle, for: .normal)
 
     tagButton.rx.tap
-      .asSignal()
-      .map { _ in tagTitle }
-      .emit(with: self, onNext: { owner, tag in
-        // TODO: 검색화면 구현 이후 업데이트
-        print("✅ \(#function) - \(#line): \(tag)")
+      .subscribe(with: self, onNext: { owner, _ in
+        owner.delegate?.tapHashTag(tagTitle)
       })
       .disposed(by: disposeBag)
   }

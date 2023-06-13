@@ -17,7 +17,7 @@ extension AVPlayer {
 
   func startAtBeginning() {
     seek(to: .zero, completionHandler: { [weak self] _ in
-      self?.play()
+      self?.playImmediately(atRate: 1.0)
     })
   }
 

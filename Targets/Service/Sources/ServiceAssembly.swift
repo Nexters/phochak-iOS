@@ -24,11 +24,13 @@ public struct ServiceAssembly: Assembly {
       return UploadVideoPostService(fileManager: fileManager)
     }
 
-    container.register(ProfileServiceType.self) { _ in return ProfileService() }
+    container.register(ProfileServiceType.self) { _ in ProfileService() }
 
-    container.register(ProfileSettingServiceType.self) { _ in return ProfileSettingService() }
+    container.register(ProfileSettingServiceType.self) { _ in ProfileSettingService() }
 
-    container.register(SettingServiceType.self) { _ in return SettingService() }
+    container.register(SettingServiceType.self) { _ in SettingService() }
+
+    container.register(SearchServiceType.self) { _ in SearchService() }
   }
 
   // MARK: Initializer
