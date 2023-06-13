@@ -44,10 +44,6 @@ final class HomeViewController: BaseViewController<HomeReactor> {
   }
 
   // MARK: Override
-  override func viewDidLoad() {
-    super.viewDidLoad()
-  }
-
   override func setupViews() {
     super.setupViews()
 

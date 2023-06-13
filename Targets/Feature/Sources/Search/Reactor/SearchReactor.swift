@@ -1,6 +1,6 @@
 //
 //  SearchReactor.swift
-//  PhoChak
+//  Feature
 //
 //  Created by 여정수 on 2023/05/25.
 //  Copyright © 2023 PhoChak. All rights reserved.
