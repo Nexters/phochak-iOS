@@ -23,7 +23,7 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
     collectionViewLayout: flowLayout
   )
 
-  private lazy var settingButtons: SettingButtons = .init()
+  private lazy var settingButtonStackView: SettingButtonStackView = .init()
   private lazy var deleteVideoPostButton: UIButton = .init()
   private lazy var selectedOptionButtonIndexNumber: Int = .init()
 
@@ -71,7 +71,7 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
       navigationItem.rightBarButtonItem = $0
     }
 
-    settingButtons.do {
+    settingButtonStackView.do {
       $0.delegate = self
       view.addSubview($0)
     }
@@ -87,7 +87,7 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
       $0.leading.trailing.equalToSuperview()
     }
 
-    settingButtons.snp.makeConstraints {
+    settingButtonStackView.snp.makeConstraints {
       $0.top.equalTo(view.safeAreaLayoutGuide)
       $0.trailing.equalToSuperview().inset(20)
       $0.width.equalTo(view.frame.width * 0.641)
@@ -405,7 +405,7 @@ private extension MyPageViewController {
       .asSignal()
       .withUnretained(self)
       .map { owner, _ -> Bool in
-        if owner.settingButtons.isHidden {
+        if owner.settingButtonStackView.isHidden {
           return true
         } else {
           owner.removeSettingButtons()
@@ -442,11 +442,11 @@ private extension MyPageViewController {
   }
 
   func presentSettingButtons() {
-    settingButtons.isHidden = false
+    settingButtonStackView.isHidden = false
     UIView.animate(
       withDuration: 0.25,
       animations: {
-        self.settingButtons.alpha = 1
+        self.settingButtonStackView.alpha = 1
       }
     )
   }
@@ -455,10 +455,10 @@ private extension MyPageViewController {
     UIView.animate(
       withDuration: 0.25,
       animations: {
-        self.settingButtons.alpha = 0
+        self.settingButtonStackView.alpha = 0
       },
       completion: { _ in
-        self.settingButtons.isHidden = true
+        self.settingButtonStackView.isHidden = true
       }
     )
   }

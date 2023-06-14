@@ -20,7 +20,7 @@ public protocol SettingButtonDelegate: AnyObject {
   func tapCheckWithButton()
 }
 
-public final class SettingButtons: UIStackView {
+public final class SettingButtonStackView: UIStackView {
 
   // MARK: Properties
   private let disposeBag: DisposeBag = .init()
@@ -58,7 +58,7 @@ public final class SettingButtons: UIStackView {
 }
 
 // MARK: - Private
-private extension SettingButtons {
+private extension SettingButtonStackView {
 
   // MARK: Methods
   func setupViews() {
