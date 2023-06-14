@@ -41,6 +41,7 @@ final class BlockedListCell: UITableViewCell {
 private extension BlockedListCell {
   func setupViews() {
     backgroundColor = .clear
+    selectionStyle = .none
     
     nameLabel.do {
       $0.textColor = .createColor(.monoGray, .w300)

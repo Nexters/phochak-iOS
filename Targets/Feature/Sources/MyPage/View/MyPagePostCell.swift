@@ -14,6 +14,10 @@ protocol MyPagePostCellDelegate: AnyObject {
   func tapOptionButton(indexNumber: Int, optionButton: UIButton)
 }
 
+extension MyPagePostCellDelegate {
+  func tapOptionButton(indexNumber: Int, optionButton: UIButton) {}
+}
+
 final class MyPagePostCell: BaseCollectionViewCell {
 
   // MARK: Properties
@@ -21,6 +25,7 @@ final class MyPagePostCell: BaseCollectionViewCell {
   private let likeImageView: UIImageView = .init()
   private let likeCountLabel: UILabel = .init()
   private let optionButton: UIButton = .init()
+  private let gradientView: UIView = .init()
   private lazy var alphaView: UIView = .init()
   private lazy var exclamedImageView: UIImageView = .init()
   weak var delegate: MyPagePostCellDelegate?
@@ -41,6 +46,15 @@ final class MyPagePostCell: BaseCollectionViewCell {
     likeCountLabel.text = nil
     alphaView.removeFromSuperview()
     exclamedImageView.removeFromSuperview()
+  }
+
+  override func layoutSubviews() {
+    super.layoutSubviews()
+
+    gradientView.setGradient(
+      startColor: .createColor(.monoGray, .w950, alpha: 0),
+      endColor: .createColor(.monoGray, .w950, alpha: 0.9)
+    )
   }
 
   override func setupViews() {
@@ -65,6 +79,10 @@ final class MyPagePostCell: BaseCollectionViewCell {
     optionButton.do {
       $0.setImage(UIImage(literal: .option), for: .normal)
       contentView.addSubview($0)
+    }
+
+    gradientView.do {
+      thumbnailImageView.addSubview($0)
     }
 
     alphaView.do {
@@ -96,6 +114,11 @@ final class MyPagePostCell: BaseCollectionViewCell {
     optionButton.snp.makeConstraints {
       $0.top.trailing.equalToSuperview().inset(12)
       $0.size.equalTo(CGSize(width: 24, height: 24))
+    }
+
+    gradientView.snp.makeConstraints {
+      $0.height.equalToSuperview().multipliedBy(0.5)
+      $0.leading.trailing.bottom.equalToSuperview()
     }
   }
 
