@@ -7,7 +7,6 @@
 //
 
 import Domain
-import Foundation
 
 import ReactorKit
 
@@ -45,8 +44,15 @@ final class BlockedListReactor: Reactor {
     case .viewWillAppear:
       return dependency.useCase.fetchBlockedList().map { .setBlockedUsers(users: $0) }
 
-    case .tapBlockedUser:
-      // TODO: Implements
+    case .tapBlockedUser(let indexPath):
+      let targetUserID: Int = currentState.blockedUsers[indexPath].id
+
+      dependency.coordinator.transition(
+        to: .userPage(targetUserID: targetUserID),
+        style: .push,
+        animated: true,
+        completion: nil
+      )
       return .empty()
     }
   }

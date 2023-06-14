@@ -61,6 +61,12 @@ final class HashTagListView: UIView {
 }
 
 extension HashTagListView {
+  var nicknameLabelTapObservable: Observable<Int> {
+    nicknameLabel.addTapGesture().rx.event
+      .filter { $0.state == .recognized }
+      .map { [weak self] _ in self?.videoPostRelay.value?.user.id ?? 0 }
+  }
+
   var exclameButtonTapObservable: Observable<Int> {
     exclameButton.rx.tap
       .map { [weak self] _ in self?.videoPostRelay.value?.id ?? 0 }
@@ -106,6 +112,7 @@ private extension HashTagListView {
     nicknameLabel.do {
       $0.font = UIFont(size: .HeadLine, weight: .w800)
       $0.textColor = .createColor(.monoGray, .w200)
+      $0.isUserInteractionEnabled = true
       headerView.addSubview($0)
     }
 

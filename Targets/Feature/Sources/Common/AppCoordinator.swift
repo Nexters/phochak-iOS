@@ -132,6 +132,8 @@ public final class AppCoordinator: AppCoordinatorType {
           return $0 is ProfileSettingViewController
         case .blockedList:
           return $0 is BlockedListViewController
+        case .userPage:
+          return $0 is UserPageViewController
         }
       }) else { return }
 

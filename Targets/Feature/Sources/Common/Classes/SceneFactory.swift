@@ -19,6 +19,7 @@ public enum Scene {
   case uploadVideoPost
   case profileSetting(originNickName: String)
   case blockedList
+  case userPage(targetUserID: Int)
 }
 
 public protocol SceneFactoryType {
@@ -126,6 +127,17 @@ final class SceneFactory: SceneFactoryType {
       let reactor: BlockedListReactor = .init(dependency: reactorDependency)
       let blockedListViewContrller: BlockedListViewController = .init(reactor: reactor)
       return blockedListViewContrller
+
+    case .userPage(let targetUserID):
+      let useCase = injector.resolve(UserPageUseCaseType.self)
+      let reactorDependency: UserPageReactor.Dependency = .init(
+        coordinator: coordinator,
+        useCase: useCase,
+        targetUserID: targetUserID
+      )
+      let reactor: UserPageReactor = .init(dependency: reactorDependency)
+      let userPageViewController: UserPageViewController = .init(reactor: reactor)
+      return userPageViewController
 
     case .tab:
       let tabBarController: PhoChakTabBarController = .init(coordinator: coordinator)

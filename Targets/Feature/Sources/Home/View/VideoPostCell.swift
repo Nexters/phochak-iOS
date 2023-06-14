@@ -14,6 +14,7 @@ import UIKit
 import RxSwift
 
 protocol VideoPostCellDelegate: AnyObject {
+  func didTapNicknameLabel(targetUserID: Int)
   func didTapLikeButton(postID: Int)
   func didTapExclameButton(postID: Int)
 }
@@ -64,6 +65,7 @@ final class VideoPostCell: BaseCollectionViewCell, VideoControllable {
     nicknameLabel.do {
       $0.font = UIFont(size: .Body, weight: .w700)
       $0.textColor = .createColor(.monoGray, .w200)
+      $0.isUserInteractionEnabled = true
       containerView.addSubview($0)
     }
 
@@ -113,6 +115,14 @@ final class VideoPostCell: BaseCollectionViewCell, VideoControllable {
     nicknameLabel.attributedText = .init(string: videoPost.user.nickname, attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
     videoPlayerView.configure(videoPost: videoPost)
     likeButton.setImage(videoPost.isLiked ? UIImage(literal: .heartOn) : UIImage(literal: .heartOff), for: .normal)
+
+    nicknameLabel.addTapGesture().rx.event
+      .filter { $0.state == .recognized }
+      .subscribe(on: MainScheduler.instance)
+      .subscribe(with: self, onNext: { owner, _ in
+        owner.delegate?.didTapNicknameLabel(targetUserID: videoPost.user.id)
+      })
+      .disposed(by: disposeBag)
 
     exclameButton.rx.tap
       .subscribe(on: MainScheduler.instance)

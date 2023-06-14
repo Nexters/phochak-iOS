@@ -47,6 +47,7 @@ final class PostRollingReactor: Reactor {
     case fetchItems(size: Int, currentIndex: Int)
     case didSwipe(direction: SwipeDirection)
     case tapBackButton
+    case tapNicknameLabel(targetUserID: Int)
     case tapHashtag(_ tag: String)
   }
 
@@ -102,6 +103,15 @@ final class PostRollingReactor: Reactor {
 
     case .tapBackButton:
       dependency.coordinator.close(style: .pop, animated: false, completion: nil)
+      return .empty()
+
+    case .tapNicknameLabel(let targetUserID):
+      dependency.coordinator.transition(
+        to: .userPage(targetUserID: targetUserID),
+        style: .push,
+        animated: true,
+        completion: nil
+      )
       return .empty()
 
     case .tapHashtag(let query):
