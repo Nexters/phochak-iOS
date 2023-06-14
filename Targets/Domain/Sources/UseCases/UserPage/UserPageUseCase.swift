@@ -8,18 +8,21 @@
 
 import RxSwift
 
-public typealias UserPageUseCaseType = FetchVideoPostUseCaseType & BlockUseCaseType
+public typealias UserPageUseCaseType = FetchVideoPostUseCaseType & BlockUseCaseType & FetchProfileUseCaseType
 
 final class UserPageUseCase: UserPageUseCaseType {
 
   // MARK: Properties
+  let profileService: ProfileServiceType
   let videoPostService: VideoPostServiceType
   let blockService: BlockServiceType
 
   init(
+    profileService: ProfileServiceType,
     videoPostService: VideoPostServiceType,
     blockService: BlockServiceType
   ) {
+    self.profileService = profileService
     self.videoPostService = videoPostService
     self.blockService = blockService
   }

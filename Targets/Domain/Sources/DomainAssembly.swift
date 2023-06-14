@@ -66,10 +66,11 @@ public struct DomainAssembly: Assembly {
       return BlockUseCase(blockService: service)
     }
 
-    container.register(UserPageUseCase.self) { resolver in
+    container.register(UserPageUseCaseType.self) { resolver in
+      let profileService = resolver.resolve(ProfileServiceType.self)!
       let postsService = resolver.resolve(VideoPostServiceType.self)!
       let blockService = resolver.resolve(BlockServiceType.self)!
-      return UserPageUseCase(videoPostService: postsService, blockService: blockService)
+      return UserPageUseCase(profileService: profileService, videoPostService: postsService, blockService: blockService)
     }
 
     container.register(SearchVideoPostUseCaseType.self) { resolver in
