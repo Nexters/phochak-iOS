@@ -179,7 +179,7 @@ extension UserPageViewController: MyPagePostCellDelegate {
     if videoPost.isBlind {
       presentBlindAlertView()
     } else {
-      reactor?.action.onNext(.videoPostCellTap(postID: videoPost.id))
+      reactor?.action.onNext(.tapVideoPostCell(postID: videoPost.id))
     }
   }
 }

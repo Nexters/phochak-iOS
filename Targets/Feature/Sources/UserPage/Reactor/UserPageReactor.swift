@@ -30,7 +30,7 @@ final class UserPageReactor: Reactor {
 
   enum Action {
     case viewWillAppear
-    case videoPostCellTap(postID: Int)
+    case tapVideoPostCell(postID: Int)
     case tapBlockButton
     case fetchMoreItems
   }
@@ -53,24 +53,24 @@ final class UserPageReactor: Reactor {
   }
 
   func mutate(action: Action) -> Observable<Mutation> {
+    let initialFetchVideoPostRequest: FetchVideoPostRequest = .init(
+      sortOption: .latest,
+      pageSize: 12,
+      filterOption: .uploaded,
+      targetUserID: dependency.targetUserID
+    )
+
     switch action {
     case .viewWillAppear:
       isLastPage = false
       return .concat([
         .just(.setLoading(true)),
         fetchUserProfile(targetUserID: dependency.targetUserID),
-        fetchVideoPosts(
-          request: .init(
-            sortOption: .latest,
-            pageSize: 12,
-            filterOption: .uploaded,
-            targetUserID: dependency.targetUserID
-          )
-        ),
+        fetchVideoPosts(request: initialFetchVideoPostRequest),
         .just(.setLoading(false))
       ])
 
-    case .videoPostCellTap(let postID):
+    case .tapVideoPostCell(let postID):
       let videoPosts: [VideoPost] = currentState.videoPosts.filter { !($0.isBlind) }
 
       guard let currentIndex = videoPosts.firstIndex(where:  { $0.id == postID }) else {
@@ -91,14 +91,7 @@ final class UserPageReactor: Reactor {
       return .concat([
         .just(.setLoading(true)),
         currentState.isBlocked ? unBlockUser() : blockUser(),
-        fetchVideoPosts(
-          request: .init(
-            sortOption: .latest,
-            pageSize: 12,
-            filterOption: .uploaded,
-            targetUserID: dependency.targetUserID
-          )
-        ),
+        fetchVideoPosts(request: initialFetchVideoPostRequest),
         .just(.setLoading(false))
       ])
 

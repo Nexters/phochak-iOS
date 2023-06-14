@@ -42,7 +42,8 @@ final class BlockedListReactor: Reactor {
   func mutate(action: Action) -> Observable<Mutation> {
     switch action {
     case .viewWillAppear:
-      return dependency.useCase.fetchBlockedList().map { .setBlockedUsers(users: $0) }
+      return dependency.useCase.fetchBlockedList()
+        .map { .setBlockedUsers(users: $0) }
 
     case .tapBlockedUser(let indexPath):
       let targetUserID: Int = currentState.blockedUsers[indexPath].id
