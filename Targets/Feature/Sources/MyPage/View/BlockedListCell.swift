@@ -17,7 +17,7 @@ final class BlockedListCell: UITableViewCell {
   override func prepareForReuse() {
     super.prepareForReuse()
 
-    nameLabel.text = .init()
+    nameLabel.text = nil
   }
 
   // MARK: Initialzer

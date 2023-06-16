@@ -39,8 +39,10 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
   }
 
   // MARK: Override
-  override func viewDidLoad() {
-    super.viewDidLoad()
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+
+    dismissSettingButtonStackView()
   }
 
   override func setupViews() {
@@ -315,7 +317,7 @@ extension MyPageViewController: SettingButtonDelegate {
     presentAlert(
       type: .clearCache,
       okAction: { [weak self] in
-        self?.removeSettingButtons()
+        self?.dismissSettingButtonStackView()
         self?.reactor?.action.onNext(.tapClearCacheButton)
       },
       isNeededCancel: true
@@ -323,7 +325,7 @@ extension MyPageViewController: SettingButtonDelegate {
   }
 
   func tapBlockListButton() {
-    removeSettingButtons()
+    dismissSettingButtonStackView()
     reactor?.action.onNext(.tapBlockListButton)
   }
 
@@ -408,13 +410,13 @@ private extension MyPageViewController {
         if owner.settingButtonStackView.isHidden {
           return true
         } else {
-          owner.removeSettingButtons()
+          owner.dismissSettingButtonStackView()
           return false
         }
       }
       .filter { $0 }
       .emit(with: self, onNext: { owner, _ in
-        owner.presentSettingButtons()
+        owner.presentSettingButtonStackView()
       })
       .disposed(by: disposeBag)
 
@@ -427,7 +429,7 @@ private extension MyPageViewController {
 
     Signal.merge(viewTapGestureSignal, collectionViewDidScrollSignal)
       .emit(with: self, onNext: { owner, _ in
-        owner.removeSettingButtons()
+        owner.dismissSettingButtonStackView()
         owner.deleteVideoPostButton.removeFromSuperview()
       })
       .disposed(by: disposeBag)
@@ -441,7 +443,7 @@ private extension MyPageViewController {
     presentAlert(type: .blind(currentFilter: postFilter))
   }
 
-  func presentSettingButtons() {
+  func presentSettingButtonStackView() {
     settingButtonStackView.isHidden = false
     UIView.animate(
       withDuration: 0.25,
@@ -451,7 +453,7 @@ private extension MyPageViewController {
     )
   }
 
-  func removeSettingButtons() {
+  func dismissSettingButtonStackView() {
     UIView.animate(
       withDuration: 0.25,
       animations: {

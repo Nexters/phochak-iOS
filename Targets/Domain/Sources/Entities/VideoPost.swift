@@ -6,8 +6,6 @@
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
-import RxDataSources
-
 public struct VideoPost: Hashable, Decodable {
 
   // MARK: Properties
@@ -62,11 +60,5 @@ public struct VideoPost: Hashable, Decodable {
     self.hashTags = hashTags
     self.isLiked = isLiked
     self.isBlind = isBlind
-  }
-}
-
-extension VideoPost: IdentifiableType, Equatable {
-  public var identity: Int {
-    return id
   }
 }

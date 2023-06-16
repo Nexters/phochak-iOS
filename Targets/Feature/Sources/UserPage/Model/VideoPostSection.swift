@@ -10,6 +10,12 @@ import Domain
 
 import RxDataSources
 
+extension VideoPost: IdentifiableType {
+  public var identity: Int {
+    return id
+  }
+}
+
 struct VideoPostSection: Equatable {
 
   // MARK: Properties

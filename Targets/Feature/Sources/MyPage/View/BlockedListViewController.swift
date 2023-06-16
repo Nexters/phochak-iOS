@@ -33,7 +33,7 @@ final class BlockedListViewController: BaseViewController<BlockedListReactor> {
   override func viewDidLoad() {
     super.viewDidLoad()
 
-    setupTitle()
+    navigationItem.title = "차단한 유저"
   }
 
   override func setupViews() {
@@ -71,10 +71,6 @@ private extension BlockedListViewController {
   typealias Action = BlockedListReactor.Action
 
   // MARK: Methods
-  func setupTitle() {
-    navigationItem.title = "차단한 유저"
-  }
-
   func bindAction(reactor: BlockedListReactor) {
     rx.viewWillAppear
       .map { Action.viewWillAppear }
