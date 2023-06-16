@@ -16,19 +16,21 @@ public protocol SettingButtonDelegate: AnyObject {
   func tapClearCacheButton()
   func tapLogoutButton()
   func tapSignOutButton()
+  func tapBlockListButton()
   func tapCheckWithButton()
 }
 
-public final class SettingButtons: UIStackView {
+public final class SettingButtonStackView: UIStackView {
 
   // MARK: Properties
   private let disposeBag: DisposeBag = .init()
   private let signOutButton: UIButton = .init()
   private let logoutButton: UIButton = .init()
   private let clearCacheButton: UIButton = .init()
+  private let blockListButton: UIButton = .init()
   private let checkWithButton: UIButton = .init()
   private var allButtons: [UIButton] {
-    return [signOutButton, logoutButton, clearCacheButton, checkWithButton]
+    return [signOutButton, logoutButton, clearCacheButton, blockListButton, checkWithButton]
   }
 
   public weak var delegate: SettingButtonDelegate?
@@ -56,7 +58,7 @@ public final class SettingButtons: UIStackView {
 }
 
 // MARK: - Private
-private extension SettingButtons {
+private extension SettingButtonStackView {
 
   // MARK: Methods
   func setupViews() {
@@ -73,6 +75,10 @@ private extension SettingButtons {
 
     clearCacheButton.do {
       $0.setTitle("캐시삭제", for: .normal)
+    }
+
+    blockListButton.do {
+      $0.setTitle("차단한 유저", for: .normal)
     }
 
     checkWithButton.do {
@@ -147,6 +153,13 @@ private extension SettingButtons {
       .asSignal()
       .emit(with: self, onNext: { owner, _ in
         owner.delegate?.tapClearCacheButton()
+      })
+      .disposed(by: disposeBag)
+
+    blockListButton.rx.tap
+      .asSignal()
+      .emit(with: self, onNext: { owner, _ in
+        owner.delegate?.tapBlockListButton()
       })
       .disposed(by: disposeBag)
 

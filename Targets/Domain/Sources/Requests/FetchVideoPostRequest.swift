@@ -15,13 +15,21 @@ public struct FetchVideoPostRequest: Equatable {
   public let lastID: Int?
   public let pageSize: Int
   public let filterOption: PostsFilterOption?
+  public let targetUserID: Int?
 
   // MARK: Initializer
-  public init(sortOption: PostsSortOption, lastID: Int? = nil, pageSize: Int = 5, filterOption: PostsFilterOption? = nil) {
+  public init(
+    sortOption: PostsSortOption,
+    lastID: Int? = nil,
+    pageSize: Int = 5,
+    filterOption: PostsFilterOption? = nil,
+    targetUserID: Int? = nil
+  ) {
     self.sortOption = sortOption
     self.lastID = lastID
     self.pageSize = pageSize
     self.filterOption = filterOption
+    self.targetUserID = targetUserID
   }
 
   // MARK: Methods

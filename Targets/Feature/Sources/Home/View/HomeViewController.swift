@@ -320,6 +320,10 @@ private extension HomeViewController {
 }
 
 extension HomeViewController: VideoPostCellDelegate {
+  func didTapNicknameLabel(targetUserID: Int) {
+    reactor?.action.onNext(.pushUserProfileScene(targetUserID: targetUserID))
+  }
+
   func didTapLikeButton(postID: Int) {
     reactor?.action.onNext(.likeVideoPost(postID: postID))
   }

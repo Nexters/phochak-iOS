@@ -46,6 +46,7 @@ final class MyPageReactor: Reactor {
     case tapSignOutButton
     case tapLogoutButton
     case tapClearCacheButton
+    case tapBlockListButton
     case tapPostDeletionButton(indexNumber: Int)
     case refresh
   }
@@ -152,6 +153,10 @@ final class MyPageReactor: Reactor {
           KingfisherManager.shared.cache.clearMemoryCache()
           return .empty()
         }
+
+    case .tapBlockListButton:
+      dependency.coordinator.transition(to: .blockedList, style: .push, animated: true, completion: nil)
+      return .empty()
 
     case .tapPostDeletionButton(let indexNumber):
       let postID = currentState.uploadedPosts[indexNumber].id

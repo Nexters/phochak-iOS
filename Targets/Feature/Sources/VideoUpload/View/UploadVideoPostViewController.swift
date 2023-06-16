@@ -203,7 +203,7 @@ final class UploadVideoPostViewController: BaseViewController<UploadVideoPostRea
 private extension UploadVideoPostViewController {
 
   // MARK: Properties
-  typealias Section = RxCollectionViewSectionedAnimatedDataSource<HashTagSection>
+  typealias Section = RxCollectionViewSectionedAnimatedDataSource<StringArraySection>
   typealias Action = UploadVideoPostReactor.Action
   typealias State = UploadVideoPostReactor.State
 
@@ -326,7 +326,7 @@ private extension UploadVideoPostViewController {
     })
 
     reactor.state
-      .map { [HashTagSection(header: "", items: $0.hashTags)] }
+      .map { [StringArraySection(header: "", items: $0.hashTags)] }
       .distinctUntilChanged()
       .bind(to: hashTagCollectionView.rx.items(dataSource: dataSource))
       .disposed(by: disposeBag)

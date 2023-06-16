@@ -18,6 +18,8 @@ public enum Scene {
   case postRolling(videoPosts: [VideoPost], currentIndex: Int, enablePaging: Bool = true)
   case uploadVideoPost
   case profileSetting(originNickName: String)
+  case blockedList
+  case userPage(targetUserID: Int)
 }
 
 public protocol SceneFactoryType {
@@ -115,6 +117,27 @@ final class SceneFactory: SceneFactoryType {
       postRollingViewController.delegate = homeViewController
       self.postRollingViewController = postRollingViewController
       return postRollingViewController
+
+    case .blockedList:
+      let useCase = injector.resolve(BlockUseCaseType.self)
+      let reactorDependency: BlockedListReactor.Dependency = .init(
+        coordinator: coordinator,
+        useCase: useCase
+      )
+      let reactor: BlockedListReactor = .init(dependency: reactorDependency)
+      let blockedListViewContrller: BlockedListViewController = .init(reactor: reactor)
+      return blockedListViewContrller
+
+    case .userPage(let targetUserID):
+      let useCase = injector.resolve(UserPageUseCaseType.self)
+      let reactorDependency: UserPageReactor.Dependency = .init(
+        coordinator: coordinator,
+        useCase: useCase,
+        targetUserID: targetUserID
+      )
+      let reactor: UserPageReactor = .init(dependency: reactorDependency)
+      let userPageViewController: UserPageViewController = .init(reactor: reactor)
+      return userPageViewController
 
     case .tab:
       let tabBarController: PhoChakTabBarController = .init(coordinator: coordinator)

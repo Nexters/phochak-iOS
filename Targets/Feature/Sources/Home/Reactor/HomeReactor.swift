@@ -35,6 +35,7 @@ final class HomeReactor: Reactor {
   enum Action {
     case fetchUserProfile
     case pushProfileSettingScene
+    case pushUserProfileScene(targetUserID: Int)
     case tapSearchButton
     case tapVideoCell(index: Int)
     case fetchInitialItems
@@ -71,6 +72,15 @@ final class HomeReactor: Reactor {
 
     case .pushProfileSettingScene:
       return pushProfileSettingScene()
+
+    case .pushUserProfileScene(let targetUserID):
+      dependency.coordinator.transition(
+        to: .userPage(targetUserID: targetUserID),
+        style: .push,
+        animated: true,
+        completion: nil
+      )
+      return .empty()
 
     case .tapSearchButton:
       return pushSearchScene()
@@ -117,6 +127,7 @@ final class HomeReactor: Reactor {
       return updateVideoPostLikeStatus(postID: postID)
 
     case .refresh:
+      isLastPage = false
       return .concat([
         .just(.setLoading(true)),
         fetchVideoPosts(request: .init(sortOption: .latest, pageSize: 10)),

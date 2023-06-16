@@ -23,7 +23,7 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
     collectionViewLayout: flowLayout
   )
 
-  private lazy var settingButtons: SettingButtons = .init()
+  private lazy var settingButtonStackView: SettingButtonStackView = .init()
   private lazy var deleteVideoPostButton: UIButton = .init()
   private lazy var selectedOptionButtonIndexNumber: Int = .init()
 
@@ -39,8 +39,10 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
   }
 
   // MARK: Override
-  override func viewDidLoad() {
-    super.viewDidLoad()
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+
+    dismissSettingButtonStackView()
   }
 
   override func setupViews() {
@@ -71,8 +73,9 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
       navigationItem.rightBarButtonItem = $0
     }
 
-    settingButtons.do {
+    settingButtonStackView.do {
       $0.delegate = self
+      view.addSubview($0)
     }
 
     deleteVideoPostButton.do {
@@ -84,6 +87,12 @@ final class MyPageViewController: BaseViewController<MyPageReactor> {
     collectionView.snp.makeConstraints {
       $0.top.bottom.equalTo(view.safeAreaLayoutGuide)
       $0.leading.trailing.equalToSuperview()
+    }
+
+    settingButtonStackView.snp.makeConstraints {
+      $0.top.equalTo(view.safeAreaLayoutGuide)
+      $0.trailing.equalToSuperview().inset(20)
+      $0.width.equalTo(view.frame.width * 0.641)
     }
   }
 
@@ -308,11 +317,16 @@ extension MyPageViewController: SettingButtonDelegate {
     presentAlert(
       type: .clearCache,
       okAction: { [weak self] in
-        self?.settingButtons.removeFromSuperview()
+        self?.dismissSettingButtonStackView()
         self?.reactor?.action.onNext(.tapClearCacheButton)
       },
       isNeededCancel: true
     )
+  }
+
+  func tapBlockListButton() {
+    dismissSettingButtonStackView()
+    reactor?.action.onNext(.tapBlockListButton)
   }
 
   func tapCheckWithButton() {
@@ -392,20 +406,17 @@ private extension MyPageViewController {
     settingBarButton.rx.tap
       .asSignal()
       .withUnretained(self)
-      .filter { owner, _ in
-        let isDescendant = owner.settingButtons.isDescendant(of: owner.view)
-        owner.settingButtons.removeFromSuperview()
-        return !isDescendant
-      }
-      .emit(with: self, onNext: { owner, _ in
-        guard let screen = owner.view.window?.windowScene?.screen.bounds else { return }
-        owner.view.addSubview(owner.settingButtons)
-
-        owner.settingButtons.snp.makeConstraints {
-          $0.top.equalTo(owner.view.safeAreaLayoutGuide)
-          $0.trailing.equalToSuperview().inset(20)
-          $0.width.equalTo(screen.width * 0.641)
+      .map { owner, _ -> Bool in
+        if owner.settingButtonStackView.isHidden {
+          return true
+        } else {
+          owner.dismissSettingButtonStackView()
+          return false
         }
+      }
+      .filter { $0 }
+      .emit(with: self, onNext: { owner, _ in
+        owner.presentSettingButtonStackView()
       })
       .disposed(by: disposeBag)
 
@@ -418,7 +429,7 @@ private extension MyPageViewController {
 
     Signal.merge(viewTapGestureSignal, collectionViewDidScrollSignal)
       .emit(with: self, onNext: { owner, _ in
-        owner.settingButtons.removeFromSuperview()
+        owner.dismissSettingButtonStackView()
         owner.deleteVideoPostButton.removeFromSuperview()
       })
       .disposed(by: disposeBag)
@@ -430,5 +441,27 @@ private extension MyPageViewController {
     }
 
     presentAlert(type: .blind(currentFilter: postFilter))
+  }
+
+  func presentSettingButtonStackView() {
+    settingButtonStackView.isHidden = false
+    UIView.animate(
+      withDuration: 0.25,
+      animations: {
+        self.settingButtonStackView.alpha = 1
+      }
+    )
+  }
+
+  func dismissSettingButtonStackView() {
+    UIView.animate(
+      withDuration: 0.25,
+      animations: {
+        self.settingButtonStackView.alpha = 0
+      },
+      completion: { _ in
+        self.settingButtonStackView.isHidden = true
+      }
+    )
   }
 }

@@ -1,31 +1,29 @@
 //
-//  HashTagSection.swift
+//  StringArraySection.swift
 //  Feature
 //
-//  Created by Ian on 2023/01/30.
+//  Created by 한상진 on 2023/06/12.
 //  Copyright © 2023 PhoChak. All rights reserved.
 //
 
 import RxDataSources
 
-struct HashTagSection: Equatable {
+struct StringArraySection: Equatable {
 
   // MARK: Properties
-  let header: String
+  var header: String
   var items: [String]
 }
 
-extension HashTagSection: AnimatableSectionModelType {
+extension StringArraySection: AnimatableSectionModelType {
 
   // MARK: Properties
-  typealias Item = String
-
   var identity: String {
     return header
   }
 
   // MARK: Initializer
-  init(original: HashTagSection, items: [String]) {
+  init(original: StringArraySection, items: [String]) {
     self = original
     self.items = items
   }

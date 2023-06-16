@@ -26,6 +26,7 @@ final class PostRollingViewController: BaseViewController<PostRollingReactor> {
     frame: .zero,
     collectionViewLayout: flowLayout
   )
+  private let nicknameLabelTapSubject: PublishSubject<Int> = .init()
   private let exclameButtonTapSubject: PublishSubject<Int> = .init()
   private let likeButtonTapSubject: PublishSubject<Int> = .init()
   private let topGradientView: UIView = .init()
@@ -186,6 +187,11 @@ private extension PostRollingViewController {
       .bind(to: reactor.action)
       .disposed(by: disposeBag)
 
+    nicknameLabelTapSubject
+      .map { PostRollingReactor.Action.tapNicknameLabel(targetUserID: $0) }
+      .bind(to: reactor.action)
+      .disposed(by: disposeBag)
+
     exclameButtonTapSubject
       .asSignal(onErrorSignalWith: .empty())
       .emit(with: self, onNext: { owner, postID in
@@ -224,6 +230,12 @@ private extension PostRollingViewController {
 
         if index == self?.reactor?.currentIndex {
           cell.playVideo()
+        }
+
+        if let nicknameLabelTapSubject = self?.nicknameLabelTapSubject {
+          cell.nicknameLabelTapSubject
+            .subscribe(nicknameLabelTapSubject)
+            .disposed(by: cell.disposeBag)
         }
 
         if let exclameButtonTapSubject = self?.exclameButtonTapSubject {

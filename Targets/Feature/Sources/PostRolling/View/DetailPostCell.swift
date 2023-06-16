@@ -27,6 +27,7 @@ final class DetailPostCell: BaseCollectionViewCell, View, VideoControllable {
   private let hashTagListView: HashTagListView = .init()
   private let firstGradientView: UIView = .init()
   private let secondGradeintView: UIView = .init()
+  let nicknameLabelTapSubject: PublishSubject<Int> = .init()
   let exclameButtonTapSubject: PublishSubject<Int> = .init()
   let likeButtonTapSubject: PublishSubject<Int> = .init()
   weak var delegate: DetailPostCellDelegate?
@@ -135,6 +136,10 @@ private extension DetailPostCell {
         return !(self?.reactor?.videoPost.isLiked ?? false)
       }
       .bind(to: likeButtonTapSubject)
+      .disposed(by: disposeBag)
+
+    hashTagListView.nicknameLabelTapObservable
+      .subscribe(nicknameLabelTapSubject)
       .disposed(by: disposeBag)
 
     hashTagListView.exclameButtonTapObservable
