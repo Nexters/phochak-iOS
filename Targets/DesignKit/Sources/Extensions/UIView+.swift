@@ -33,6 +33,16 @@ public extension UIView {
     setGradient(startColor: startColor, endColor: endColor)
   }
 
+  func removeGradient() {
+    guard let subLayers = layer.sublayers else {
+      return
+    }
+
+    for subLayer in subLayers where (subLayer as? CAGradientLayer) != nil {
+      subLayer.removeFromSuperlayer()
+    }
+  }
+
   func cornerRadius(_ corners: [UIRectCorner] = [.allCorners], radius: CGFloat) {
     layer.masksToBounds = true
     layer.cornerRadius = radius
