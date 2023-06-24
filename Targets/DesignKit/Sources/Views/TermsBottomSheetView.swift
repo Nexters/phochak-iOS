@@ -12,6 +12,7 @@ import RxSwift
 
 public protocol TermsViewDelegate: AnyObject {
   func tapAgreeButton(loginType: LoginType)
+  func tapShowButton()
   func tapCloseButton()
 }
 
@@ -137,6 +138,12 @@ private extension TermsBottomSheetView {
     closeButton.rx.tap
       .subscribe(with: self, onNext: { owner, _ in
         owner.delegate?.tapCloseButton()
+      })
+      .disposed(by: disposeBag)
+
+    showButton.rx.tap
+      .subscribe(with: self, onNext: { owner, _ in
+        owner.delegate?.tapShowButton()
       })
       .disposed(by: disposeBag)
   }

@@ -14,6 +14,7 @@ public enum Scene {
   case tab
   case splash
   case signIn
+  case termsWebView
   case search(query: String = "")
   case postRolling(videoPosts: [VideoPost], currentIndex: Int, enablePaging: Bool = true)
   case uploadVideoPost
@@ -55,7 +56,12 @@ final class SceneFactory: SceneFactoryType {
       )
       let reactor: SignInReactor = .init(dependency: reactorDependency)
       let signInViewController: SignInViewController = .init(reactor: reactor)
-      return signInViewController
+      return UINavigationController(rootViewController: signInViewController)
+
+    case .termsWebView:
+      let reactor: TermsWebViewReactor = .init(dependency: .init(coordinator: coordinator))
+      let termsWebViewController: TermsWebViewController = .init(reactor: reactor)
+      return termsWebViewController
 
     case .splash:
       let reactor: SplashReactor = .init(dependency: .init(coordinator: coordinator))

@@ -150,6 +150,10 @@ extension SignInViewController: TermsViewDelegate {
   func tapCloseButton() {
     hideTermsView()
   }
+
+  func tapShowButton() {
+    reactor?.action.onNext(.tapShowTermsButton)
+  }
 }
 
 // MARK: - Private Extenion

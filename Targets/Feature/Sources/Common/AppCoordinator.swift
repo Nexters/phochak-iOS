@@ -66,9 +66,20 @@ public final class AppCoordinator: AppCoordinatorType {
   }
 
   public func transition(to scene: Scene, style: TransitionStyle, animated: Bool, completion: (() -> Void)?) {
-    guard let navController = (UIApplication.keyWindow?.rootViewController as? PhoChakTabBarController)?.selectedViewController as? UINavigationController else {
+    guard let rootViewController = UIApplication.keyWindow?.rootViewController else {
       return
     }
+
+    var navController: UINavigationController = .init()
+
+    if let tabBarNavController = (rootViewController as? PhoChakTabBarController)?.selectedViewController as? UINavigationController {
+      navController = tabBarNavController
+    } else if let signInNavController = rootViewController as? UINavigationController {
+      navController = signInNavController
+    } else {
+      return
+    }
+
     self.currentNavController = navController
 
     let createdViewController = sceneFactory.create(scene: scene)
@@ -120,6 +131,8 @@ public final class AppCoordinator: AppCoordinatorType {
           return $0 is PhoChakTabBarController
         case .signIn:
           return $0 is SignInViewController
+        case .termsWebView:
+          return $0 is TermsWebViewController
         case .splash:
           return $0 is SplashViewController
         case .search:
