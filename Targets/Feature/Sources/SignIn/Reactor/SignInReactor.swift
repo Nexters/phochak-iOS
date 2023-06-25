@@ -16,6 +16,7 @@ final class SignInReactor: Reactor {
   // MARK: - Properties
   private let depepdency: Dependency
   var initialState: State = .init()
+  var isFirstSignIn: Bool = AuthManager.load(authInfoType: .isFirstSignIn) == nil
 
   struct Dependency {
     let coordinator: AppCoordinatorType

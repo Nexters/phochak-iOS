@@ -38,7 +38,7 @@ final class SignInViewController: BaseViewController<SignInReactor> {
 
   // MARK: Override
   override func bind(reactor: SignInReactor) {
-    bind()
+    bindAction(reactor: reactor)
   }
 
   override func setupViews() {
@@ -158,13 +158,17 @@ extension SignInViewController: TermsViewDelegate {
 
 // MARK: - Private Extenion
 private extension SignInViewController {
-  func bind() {
+  func bindAction(reactor: SignInReactor) {
     Signal.merge([
       kakaoLoginButton.rx.tap.asSignal().map { LoginType.kakao },
       appleLoginButton.rx.tap.asSignal().map { LoginType.apple }
     ])
     .emit(with: self, onNext: { owner, loginType in
-      owner.showTermsView(loginType: loginType)
+      if reactor.isFirstSignIn {
+        owner.showTermsView(loginType: loginType)
+      } else {
+        owner.termsBottomSheetView.delegate?.tapAgreeButton(loginType: loginType)
+      }
     })
     .disposed(by: disposeBag)
   }
