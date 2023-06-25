@@ -159,19 +159,14 @@ extension SignInViewController: TermsViewDelegate {
 // MARK: - Private Extenion
 private extension SignInViewController {
   func bind() {
-    kakaoLoginButton.rx.tap
-      .asSignal()
-      .emit(with: self, onNext: { owner, _ in
-        owner.showTermsView(loginType: .kakao)
-      })
-      .disposed(by: disposeBag)
-
-    appleLoginButton.rx.tap
-      .asSignal()
-      .emit(with: self, onNext: { owner, _ in
-        owner.showTermsView(loginType: .apple)
-      })
-      .disposed(by: disposeBag)
+    Signal.merge([
+      kakaoLoginButton.rx.tap.asSignal().map { LoginType.kakao },
+      appleLoginButton.rx.tap.asSignal().map { LoginType.apple }
+    ])
+    .emit(with: self, onNext: { owner, loginType in
+      owner.showTermsView(loginType: loginType)
+    })
+    .disposed(by: disposeBag)
   }
 
   func signinWithApple() {
@@ -195,7 +190,6 @@ private extension SignInViewController {
         translationX: 0,
         y: -(self.view.frame.height * 0.286)
       )
-      self.view.layoutIfNeeded()
     })
   }
 
@@ -208,7 +202,6 @@ private extension SignInViewController {
         translationX: 0,
         y: (self.view.frame.height * 0.286)
       )
-      self.view.layoutIfNeeded()
     })
   }
 }
