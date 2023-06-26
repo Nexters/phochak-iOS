@@ -70,14 +70,10 @@ public final class AppCoordinator: AppCoordinatorType {
       return
     }
 
-    var navController: UINavigationController
+    var navController: UINavigationController? = UIApplication.keyWindow?.rootViewController as? UINavigationController
 
     if let tabBarNavController = (rootViewController as? PhoChakTabBarController)?.selectedViewController as? UINavigationController {
       navController = tabBarNavController
-    } else if let signInNavController = rootViewController as? UINavigationController {
-      navController = signInNavController
-    } else {
-      return
     }
 
     self.currentNavController = navController
@@ -87,13 +83,13 @@ public final class AppCoordinator: AppCoordinatorType {
     switch style {
     case .push:
       if case .postRolling = scene {
-        navController.pushWithAnimation(createdViewController)
+        navController?.pushWithAnimation(createdViewController)
       } else {
-        navController.pushViewController(createdViewController, animated: true)
+        navController?.pushViewController(createdViewController, animated: true)
       }
 
      case .modal:
-      navController.present(createdViewController, animated: animated, completion: completion)
+      navController?.present(createdViewController, animated: animated, completion: completion)
     }
   }
 
