@@ -141,7 +141,10 @@ final class MyPageReactor: Reactor {
       return .empty()
 
     case .tapSignOutButton:
-      return dependency.useCase.signOut().map { .reSignIn }
+      return dependency.useCase.signOut().map {
+        AuthManager.deleteSignInLog()
+        return .reSignIn
+      }
 
     case .tapLogoutButton:
       return dependency.useCase.logout().map { .reSignIn }

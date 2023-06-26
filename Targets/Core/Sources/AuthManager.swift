@@ -64,4 +64,13 @@ public enum AuthManager {
       SecItemDelete(query)
     }
   }
+
+  public static func deleteSignInLog() {
+    let query: NSDictionary = .init(dictionary: [
+      kSecClass: kSecClassGenericPassword,
+      kSecAttrAccount: "isFirstSignIn"
+    ])
+
+    SecItemDelete(query)
+  }
 }

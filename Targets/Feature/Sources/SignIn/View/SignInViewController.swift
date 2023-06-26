@@ -23,6 +23,7 @@ final class SignInViewController: BaseViewController<SignInReactor> {
   private let titleImageView: UIImageView = .init(image: UIImage(literal: .loginTitle))
   private let kakaoLoginButton: UIButton = .init()
   private let appleLoginButton: UIButton = .init()
+  private let termsBottomSheetView: TermsBottomSheetView = .init()
 
   // MARK: Initializer
   init(reactor: SignInReactor) {
@@ -35,16 +36,9 @@ final class SignInViewController: BaseViewController<SignInReactor> {
     fatalError("init(coder:) has not been implemented")
   }
 
-  // MARK: Methods
+  // MARK: Override
   override func bind(reactor: SignInReactor) {
     bindAction(reactor: reactor)
-
-    appleLoginButton.rx.tap
-      .asSignal()
-      .emit(with: self, onNext: { owner, _ in
-        owner.signinWithApple()
-      })
-      .disposed(by: disposeBag)
   }
 
   override func setupViews() {
@@ -75,6 +69,11 @@ final class SignInViewController: BaseViewController<SignInReactor> {
       $0.titleEdgeInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
       view.addSubview($0)
     }
+
+    termsBottomSheetView.do {
+      $0.delegate = self
+      view.addSubview($0)
+    }
   }
 
   override func setupLayoutConstraints() {
@@ -102,6 +101,12 @@ final class SignInViewController: BaseViewController<SignInReactor> {
     iconImageView.snp.makeConstraints {
       $0.bottom.equalTo(logoImageView.snp.top).offset(-40)
       $0.centerX.equalToSuperview()
+    }
+
+    termsBottomSheetView.snp.makeConstraints {
+      $0.height.equalTo(view.frame.height * 0.286)
+      $0.leading.trailing.equalToSuperview()
+      $0.bottom.equalToSuperview().offset(view.frame.height * 0.286)
     }
   }
 }
@@ -131,16 +136,41 @@ extension SignInViewController: ASAuthorizationControllerPresentationContextProv
   }
 }
 
+// MARK: - TermsViewDelegate Extension
+extension SignInViewController: TermsViewDelegate {
+  func tapAgreeButton(loginType: LoginType) {
+    switch loginType {
+    case .apple:
+      signinWithApple()
+    case .kakao:
+      reactor?.action.onNext(.tapKakaoSignInButton)
+    }
+  }
+
+  func tapCloseButton() {
+    hideTermsView()
+  }
+
+  func tapShowButton() {
+    reactor?.action.onNext(.tapShowTermsButton)
+  }
+}
+
 // MARK: - Private Extenion
 private extension SignInViewController {
   func bindAction(reactor: SignInReactor) {
-    typealias Action = SignInReactor.Action
-
-    kakaoLoginButton.rx.tap
-      .asSignal()
-      .map { Action.tapKakaoSignInButton }
-      .emit(to: reactor.action)
-      .disposed(by: disposeBag)
+    Signal.merge([
+      kakaoLoginButton.rx.tap.asSignal().map { LoginType.kakao },
+      appleLoginButton.rx.tap.asSignal().map { LoginType.apple }
+    ])
+    .emit(with: self, onNext: { owner, loginType in
+      if reactor.isFirstSignIn {
+        owner.showTermsView(loginType: loginType)
+      } else {
+        owner.termsBottomSheetView.delegate?.tapAgreeButton(loginType: loginType)
+      }
+    })
+    .disposed(by: disposeBag)
   }
 
   func signinWithApple() {
@@ -152,5 +182,30 @@ private extension SignInViewController {
     authController.delegate = self
     authController.presentationContextProvider = self
     authController.performRequests()
+  }
+
+  func showTermsView(loginType: LoginType) {
+    termsBottomSheetView.loginType = loginType
+    self.view.backgroundColor = .createColor(.monoGray, .w800, alpha: 0.4)
+    self.view.removeGradient()
+
+    UIView.animate(withDuration: 0.3, animations: {
+      self.termsBottomSheetView.transform = CGAffineTransform(
+        translationX: 0,
+        y: -(self.view.frame.height * 0.286)
+      )
+    })
+  }
+
+  func hideTermsView() {
+    self.view.setGradientBackground()
+    self.view.backgroundColor = nil
+
+    UIView.animate(withDuration: 0.3, animations: {
+      self.termsBottomSheetView.transform = CGAffineTransform(
+        translationX: 0,
+        y: (self.view.frame.height * 0.286)
+      )
+    })
   }
 }

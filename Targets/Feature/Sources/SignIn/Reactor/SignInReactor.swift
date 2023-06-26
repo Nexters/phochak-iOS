@@ -16,6 +16,7 @@ final class SignInReactor: Reactor {
   // MARK: - Properties
   private let depepdency: Dependency
   var initialState: State = .init()
+  var isFirstSignIn: Bool = AuthManager.load(authInfoType: .isFirstSignIn) == nil
 
   struct Dependency {
     let coordinator: AppCoordinatorType
@@ -30,6 +31,7 @@ final class SignInReactor: Reactor {
   enum Action {
     case tapKakaoSignInButton
     case receiveAppleSigninAuthCode(token: String)
+    case tapShowTermsButton
   }
 
   enum Mutation {
@@ -46,6 +48,16 @@ final class SignInReactor: Reactor {
     case .receiveAppleSigninAuthCode(let token):
       return depepdency.useCase.tryAppleSignIn(token: token)
         .map { .setUserToken(userToken: $0) }
+
+    case .tapShowTermsButton:
+      depepdency.coordinator.transition(
+        to: .termsWebView,
+        style: .push,
+        animated: true,
+        completion: nil
+      )
+
+      return .empty()
     }
   }
 
