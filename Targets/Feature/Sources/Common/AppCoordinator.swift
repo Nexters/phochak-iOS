@@ -70,7 +70,7 @@ public final class AppCoordinator: AppCoordinatorType {
       return
     }
 
-    var navController: UINavigationController = .init()
+    var navController: UINavigationController
 
     if let tabBarNavController = (rootViewController as? PhoChakTabBarController)?.selectedViewController as? UINavigationController {
       navController = tabBarNavController
